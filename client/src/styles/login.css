@@ -94,12 +94,18 @@ CENTERED QUOTE
 ========================= */
 
 .auth-quote {
-    width: 85%;
-    max-width: 30rem;
-
+    width: 80%;
+    max-width: 32rem;
     margin: auto 0; /* Ensures exact vertical and horizontal centering */
-
     text-align: center;
+
+    background-color: rgba(55, 55, 55, 0.386);
+    padding: 5%;
+    border-radius: 15px;
+}
+
+.auth-quote > div {
+    width: 100%;
 }
 
 .auth-quote p {
@@ -108,14 +114,14 @@ CENTERED QUOTE
     font-family: "Playfair Display", serif;
     font-size: clamp(1.4rem, 2.5vw, 2.5rem);
     font-weight: 500;
-    line-height: 1.15;
+    line-height: 0.98;
     letter-spacing: -0.03em;
 }
 
 .auth-quote span {
     display: block;
 
-    margin-top: 1rem;
+    margin-top: 1.5rem;
 
     font-size: clamp(0.75rem, 0.9vw, 0.875rem);
     line-height: 1.4;
