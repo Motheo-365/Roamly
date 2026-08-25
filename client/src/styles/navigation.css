@@ -1,15 +1,15 @@
 .navigation {
-    width: 100%;
-
     display: flex;
     align-items: center;
     justify-content: space-between;
+    align-self: center;
 
     padding: 1.2rem 4vw;
+    margin-top: 2%;
 
     position: relative;
     z-index: 100;
-    background-color: rgba(255, 255, 255, 0.434);
+    background-color: rgba(12, 9, 9, 0.253);
     padding: 2%;
     border-radius: 20px;
 }
@@ -28,7 +28,7 @@
     align-items: center;
     gap: 0.65rem;
 
-    color: #18232d;
+    color: white;
 
     text-decoration: none;
 }
@@ -43,7 +43,7 @@
     border: 1px solid #18232d;
     border-radius: 50%;
 
-    color: #18232d;
+    color: white;
 
     font-size: 0.75rem;
     font-weight: 700;
@@ -79,9 +79,9 @@
 
     padding: 0.4rem 0;
 
-    color: #737a7f;
+    color: white;
 
-    font-size: clamp(0.75rem, 0.9vw, 0.875rem);
+    font-size: clamp(0.85rem, 0.9vw, 0.875rem);
     font-weight: 500;
 
     text-decoration: none;
