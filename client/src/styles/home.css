@@ -1,0 +1,67 @@
+.home-page {
+    width: 100%;
+    min-height: 100vh;
+
+    display: grid;
+    grid-template-columns: 45% 55%;
+
+    overflow: hidden;
+
+    background: #f8f6f2;
+}
+
+.home-content {
+    width: 100%;
+    min-height: 100vh;
+
+    display: flex;
+    flex-direction: column;
+}
+
+.home-main {
+    width: 80%;
+    margin: auto;
+}
+
+.home-main h1 {
+    margin: 0;
+
+    color: #18232d;
+
+    font-family: "Playfair Display", serif;
+    font-size: clamp(2.5rem, 4vw, 4rem);
+    font-weight: 500;
+    line-height: 1;
+    letter-spacing: -0.04em;
+}
+
+.home-main p {
+    margin-top: 1rem;
+
+    color: #737a7f;
+
+    font-size: clamp(0.8rem, 1vw, 1rem);
+}
+
+.home-map {
+    width: 100%;
+    min-height: 100vh;
+
+    position: relative;
+}
+
+@media (max-width: 800px) {
+    .home-page {
+        display: block;
+        overflow: visible;
+    }
+
+    .home-content {
+        min-height: auto;
+    }
+
+    .home-map {
+        height: 60vh;
+        min-height: 25rem;
+    }
+}

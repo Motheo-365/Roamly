@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+
 
 import Button from "../components/ui/button";
 import Input from "../components/ui/input";
@@ -7,10 +8,10 @@ import Input from "../components/ui/input";
 // Styling
 import '../styles/login.css'
 
-
 function Login() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const navigate = useNavigate();
 
     const handleSubmit = (event: React.FormEvent) => {
         event.preventDefault();
@@ -19,6 +20,8 @@ function Login() {
             email,
             password,
         });
+
+        navigate("/");
     };
 
     return (
