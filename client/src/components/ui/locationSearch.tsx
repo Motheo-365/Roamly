@@ -18,6 +18,7 @@ function LocationSearch({
     const [search, setSearch] = useState("");
     const [results, setResults] = useState<LocationResult[]>([]);
     const [loading, setLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
     const [showResults, setShowResults] = useState(false);
 
     useEffect(() => {
@@ -30,6 +31,7 @@ function LocationSearch({
         const searchLocationsAsync = async () => {
             try {
                 setLoading(true);
+                setError(null);
 
                 const data = await searchLocations(
                     search,
@@ -50,6 +52,13 @@ function LocationSearch({
                 console.error(
                     "Location search failed:",
                     error
+                );
+                setResults([]);
+                setShowResults(false);
+                setError(
+                    error instanceof Error
+                        ? error.message
+                        : "Unable to search locations."
                 );
 
             } finally {
@@ -97,6 +106,7 @@ function LocationSearch({
         if (value.trim().length < 2) {
             setResults([]);
             setShowResults(false);
+            setError(null);
         }
     };
 
@@ -128,6 +138,12 @@ function LocationSearch({
                     </span>
                 )}
 
+                {error && (
+                    <div className="search-error" role="alert">
+                        {error}
+                    </div>
+                )}
+
                 {showResults &&
                     results.length > 0 && (
                         <div className="search-results">
@@ -145,7 +161,6 @@ function LocationSearch({
                                         }
                                     >
                                         <span className="result-icon">
-                                            📍
                                         </span>
 
                                         <span className="result-name">
