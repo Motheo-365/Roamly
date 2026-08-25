@@ -7,6 +7,7 @@ export interface LocationResult {
 export async function searchLocations(
     query: string
 ): Promise<LocationResult[]> {
+
     const url = new URL(
         "https://nominatim.openstreetmap.org/search"
     );
@@ -16,13 +17,28 @@ export async function searchLocations(
     url.searchParams.set("limit", "5");
     url.searchParams.set("addressdetails", "1");
 
+    console.log("Nominatim URL:", url.toString());
+
     const response = await fetch(url, {
         headers: {
             "User-Agent": "Roamly Travel App",
+            "Accept": "application/json",
         },
     });
 
+    console.log(
+        "Nominatim status:",
+        response.status
+    );
+
     if (!response.ok) {
+        const errorText = await response.text();
+
+        console.error(
+            "Nominatim response:",
+            errorText
+        );
+
         throw new Error(
             `Nominatim request failed: ${response.status}`
         );

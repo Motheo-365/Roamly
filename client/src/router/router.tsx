@@ -11,7 +11,7 @@ export default function Router() {
         <BrowserRouter>
             <Routes>
 
-                {/* AUthenitication */}
+                {/* Authenitication */}
                 <Route element={<AuthLayout />}>
                     <Route path="/login" element={<Login />} />
                     <Route path="/signup" element={<Signup />} />
@@ -19,7 +19,7 @@ export default function Router() {
 
                 {/* Application */}
                 <Route path="/" element={<Dashboard/>} />
-                
+
                 <Route
                     path="*"
                     element={<Navigate to="/login" replace />}

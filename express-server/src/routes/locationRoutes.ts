@@ -6,9 +6,6 @@ import {
 
 const router = Router();
 
-router.get(
-    "/search",
-    searchLocationController
-);
+router.get("/search", searchLocationController);
 
 export default router;
