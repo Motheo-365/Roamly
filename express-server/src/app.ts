@@ -10,6 +10,7 @@ import expenseRoutes from "./routes/expenseRoutes.js";
 import budgetRoutes from "./routes/budgetRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
 import activityLogRoutes from "./routes/activityLogRoutes.js";
+import locationRoutes from "./routes/locationRoutes.js";
 
 //Event Observers
 import "./events/tripObservers.js"
@@ -34,6 +35,7 @@ app.use("/api/activities", activityRoutes);
 app.use("/api/expenses", expenseRoutes);
 app.use("/api/budget", budgetRoutes);
 app.use("/api/activity-logs", activityLogRoutes);
+app.use("/api/locations", locationRoutes);
 
 /*
     * 404 Not Found Handler
