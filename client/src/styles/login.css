@@ -5,7 +5,7 @@ BASE PAGE CONTAINER
 .auth-page {
     width: 100vw;
     height: 100dvh; /* Prevents mobile browser bar overflow */
-
+    color: black;
     display: grid;
     grid-template-columns: 42% 58%;
 
@@ -42,37 +42,51 @@ IMAGE PANEL
     align-items: center;
 
     color: #fff;
-    background: rgba(0, 0, 0, 0.25); /* Visual contrast overlay */
 }
 
 /* =========================
-BRAND
+Nav
 ========================= */
 
-.brand {
-    align-self: flex-start; /* Keeps brand anchored top-left */
-
-    display: inline-flex;
-    align-items: center;
-    gap: 0.6rem;
-
-    font-size: clamp(0.9rem, 1.2vw, 1.25rem);
-    font-weight: 700;
-    letter-spacing: -0.03em;
+.auth-nav {
+  width: 100%;
+  
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
 }
 
-.brand-mark {
-    width: clamp(1.5rem, 2vw, 2rem);
-    aspect-ratio: 1;
+.auth-nav .brand {
+  /* Override former flex-start alignment */
+  align-self: unset;
+}
 
-    display: grid;
-    place-items: center;
+.nav-links {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
 
-    border: 1px solid rgba(255, 255, 255, 0.8);
-    border-radius: 50%;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    background-color: rgba(255, 255, 255, 0.434);
+    padding: 2%;
+    border-radius: 20px;
+}
 
-    font-size: 0.75em;
-    font-weight: 700;
+.nav-links a {
+  color: rgba(255, 255, 255, 0.85);
+
+  font-size: clamp(0.75rem, 0.85vw, 0.9rem);
+  font-weight: 500;
+  text-decoration: none;
+
+  transition: color 0.2s ease;
+}
+
+.nav-links a:hover {
+  color: #ffffff;
 }
 
 /* =========================

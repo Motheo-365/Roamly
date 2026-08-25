@@ -1,5 +1,4 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import Navigation from "../components/navigation";
 
 import Login from "../pages/login";
 import Signup from "../pages/signup";
@@ -10,8 +9,6 @@ import Signup from "../pages/signup";
 export default function Router() {
   return (
     <BrowserRouter>
-        <Navigation/>
-        
         <Routes>
         {/* Authentication */}
         <Route path="/login" element={<Login />} />

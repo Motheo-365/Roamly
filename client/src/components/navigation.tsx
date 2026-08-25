@@ -6,8 +6,6 @@ function Navigation() {
         <nav className="navigation">
             <div className="navigation-brand">
                 <NavLink to="/" className="brand-link">
-                    <span className="brand-mark">R</span>
-                    <span className="brand-name">Roamly</span>
                 </NavLink>
             </div>
 

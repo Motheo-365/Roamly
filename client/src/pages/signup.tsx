@@ -32,7 +32,7 @@ export default function Signup({ onSwitchToLogin }: SignupProps) {
         <div className="login-header">
           <span className="eyebrow">START YOUR JOURNEY</span>
 
-          <h1>Begin roaming.</h1>
+          <h1>One site for all your travel planning needs.</h1>
 
           <p>
             Create an account to unlock personalized trip planning and guides.
@@ -90,7 +90,7 @@ export default function Signup({ onSwitchToLogin }: SignupProps) {
             className="link-button" 
             onClick={onSwitchToLogin}
           >
-            Log in
+            <a href="login">Log in</a>
           </button>
         </p>
       </div>

@@ -26,7 +26,7 @@ export default function Login() {
         <div className="login-header">
           <span className="eyebrow">WELCOME BACK</span>
 
-          <h1>Ready to roam?</h1>
+          <h1>Ready to travel?</h1>
 
           <p>
             Sign in to continue planning your next adventure.
@@ -80,7 +80,7 @@ export default function Login() {
 
         <p className="signup-text">
           Don't have an account?{" "}
-          <a href="#">Create one</a>
+          <a href="signup">Create one</a>
         </p>
       </div>
     </AuthLayout>
