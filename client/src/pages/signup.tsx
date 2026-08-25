@@ -4,7 +4,7 @@ import Button from "../components/ui/button";
 import Input from "../components/ui/input";
 
 // Styling
-import '../../styles/login.css';
+import '../styles/login.css'
 
 interface SignupProps {
   onSwitchToLogin?: () => void;

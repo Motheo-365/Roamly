@@ -1,0 +1,159 @@
+.navigation {
+    width: 100%;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 1.2rem 4vw;
+
+    background: #f8f6f2;
+
+    border-bottom: 1px solid rgba(24, 35, 45, 0.08);
+
+    position: relative;
+    z-index: 100;
+}
+
+/* =========================
+   BRAND
+========================= */
+
+.navigation-brand {
+    display: flex;
+    align-items: center;
+}
+
+.brand-link {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+
+    color: #18232d;
+
+    text-decoration: none;
+}
+
+.brand-mark {
+    width: clamp(1.8rem, 2.5vw, 2.2rem);
+    aspect-ratio: 1;
+
+    display: grid;
+    place-items: center;
+
+    border: 1px solid #18232d;
+    border-radius: 50%;
+
+    color: #18232d;
+
+    font-size: 0.75rem;
+    font-weight: 700;
+
+    transition:
+        background 0.2s ease,
+        color 0.2s ease;
+}
+
+.brand-link:hover .brand-mark {
+    background: #18232d;
+    color: #fff;
+}
+
+.brand-name {
+    font-size: clamp(1rem, 1.4vw, 1.3rem);
+    font-weight: 700;
+    letter-spacing: -0.04em;
+}
+
+/* =========================
+   NAVIGATION LINKS
+========================= */
+
+.navigation-links {
+    display: flex;
+    align-items: center;
+    gap: clamp(1.2rem, 2.5vw, 2.8rem);
+}
+
+.navigation-links a {
+    position: relative;
+
+    padding: 0.4rem 0;
+
+    color: #737a7f;
+
+    font-size: clamp(0.75rem, 0.9vw, 0.875rem);
+    font-weight: 500;
+
+    text-decoration: none;
+
+    transition: color 0.2s ease;
+}
+
+.navigation-links a:hover {
+    color: #18232d;
+}
+
+/* Active link */
+
+.navigation-links a.active {
+    color: #18232d;
+    font-weight: 600;
+}
+
+.navigation-links a.active::after {
+    content: "";
+
+    position: absolute;
+
+    left: 50%;
+    bottom: -0.45rem;
+
+    width: 0.25rem;
+    aspect-ratio: 1;
+
+    border-radius: 50%;
+
+    background: #b65d47;
+
+    transform: translateX(-50%);
+}
+
+/* =========================
+   TABLET
+========================= */
+
+@media (max-width: 800px) {
+    .navigation {
+        padding: 1rem 5vw;
+    }
+
+    .navigation-links {
+        gap: 1.2rem;
+    }
+}
+
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width: 600px) {
+    .navigation {
+        flex-direction: column;
+        gap: 1rem;
+
+        padding: 1rem 6vw;
+    }
+
+    .navigation-links {
+        width: 100%;
+
+        justify-content: center;
+
+        gap: 1.5rem;
+    }
+
+    .navigation-links a {
+        font-size: 0.75rem;
+    }
+}
