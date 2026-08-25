@@ -1,0 +1,555 @@
+/* =========================
+BASE PAGE CONTAINER
+========================= */
+
+.auth-page {
+    width: 100vw;
+    height: 100dvh; /* Prevents mobile browser bar overflow */
+
+    display: grid;
+    grid-template-columns: 42% 58%;
+
+    background: #f8f6f2;
+    overflow: hidden; /* Strict lock on overflow X and Y */
+}
+
+/* =========================
+IMAGE PANEL
+========================= */
+
+.auth-visual {
+    position: relative;
+    width: 100%;
+    height: 100%;
+
+    background-image: url("https://images.unsplash.com/photo-1500534623283-312aade485b7?auto=format&fit=crop&w=1800&q=90");
+    background-size: cover;
+    background-position: center;
+
+    overflow: hidden;
+}
+
+.auth-overlay {
+    width: 100%;
+    height: 100%;
+
+    padding: 3vh 3vw;
+    box-sizing: border-box;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* Keeps brand top, quote perfectly centered */
+    align-items: center;
+
+    color: #fff;
+    background: rgba(0, 0, 0, 0.25); /* Visual contrast overlay */
+}
+
+/* =========================
+BRAND
+========================= */
+
+.brand {
+    align-self: flex-start; /* Keeps brand anchored top-left */
+
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+
+    font-size: clamp(0.9rem, 1.2vw, 1.25rem);
+    font-weight: 700;
+    letter-spacing: -0.03em;
+}
+
+.brand-mark {
+    width: clamp(1.5rem, 2vw, 2rem);
+    aspect-ratio: 1;
+
+    display: grid;
+    place-items: center;
+
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    border-radius: 50%;
+
+    font-size: 0.75em;
+    font-weight: 700;
+}
+
+/* =========================
+CENTERED QUOTE
+========================= */
+
+.auth-quote {
+    width: 85%;
+    max-width: 30rem;
+
+    margin: auto 0; /* Ensures exact vertical and horizontal centering */
+
+    text-align: center;
+}
+
+.auth-quote p {
+    margin: 0;
+
+    font-family: "Playfair Display", serif;
+    font-size: clamp(1.4rem, 2.5vw, 2.5rem);
+    font-weight: 500;
+    line-height: 1.15;
+    letter-spacing: -0.03em;
+}
+
+.auth-quote span {
+    display: block;
+
+    margin-top: 1rem;
+
+    font-size: clamp(0.75rem, 0.9vw, 0.875rem);
+    line-height: 1.4;
+
+    color: rgba(255, 255, 255, 0.9);
+}
+
+/* Spacer element to keep quote vertically centered relative to brand header */
+.auth-overlay-spacer {
+    height: clamp(1.5rem, 2vw, 2rem);
+    visibility: hidden;
+}
+
+/* =========================
+FORM PANEL
+========================= */
+
+.auth-content {
+    width: 100%;
+    height: 100%;
+
+    display: flex;
+    align-items: center;     /* Perfect vertical centering */
+    justify-content: center; /* Perfect horizontal centering */
+
+    padding: 4vh 4vw;
+    box-sizing: border-box;
+
+    background: #f8f6f2;
+    overflow-y: auto; /* Handles edge cases with ultra-small viewports safely */
+}
+
+.login-container {
+    width: 100%;
+    max-width: 24rem;
+    margin: auto;
+}
+
+/* =========================
+HEADER
+========================= */
+
+.login-header {
+    margin-bottom: 1.8rem;
+    text-align: left;
+}
+
+.eyebrow {
+    display: inline-block;
+
+    margin-bottom: 0.5rem;
+
+    color: #b65d47;
+
+    font-size: clamp(0.65rem, 0.75vw, 0.75rem);
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+}
+
+.login-header h1 {
+    margin: 0;
+
+    color: #18232d;
+
+    font-family: "Playfair Display", serif;
+    font-size: clamp(2rem, 3.2vw, 3rem);
+    font-weight: 500;
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+}
+
+.login-header p {
+    margin: 0.75rem 0 0;
+
+    color: #737a7f;
+
+    font-size: clamp(0.8rem, 0.85vw, 0.9rem);
+    line-height: 1.5;
+}
+
+/* =========================
+INPUTS
+========================= */
+
+.input-group {
+    margin-bottom: 1.25rem;
+}
+
+.input-group label {
+    display: block;
+
+    margin-bottom: 0.4rem;
+
+    color: #303a42;
+
+    font-size: clamp(0.7rem, 0.8vw, 0.8rem);
+    font-weight: 600;
+}
+
+.input-group input:not([type="checkbox"]) {
+    display: block;
+
+    width: 100%;
+    height: 2.85rem;
+
+    padding: 0 0.85rem;
+    box-sizing: border-box;
+
+    border: 1px solid #d8d6d1;
+    border-radius: 0.45rem;
+
+    outline: none;
+
+    background: #fff;
+    color: #18232d;
+
+    font-size: clamp(0.8rem, 0.85vw, 0.875rem);
+
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.input-group input:not([type="checkbox"]):hover {
+    border-color: #bcbab5;
+}
+
+.input-group input:not([type="checkbox"]):focus {
+    border-color: #b65d47;
+    box-shadow: 0 0 0 0.2rem rgba(182, 93, 71, 0.09);
+}
+
+.input-group input::placeholder {
+    color: #a4a5a3;
+}
+
+/* =========================
+OPTIONS
+========================= */
+
+.form-options {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    margin: 0.5rem 0 1.5rem;
+
+    font-size: clamp(0.7rem, 0.75vw, 0.8rem);
+}
+
+.remember {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+
+    color: #747b7f;
+
+    cursor: pointer;
+}
+
+.remember input {
+    width: 0.9rem;
+    height: 0.9rem;
+
+    margin: 0;
+
+    accent-color: #b65d47;
+
+    cursor: pointer;
+}
+
+a {
+    color: #a94f3c;
+
+    font-weight: 600;
+    text-decoration: none;
+}
+
+a:hover {
+    color: #803a2d;
+}
+
+/* =========================
+BUTTON
+========================= */
+
+.button {
+    width: 100%;
+    height: 2.85rem;
+
+    border: 0;
+    border-radius: 0.45rem;
+
+    background: #18232d;
+    color: #fff;
+
+    cursor: pointer;
+
+    font-size: clamp(0.8rem, 0.85vw, 0.875rem);
+    font-weight: 600;
+
+    transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.button:hover {
+    background: #263541;
+    transform: translateY(-0.05rem);
+}
+
+.button:active {
+    transform: translateY(0);
+}
+
+.button:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* =========================
+DIVIDER
+========================= */
+
+.divider {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+
+    margin: 1.5rem 0;
+
+    color: #a2a3a0;
+
+    font-size: clamp(0.65rem, 0.7vw, 0.75rem);
+}
+
+.divider::before,
+.divider::after {
+    content: "";
+
+    flex: 1;
+
+    height: 1px;
+
+    background: #dedcd7;
+}
+
+/* =========================
+SIGN UP
+========================= */
+
+.signup-text {
+    margin: 0;
+
+    color: #777d81;
+
+    font-size: clamp(0.75rem, 0.8vw, 0.85rem);
+    text-align: center;
+}
+
+/* =========================
+PASSWORD TOGGLE
+========================= */
+
+.password-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+/* Ensure padding on the right so input text doesn't overlap the button */
+.password-wrapper input {
+  padding-right: 3rem !important;
+}
+
+.password-toggle {
+  position: absolute;
+  right: 0.85rem;
+  top: calc(50% + 0.8rem); /* Centers relative to input while accounting for label height */
+  transform: translateY(-50%);
+
+  background: none;
+  border: none;
+  padding: 0;
+
+  color: #737a7f;
+  font-size: 0.75rem;
+  font-weight: 600;
+
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.password-toggle:hover {
+  color: #18232d;
+}
+
+.password-toggle:focus-visible {
+  outline: 2px solid #b65d47;
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* =========================
+LINK BUTTON & INLINE ACTIONS
+========================= */
+
+.link-button {
+  background: none;
+  border: none;
+  padding: 0;
+  
+  color: #a94f3c;
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: 600;
+
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.link-button:hover {
+  color: #803a2d;
+  text-decoration: underline;
+}
+
+/* =========================
+MODAL CONTAINER
+========================= */
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: rgba(15, 23, 30, 0.65);
+  backdrop-filter: blur(4px);
+
+  z-index: 1000;
+  overflow: hidden;
+}
+
+.modal-content {
+  position: relative;
+
+  width: 100%;
+  max-width: 900px;
+  max-height: 90vh;
+
+  background: #f8f6f2;
+  border-radius: 0.8rem;
+
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+}
+
+.modal-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+
+  width: 2rem;
+  height: 2rem;
+
+  display: grid;
+  place-items: center;
+
+  border: 0;
+  border-radius: 50%;
+
+  background: rgba(0, 0, 0, 0.05);
+  color: #18232d;
+
+  font-size: 1.25rem;
+  line-height: 1;
+
+  cursor: pointer;
+  z-index: 10;
+  transition: background 0.2s ease;
+}
+
+.modal-close:hover {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+/* =========================
+ERRORS
+========================= */
+
+.input-error {
+    display: block;
+
+    margin-top: 0.35rem;
+
+    color: #b54e43;
+
+    font-size: 0.7rem;
+}
+
+/* =========================
+TABLET
+========================= */
+
+@media (max-width: 900px) {
+    .auth-page {
+        grid-template-columns: 38% 62%;
+    }
+
+    .auth-overlay {
+        padding: 2.5vh 2.5vw;
+    }
+
+    .auth-content {
+        padding: 4vh 4vw;
+    }
+}
+
+/* =========================
+MOBILE
+========================= */
+
+@media (max-width: 700px) {
+    .auth-page {
+        grid-template-columns: 1fr;
+        grid-template-rows: 30dvh 70dvh; /* Clean split layout without page scroll */
+    }
+
+    .auth-visual {
+        height: 100%;
+    }
+
+    .auth-overlay {
+        padding: 2vh 4vw;
+    }
+
+    .auth-quote p {
+        font-size: clamp(1rem, 4vw, 1.4rem);
+    }
+
+    .auth-quote span {
+        margin-top: 0.5rem;
+    }
+
+    .auth-content {
+        padding: 2vh 6vw;
+    }
+
+    .login-header {
+        margin-bottom: 1.2rem;
+    }
+}

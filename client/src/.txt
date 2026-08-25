@@ -1,0 +1,69 @@
+I think the name and visual identity should make it feel like a real travel product, not a student CRUD project.
+
+My pick: Roamly 🌍
+
+Roamly — Plan less. Explore more.
+
+
+
+It feels like an actual consumer app and fits the idea of trips, itineraries and budgeting without being too corporate.
+
+Theme
+
+I'd go for a modern travel-editorial aesthetic:
+
+
+
+ Warm off-white background 
+
+ Deep navy/charcoal text 
+
+ One warm accent colour (terracotta/coral) 
+
+ Large destination photography 
+
+ Rounded cards, but not overly bubbly 
+
+ Clean typography 
+
+ Subtle map/route elements 
+
+ Lots of whitespace
+ The personality
+
+Not:
+
+✈️🌴🌈 FUN TRAVEL APP!!!
+
+More:
+
+Roamly
+Your trips, thoughtfully planned.
+
+It should feel like something a young professional would actually use.
+
+Colour direction
+
+I'd use something roughly like:
+
+Background    #F7F4EF
+Text          #1E2428
+Primary       #D96C4A
+Secondary     #6F7D75
+Cards         #FFFFFF
+
+The terracotta gives it a travel/adventure feeling without looking like every blue SaaS dashboard.
+
+Logo
+
+Very simple:
+
+roamly
+
+with a tiny curved route/compass element incorporated into the logo.
+
+For example:
+
+roamly 〰
+
+or a small locatjion-pin/route mark beside the wordmark.
