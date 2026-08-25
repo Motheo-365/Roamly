@@ -16,6 +16,7 @@ export async function searchLocations(
     url.searchParams.set("q", query);
     url.searchParams.set("limit", "5");
     url.searchParams.set("addressdetails", "1");
+    url.searchParams.set("accept-language", "en");
 
     console.log("Nominatim URL:", url.toString());
 

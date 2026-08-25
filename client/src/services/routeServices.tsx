@@ -4,7 +4,11 @@ export interface RouteResult {
     geometry: [number, number][];
 }
 
-import { API_URL } from "./api";
+import { apiRequest } from "./api";
+
+interface RouteResponse {
+    data: RouteResult;
+}
 
 export async function getRoute(
     fromLat: number,
@@ -20,17 +24,42 @@ export async function getRoute(
         toLon: String(toLon),
     });
 
-    const response = await fetch(
-        `${API_URL}/api/routes?${params}`
-    );
-
-    if (!response.ok) {
-        throw new Error(
-            "Unable to calculate route."
+    try {
+        const result = await apiRequest<RouteResponse>(
+            `/api/routes?${params.toString()}`
         );
+
+        return result.data;
+    } catch (error) {
+        if (!(error instanceof Error) || error.message !== "Route not found") {
+            throw error;
+        }
+
+        const osrmUrl = new URL(
+            `https://router.project-osrm.org/route/v1/driving/${fromLon},${fromLat};${toLon},${toLat}`
+        );
+
+        osrmUrl.searchParams.set("overview", "full");
+        osrmUrl.searchParams.set("geometries", "geojson");
+
+        const response = await fetch(osrmUrl);
+        const data = await response.json();
+
+        if (!response.ok || data.code !== "Ok" || !data.routes?.length) {
+            throw new Error("Unable to calculate route.", { cause: error });
+        }
+
+        const route = data.routes[0];
+
+        return {
+            distance: route.distance,
+            duration: route.duration,
+            geometry: route.geometry.coordinates.map(
+                ([longitude, latitude]: [number, number]) => [
+                    latitude,
+                    longitude,
+                ]
+            ),
+        };
     }
-
-    const result = await response.json();
-
-    return result.data;
 }

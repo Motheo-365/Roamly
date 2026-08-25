@@ -7,11 +7,13 @@ import {
 
 interface LocationSearchProps {
     placeholder?: string;
+    label?: string;
     onSelect: (location: LocationResult) => void;
 }
 
 function LocationSearch({
     placeholder = "Search a destination...",
+    label,
     onSelect,
 }: LocationSearchProps) {
 
@@ -111,82 +113,90 @@ function LocationSearch({
     };
 
     return (
-        <form
-            className="location-search"
-            onSubmit={handleSubmit}
-        >
-            <div className="search-input-wrapper">
+        <div className="location-search-group">
+            {label && (
+                <label className="location-search-label">
+                    {label}
+                </label>
+            )}
 
-                <input
-                    type="text"
-                    value={search}
-                    onChange={(event) =>
-                        handleSearchChange(event.target.value)
-                    }
-                    onFocus={() => {
-                        if (results.length > 0) {
-                            setShowResults(true);
+            <form
+                className="location-search"
+                onSubmit={handleSubmit}
+            >
+                <div className="search-input-wrapper">
+
+                    <input
+                        type="text"
+                        value={search}
+                        onChange={(event) =>
+                            handleSearchChange(event.target.value)
                         }
-                    }}
-                    placeholder={placeholder}
-                    aria-label={placeholder}
-                />
+                        onFocus={() => {
+                            if (results.length > 0) {
+                                setShowResults(true);
+                            }
+                        }}
+                        placeholder={placeholder}
+                        aria-label={placeholder}
+                    />
 
-                {loading && (
-                    <span className="search-loading">
-                        ...
-                    </span>
-                )}
+                    {loading && (
+                        <span className="search-loading">
+                            ...
+                        </span>
+                    )}
 
-                {error && (
-                    <div className="search-error" role="alert">
-                        {error}
-                    </div>
-                )}
-
-                {showResults &&
-                    results.length > 0 && (
-                        <div className="search-results">
-
-                            {results.map(
-                                (location, index) => (
-                                    <button
-                                        key={`${location.lat}-${location.lon}-${index}`}
-                                        type="button"
-                                        className="search-result"
-                                        onClick={() =>
-                                            handleSelect(
-                                                location
-                                            )
-                                        }
-                                    >
-                                        <span className="result-icon">
-                                        </span>
-
-                                        <span className="result-name">
-                                            {
-                                                location.display_name
-                                            }
-                                        </span>
-                                    </button>
-                                )
-                            )}
-
+                    {error && (
+                        <div className="search-error" role="alert">
+                            {error}
                         </div>
                     )}
 
-            </div>
+                    {showResults &&
+                        results.length > 0 && (
+                            <div className="search-results">
 
-            <button
-                type="submit"
-                disabled={
-                    loading ||
-                    results.length === 0
-                }
-            >
-                Search
-            </button>
-        </form>
+                                {results.map(
+                                    (location, index) => (
+                                        <button
+                                            key={`${location.lat}-${location.lon}-${index}`}
+                                            type="button"
+                                            className="search-result"
+                                            onClick={() =>
+                                                handleSelect(
+                                                    location
+                                                )
+                                            }
+                                        >
+                                            <span className="result-icon">
+                                            </span>
+
+                                            <span className="result-name">
+                                                {
+                                                    location.display_name
+                                                }
+                                            </span>
+                                        </button>
+                                    )
+                                )}
+
+                            </div>
+                        )}
+
+                </div>
+
+                <button
+                    type="submit"
+                    disabled={
+                        loading ||
+                        results.length === 0
+                    }
+                >
+                    Search
+                </button>
+            </form>
+        </div>
     );
 }
 
