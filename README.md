@@ -1,10 +1,10 @@
-# Roamly ✈️
+# Roamly
 
 Roamly is a full-stack travel planning application designed to help users organise trips, manage expenses, track activities, and monitor their travel budgets in one place.
 
 The project is being developed with a focus on **clean architecture, maintainability, and practical software design patterns**. Rather than adding design patterns simply for demonstration, each pattern is being introduced to solve a specific architectural or business problem within the application.
 
-## 🎯 Project Goals
+## Project Goals
 
 The main goals of Roamly are to:
 
@@ -14,7 +14,7 @@ The main goals of Roamly are to:
 * Demonstrate understanding of scalable backend architecture.
 * Create a polished project suitable for a professional software development portfolio.
 
-## 🏗️ Architecture
+## Architecture
 
 Roamly follows a **layered architecture** where different parts of the application have clearly defined responsibilities.
 
@@ -34,7 +34,7 @@ This structure prevents individual components from becoming responsible for too 
 
 For example, a controller should handle HTTP requests and responses rather than containing database queries and business rules.
 
-## 🧩 Design Patterns
+## Design Patterns
 
 ### 1. Repository Pattern
 
@@ -227,7 +227,7 @@ server/
 | **Factory**           | Expense creation    | Centralises creation of different expense types          |
 | **Observer / Events** | Notifications       | Allows components to react to trip-related events        |
 
-## 🚀 Development Plan
+## Development Plan
 
 Roamly will be developed incrementally rather than implementing every architectural feature at once.
 
@@ -275,7 +275,7 @@ Roamly will be developed incrementally rather than implementing every architectu
 * Configure environment variables and security settings.
 * Test the complete production system.
 
-## 💡 What This Project Demonstrates
+## What This Project Demonstrates
 
 Roamly is intended to demonstrate more than the ability to create CRUD functionality.
 
