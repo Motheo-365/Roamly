@@ -134,18 +134,33 @@ FORM PANEL
 ========================= */
 
 .auth-content {
+    position: relative;
+    overflow: hidden;
+
     width: 100%;
-    height: 100%;
+    min-height: 100vh;
 
     display: flex;
-    align-items: center;     /* Perfect vertical centering */
-    justify-content: center; /* Perfect horizontal centering */
+    align-items: center;
+    justify-content: center;
 
-    padding: 4vh 4vw;
-    box-sizing: border-box;
+    padding: 8vh 8vw;
 
     background: #f8f6f2;
-    overflow-y: auto; /* Handles edge cases with ultra-small viewports safely */
+}
+
+.auth-panel {
+    position: absolute;
+    inset: 0;
+
+    width: 100%;
+    max-width: 26rem;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 8vh 8vw;
 }
 
 .login-container {

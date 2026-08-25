@@ -1,41 +1,56 @@
-import React from "react";
+import { Outlet, useLocation } from "react-router-dom";
+import { AnimatePresence, motion } from "framer-motion";
 import "../../styles/login.css";
 
-interface AuthLayoutProps {
-  children: React.ReactNode;
+function AuthLayout() {
+    const location = useLocation();
+
+    return (
+        <main className="auth-page">
+
+            {/* LEFT SIDE — NEVER ANIMATES */}
+            <section className="auth-visual">
+                <div className="auth-overlay">
+                    <div className="brand">
+                        <span className="brand-name">Roamly</span>
+                    </div>
+
+                    <div className="auth-quote">
+                        <p>Discover somewhere new.</p>
+                        <span>
+                            Your journeys, beautifully planned.
+                        </span>
+                    </div>
+                </div>
+            </section>
+
+            {/* RIGHT SIDE — ANIMATES */}
+            <section className="auth-content">
+                <AnimatePresence mode="wait" initial={false}>
+                    <motion.div
+                        key={location.pathname}
+                        className="auth-panel"
+                        initial={{
+                            x: "100%",
+                        }}
+                        animate={{
+                            x: 0,
+                        }}
+                        exit={{
+                            x:  "-100%",
+                        }}
+                        transition={{
+                            duration: 0.45,
+                            ease: [0.22, 1, 0.36, 1],
+                        }}
+                    >
+                      <Outlet />
+                    </motion.div>
+                </AnimatePresence>
+            </section>
+
+        </main>
+    );
 }
 
-export default function AuthLayout({ children }: AuthLayoutProps) {
-  return (
-    <div className="auth-page">
-      <div className="auth-visual">
-        <div className="auth-overlay">
-          {/* Replaces div.brand with a full Navigation Bar */}
-          <nav className="auth-nav">
-            <div className="brand">
-              <span>Roamly</span>
-            </div>
-
-            <ul className="nav-links">
-              <li><a href="/">Home</a></li>
-              <li><a href="/explore">Explore</a></li>
-              <li><a href="/destinations">Destinations</a></li>
-              <li><a href="/about">About</a></li>
-            </ul>
-          </nav>
-
-          <div className="auth-quote">
-            <p>"Travel makes one modest. You see what a tiny place you occupy in the world."</p>
-            <span>— Gustave Flaubert</span>
-          </div>
-
-          <div className="auth-overlay-spacer" />
-        </div>
-      </div>
-
-      <div className="auth-content">
-        {children}
-      </div>
-    </div>
-  );
-}
+export default AuthLayout;
