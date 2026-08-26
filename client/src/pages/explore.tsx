@@ -137,8 +137,6 @@ function Explore() {
             {/* Header */}
             <header className="explore-header">
                 <div>
-                    <h1>Explore your next adventure</h1>
-
                     <p>
                         Discover places, restaurants and experiences
                         for your next trip.

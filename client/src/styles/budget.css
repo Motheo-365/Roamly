@@ -1,0 +1,841 @@
+/* =================================
+   BUDGET PAGE
+================================= */
+
+.budget-page,
+.breakdown-page {
+    min-height: 100vh;
+    padding: 2.5rem 6%;
+    background: #ffffff;
+    color: #18232d;
+}
+
+
+/* =================================
+   HEADER
+================================= */
+
+.budget-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    margin-bottom: 2.5rem;
+}
+
+.budget-eyebrow {
+    display: block;
+    margin-bottom: 0.35rem;
+    color: #d46b3c;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+}
+
+.budget-header h1,
+.breakdown-header h1 {
+    margin: 0;
+    color: rgba(0, 0, 0, 0.663);
+    font-family: "Playfair Display", serif;
+
+    font-size: clamp(2.3rem, 5vw, 3rem);
+    font-weight: 500;
+
+    letter-spacing: -0.04em;
+}
+
+.add-expense-button {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+
+    height: 3.1rem;
+
+    padding: 0 1.25rem;
+
+    border: none;
+    border-radius: 2rem;
+
+    background: #d46b3c;;
+    color: white;
+
+    font-size: 0.85rem;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.add-expense-button span {
+    font-size: 1.4rem;
+    font-weight: 400;
+}
+
+.add-expense-button:hover {
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 0.5rem 1.25rem rgba(255, 91, 71, 0.2);
+}
+
+/* Change grid layout to flex column so actions drop below fields */
+.expense-form {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+/* Container wrapping all rows */
+.expense-form-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  width: 100%;
+  max-width: 32rem;
+  margin: 1.5rem 0;
+}
+
+/* Align action buttons to the bottom right */
+.expense-form-actions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+/* Optional styling fixes for the action buttons */
+.expense-form-actions .cancel-button {
+  background: transparent;
+  border: 1px solid #d0d4d6;
+  color: #18232d;
+  padding: 0.6rem 1.2rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.expense-form-actions .save-expense-button {
+  background: #18232d;
+  border: none;
+  color: white;
+  padding: 0.6rem 1.2rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+/* Individual row layout */
+.form-field {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  width: 100%;
+}
+
+/* Label styling (Left Aligned) */
+.form-field label {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: #18232d;
+  text-align: left;
+  flex-shrink: 0;
+}
+
+/* Form input control shared styles (Right Aligned Container) */
+.form-field input[type="text"],
+.form-field input[type="number"],
+.form-field select,
+.form-field .amount-input {
+  width: 60%; /* Keeps all inputs aligned down the right side */
+  box-sizing: border-box;
+}
+
+/* Input and select element styles */
+.form-field input[type="text"],
+.form-field input[type="number"],
+.form-field select {
+  background: transparent;
+  color: #18232d;
+  border: 1px solid #d0d4d6;
+  border-radius: 8px;
+  padding: 0.625rem 0.875rem;
+  font-size: 0.9375rem;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.form-field input:focus,
+.form-field select:focus {
+  border-color: #18232d;
+}
+
+/* Wrapper fix for the Amount row */
+.form-field .amount-input {
+  display: flex;
+  align-items: center;
+  border: 1px solid #d0d4d6;
+  border-radius: 8px;
+  padding: 0 0.875rem;
+  background: transparent;
+  transition: border-color 0.2s ease;
+}
+
+.form-field .amount-input:focus-within {
+  border-color: #18232d;
+}
+
+.form-field .amount-input label {
+  margin-right: 0.5rem;
+  color: #737a7f;
+  font-weight: 500;
+}
+
+.form-field .amount-input input {
+  border: none;
+  padding: 0.625rem 0;
+  width: 100%;
+  outline: none;
+}
+
+/* =================================
+   BUDGET OVERVIEW
+================================= */
+
+.budget-overview {
+    display: grid;
+    grid-template-columns: 1.2fr 1.5fr 1fr;
+    gap: 2rem;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    border-radius: 1.25rem;
+    background: #f4f5f6;
+}
+
+.budget-total {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.budget-label {
+    color: #7c858b;
+    font-size: 0.8rem;
+}
+
+.budget-total h2 {
+    margin: 0.2rem 0;
+    font-size: clamp(2rem, 4vw, 2.8rem);
+    font-weight: 400;
+}
+
+.budget-total p {
+    margin: 0;
+    color: #899197;
+    font-size: 0.8rem;
+}
+
+
+/* =================================
+   PROGRESS
+================================= */
+
+.budget-progress {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.progress-track,
+.category-track {
+    width: 100%;
+    height: 0.6rem;
+    overflow: hidden;
+    border-radius: 1rem;
+    background: #dfe3e5;
+}
+
+.progress-fill,
+.category-fill {
+    height: 100%;
+    border-radius: inherit;
+    background: #ff5b47;
+    transition: width 0.4s ease;
+}
+
+.progress-info {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 0.65rem;
+    color: #6f787e;
+    font-size: 0.75rem;
+}
+
+
+/* =================================
+   BUDGET ACTIONS
+================================= */
+
+.budget-actions {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.budget-actions button {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.55rem;
+    border: none;
+    background: transparent;
+    color: #68747c;
+    font-size: 0.82rem;
+    font-weight: 600;
+    text-align: left;
+    cursor: pointer;
+    border-radius: 0.5rem;
+}
+
+.budget-actions button:hover {
+    background: #e9ebed;
+    color: #18232d;
+}
+
+.budget-actions span {
+    width: 1.3rem;
+    font-size: 1rem;
+    text-align: center;
+}
+
+
+/* =================================
+   SET BUDGET
+================================= */
+
+.set-budget-panel {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2rem;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    border: 1px solid #e6e8e9;
+    border-radius: 1rem;
+}
+
+.set-budget-panel h3 {
+    margin: 0 0 0.3rem;
+}
+
+.set-budget-panel p {
+    margin: 0;
+    color: #7c858b;
+    font-size: 0.8rem;
+}
+
+.budget-input-wrapper {
+    display: flex;
+    align-items: center;
+    height: 2.8rem;
+    border: 1px solid #dfe3e5;
+    border-radius: 0.6rem;
+    overflow: hidden;
+}
+
+.budget-input-wrapper span {
+    padding-left: 0.8rem;
+}
+
+.budget-input-wrapper input {
+    width: 120px;
+    height: 100%;
+    border: none;
+    outline: none;
+    padding: 0 0.5rem;
+    font-size: 0.9rem;
+
+    background-color: transparent;
+    color: black;
+}
+
+.budget-input-wrapper button {
+    height: 100%;
+    padding: 0 1rem;
+    border: none;
+    background: #18232d70;
+    color: white;
+    cursor: pointer;
+}
+
+
+/* =================================
+   EXPENSES
+================================= */
+
+.expenses-section {
+    margin-top: 2rem;
+}
+
+.section-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    margin-bottom: 1.5rem;
+}
+
+.section-title {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #d46b3c;
+    border-radius: 8px;
+    padding: 1.25%;
+    border-color: transparent;
+    cursor: pointer;
+    width: 30%;
+}
+
+button:hover.section-title {
+    background-color: #b35b32;
+}
+
+.section-chevron {
+    font-size: 1rem;
+}
+
+.section-title h2 {
+    margin: 0;
+    color: rgba(0, 0, 0, 0.663);
+    font-size: 1.45rem;
+}
+
+.section-title span:not(.section-chevron) {
+    display: block;
+    margin-top: 0.15rem;
+    color: #000000;
+    font-size: 0.75rem;
+}
+
+.sort-button {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    border: none;
+    background-color: #d46b3c;
+    color: #ffffff;
+    font-size: 0.8rem;
+    cursor: pointer;
+    padding: 3%;
+    border-radius: 8px;
+}
+
+.sort-button strong {
+    font-weight: 700;
+}
+
+.sort-button span {
+    font-size: 1rem;
+}
+
+button:hover.sort-button {
+    background-color: #b35b32;
+}
+/* =================================
+   EXPENSE LIST
+================================= */
+
+.expense-list {
+    display: flex;
+    flex-direction: column;
+}
+
+.expense-item {
+    display: grid;
+    grid-template-columns: 10rem 1fr auto auto auto;
+
+    align-items: center;
+
+    gap: 1rem;
+
+    padding: 1rem 0;
+
+    border-bottom: 1px solid #eeeeeb;
+}
+
+.expense-icon {
+    display: grid;
+
+    width: 2.7rem;
+    height: 2.7rem;
+
+    place-items: center;
+
+    border-radius: 0.7rem;
+
+    background: #f2f3f3;
+
+    font-size: 1.1rem;
+}
+
+.expense-details h3 {
+    margin: 0;
+    font-size: 0.9rem;
+}
+
+.expense-details span {
+    display: block;
+
+    margin-top: 0.2rem;
+
+    color: #899197;
+
+    font-size: 0.72rem;
+}
+
+.expense-date {
+    color: #899197;
+    font-size: 0.75rem;
+}
+
+.expense-amount {
+    font-size: 0.9rem;
+}
+
+.expense-menu {
+    border: none;
+
+    background: transparent;
+
+    color: #8b9398;
+
+    font-size: 1.2rem;
+
+    cursor: pointer;
+}
+
+
+/* =================================
+   EMPTY STATE
+================================= */
+
+.empty-expenses {
+    padding: 3rem 1rem;
+
+    text-align: center;
+
+    color: #7c858b;
+}
+
+.empty-expenses h3 {
+    margin: 0 0 0.4rem;
+    color: #45515a;
+    font-size: 0.95rem;
+}
+
+.empty-expenses p {
+    max-width: 400px;
+
+    margin: 0 auto 1.2rem;
+
+    font-size: 0.8rem;
+
+    line-height: 1.5;
+}
+
+.empty-expenses button {
+    border: none;
+
+    background: transparent;
+
+    color: #d46b3c;
+
+    font-weight: 600;
+
+    cursor: pointer;
+}
+
+
+/* =================================
+   BREAKDOWN PAGE
+================================= */
+
+.breakdown-header {
+    margin-bottom: 2rem;
+}
+
+.back-button {
+    display: block;
+
+    margin-bottom: 1.5rem;
+
+    padding: 0;
+
+    border: none;
+
+    background: transparent;
+
+    color: #6f787e;
+
+    font-size: 0.8rem;
+
+    cursor: pointer;
+}
+
+.breakdown-header p {
+    margin: 0.6rem 0 0;
+
+    color: #7c858b;
+
+    font-size: 0.9rem;
+}
+
+
+/* =================================
+   SUMMARY
+================================= */
+
+.breakdown-summary {
+    display: grid;
+
+    grid-template-columns: repeat(3, 1fr);
+
+    gap: 1rem;
+
+    margin-bottom: 3rem;
+}
+
+.summary-card {
+    padding: 1.5rem;
+
+    border: 1px solid #e8eaeb;
+
+    border-radius: 1rem;
+
+    background: #f8f9f9;
+}
+
+.summary-card span {
+    display: block;
+
+    margin-bottom: 0.5rem;
+
+    color: #7c858b;
+
+    font-size: 0.75rem;
+}
+
+.summary-card strong {
+    font-size: 1.5rem;
+    font-weight: 500;
+}
+
+
+/* =================================
+   CATEGORY BREAKDOWN
+================================= */
+
+.breakdown-section-header {
+    margin-bottom: 1.5rem;
+}
+
+.breakdown-section-header h2 {
+    margin: 0;
+    font-size: 1.4rem;
+    color: rgba(0, 0, 0, 0.663);
+}
+
+.breakdown-section-header p {
+    margin: 0.4rem 0 0;
+
+    color: #606162;
+
+    font-size: 0.8rem;
+}
+
+.category-list {
+    display: grid;
+
+    grid-template-columns: repeat(2, 1fr);
+
+    gap: 1rem;
+}
+
+.category-card {
+    padding: 1.25rem;
+
+    border: 1px solid #e7e9ea;
+
+    border-radius: 1rem;
+}
+
+.category-top {
+    display: flex;
+    justify-content: space-between;
+
+    gap: 1rem;
+
+    margin-bottom: 1.2rem;
+}
+
+.category-name {
+    display: flex;
+    align-items: center;
+
+    gap: 0.8rem;
+}
+
+.category-icon {
+    display: grid;
+
+    width: 2.5rem;
+    height: 2.5rem;
+
+    place-items: center;
+
+    border-radius: 0.65rem;
+
+    background: #f1f2f3;
+}
+
+.category-name h3 {
+    margin: 0;
+
+    font-size: 0.9rem;
+}
+
+.category-name span,
+.category-amount span {
+    display: block;
+
+    margin-top: 0.2rem;
+
+    color: #899197;
+
+    font-size: 0.7rem;
+}
+
+.category-amount {
+    text-align: right;
+}
+
+.category-amount strong {
+    font-size: 0.85rem;
+}
+
+.category-progress {
+    display: flex;
+    align-items: center;
+
+    gap: 0.7rem;
+}
+
+.category-progress .category-track {
+    flex: 1;
+}
+
+.category-progress > span {
+    width: 2rem;
+
+    color: #6f787e;
+
+    font-size: 0.7rem;
+
+    text-align: right;
+}
+
+
+/* =================================
+   RESPONSIVE
+================================= */
+
+@media (max-width: 900px) {
+    .budget-overview {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .budget-actions {
+        grid-column: 1 / -1;
+
+        flex-direction: row;
+    }
+
+    .category-list {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 650px) {
+    .budget-page,
+    .breakdown-page {
+        padding: 2rem 1rem 4rem;
+    }
+
+    .budget-header {
+        align-items: flex-start;
+    }
+
+    .budget-header h1 {
+        font-size: 2.2rem;
+    }
+
+    .add-expense-button {
+        height: 2.7rem;
+        padding: 0 0.9rem;
+    }
+
+    .budget-overview {
+        grid-template-columns: 1fr;
+
+        padding: 1.5rem;
+    }
+
+    .budget-actions {
+        grid-column: auto;
+
+        flex-direction: column;
+    }
+
+    .section-heading {
+        align-items: flex-start;
+
+        gap: 1rem;
+    }
+
+    .expense-item {
+        grid-template-columns: 2.7rem 1fr auto;
+    }
+
+    .expense-date {
+        display: none;
+    }
+
+    .expense-menu {
+        display: none;
+    }
+
+    .breakdown-summary {
+        grid-template-columns: 1fr;
+    }
+
+    .set-budget-panel {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .budget-input-wrapper {
+        width: 100%;
+    }
+
+    .budget-input-wrapper input {
+        flex: 1;
+    }
+}

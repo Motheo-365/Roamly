@@ -63,6 +63,17 @@
     scroll-margin-top: 1.5rem;
 }
 
+.trips-section,
+.budget-section {
+    min-height: 100vh;
+    scroll-margin-top: 1.5rem;
+}
+
+.trips-section {
+    min-height: 100vh;
+    scroll-margin-top: 1.5rem;
+}
+
 @media (max-width: 800px) {
     .home-page {
         display: block;

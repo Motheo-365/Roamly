@@ -1,0 +1,250 @@
+.create-trip-page {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    padding: 4rem 1.5rem 6rem;
+    background: #f7f8f6;
+    color: #18232d;
+}
+
+.create-trip-container {
+    width: 100%;
+    max-width: 720px;
+}
+
+
+.create-trip-heading {
+    text-align: center;
+    margin-bottom: 2.5rem;
+}
+
+.create-trip-heading span {
+    display: block;
+    margin-bottom: 0.75rem;
+    color: #d46b3c;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+}
+
+.create-trip-heading h1 {
+    margin: 0;
+    font-family: "Playfair Display", serif;
+    font-size: clamp(2.2rem, 5vw, 3.2rem);
+    font-weight: 500;
+    letter-spacing: -0.04em;
+    color: rgba(0, 0, 0, 0.679);
+    padding: 2%;
+}
+
+.create-trip-heading p {
+    max-width: 520px;
+    margin: 0.9rem auto 0;
+    color: #737b80;
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+
+
+.create-trip-form {
+    padding: 2rem;
+    background: rgba(255, 255, 255, 0.96);
+    border: 1px solid #eeeeeb;
+    border-radius: 1rem;
+    box-shadow:
+        0 1rem 3rem rgba(24, 35, 45, 0.07);
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.55rem;
+    color: #39444c;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.optional {
+    color: #a0a5a8;
+    font-size: 0.7rem;
+    font-weight: 400;
+}
+
+
+.form-group input,
+.form-group textarea {
+    width: 100%;
+    box-sizing: border-box;
+    border: 1px solid #e1e4e2;
+    border-radius: 0.625rem;
+    background: #fafbf9;
+    color: #18232d;
+    font-family: inherit;
+    font-size: 0.9rem;
+    outline: none;
+
+    transition:
+        border-color 0.2s ease,
+        background 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.form-group input {
+    height: 3.2rem;
+    padding: 0 1rem;
+}
+
+.form-group textarea {
+    resize: vertical;
+    min-height: 7rem;
+    padding: 0.9rem 1rem;
+    line-height: 1.5;
+}
+
+.form-group input::placeholder,
+.form-group textarea::placeholder {
+    color: #a0a6a9;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+    border-color: #18232d;
+    background: white;
+    box-shadow:
+        0 0 0 3px rgba(24, 35, 45, 0.06);
+}
+
+.input-with-icon {
+    position: relative;
+}
+
+.input-with-icon span {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1rem;
+    pointer-events: none;
+}
+
+.input-with-icon input {
+    padding-left: 2.75rem;
+}
+
+
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.traveller-control {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    width: 100%;
+    height: 3.2rem;
+
+    box-sizing: border-box;
+    padding: 0 0.5rem;
+    border: 1px solid #e1e4e2;
+    border-radius: 0.625rem;
+    background: #fafbf9;
+}
+
+.traveller-control button {
+    display: grid;
+    width: 2.2rem;
+    height: 2.2rem;
+    place-items: center;
+
+    border: 1px solid #dfe3e0;
+    border-radius: 50%;
+    background: white;
+    color: #18232d;
+
+    font-size: 1.1rem;
+    cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        transform 0.2s ease;
+}
+
+.traveller-control button:hover {
+    background: #eef1ee;
+    transform: scale(1.05);
+}
+
+.traveller-control span {
+    color: #39444c;
+    font-size: 0.85rem;
+}
+
+
+.create-trip-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    width: 100%;
+    height: 3.4rem;
+    margin-top: 0.5rem;
+    border: none;
+    border-radius: 0.625rem;
+    background: #18232d;
+    color: white;
+    font-family: inherit;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.create-trip-button:hover {
+    background: #263640;
+    transform: translateY(-1px);
+    box-shadow:
+        0 0.5rem 1.5rem rgba(24, 35, 45, 0.18);
+}
+
+.create-trip-button span {
+    font-size: 1.1rem;
+    transition: transform 0.2s ease;
+}
+
+.create-trip-button:hover span {
+    transform: translateX(3px);
+}
+
+
+
+@media (max-width: 600px) {
+    .create-trip-page {
+        padding: 2.5rem 1rem 4rem;
+    }
+
+    .create-trip-form {
+        padding: 1.5rem;
+    }
+
+    .form-row {
+        grid-template-columns: 1fr;
+        gap: 0;
+    }
+
+    .create-trip-heading h1 {
+        font-size: 2.2rem;
+    }
+}

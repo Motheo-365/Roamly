@@ -104,7 +104,8 @@
 
 /* Active link */
 
-.navigation-links a.active {
+.navigation-links a.active,
+.navigation-links button.active {
     color: #18232d;
     font-weight: 600;
 }

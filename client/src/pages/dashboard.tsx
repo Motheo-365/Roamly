@@ -3,6 +3,8 @@ import Navigation from "../components/ui/navigation";
 import Map from "../components/ui/map";
 import Carousel from "../components/ui/carousel";
 import Explore from "./explore";
+import CreateTrip from "./createTrip";
+import Budget from "./budget";
 
 import "../styles/home.css"
 
@@ -38,13 +40,35 @@ function Dashboard() {
                 >
                     <Explore />
                 </motion.section>
+
+                <motion.section
+                    id="trips"
+                    className="narrative-section trips-section"
+                    initial={{ opacity: 0, y: 60 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, amount: 0.08 }}
+                    transition={{ duration: 0.7, ease: "easeOut" }}
+                >
+                    <CreateTrip />
+                </motion.section>
+
+                <motion.section
+                    id="budget"
+                    className="narrative-section budget-section"
+                    initial={{ opacity: 0, y: 60 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, amount: 0.08 }}
+                    transition={{ duration: 0.7, ease: "easeOut" }} 
+                >
+                    <Budget/>
+                </motion.section>
             </div>
 
             <aside className="home-map">
                 <Map />
             </aside>
 
-        </div>
+    </div>
     );
 }
 
