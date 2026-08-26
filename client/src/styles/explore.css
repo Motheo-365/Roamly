@@ -117,7 +117,7 @@
 
     font-size: 0.875rem;
     color: #737a7f;
-    transform: translateX(10%);
+    transform: translateX(20%);
 }
 
 .popular-destinations button {
@@ -193,6 +193,7 @@
     padding: 0 1.125rem 1.125rem;
     overflow-x: auto;
     min-height: 2.25rem;
+    transform: translateX(22%);
 }
 
 .category-filters::-webkit-scrollbar {
