@@ -73,6 +73,8 @@
     display: flex;
     align-items: center;
     gap: clamp(1.2rem, 2.5vw, 2.8rem);
+    text-align: center;
+
 }
 
 .navigation-links a,
