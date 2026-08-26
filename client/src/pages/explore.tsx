@@ -1,6 +1,4 @@
-import { useEffect, useRef, useState } from "react";
-import L from "leaflet";
-import "leaflet/dist/leaflet.css";
+import { useState } from "react";
 import "../styles/explore.css";
 
 type PlaceType = "attraction" | "restaurant" | "hotel";
@@ -73,10 +71,6 @@ const places: Place[] = [
 ];
 
 function Explore() {
-    const mapRef = useRef<L.Map | null>(null);
-    const mapContainerRef = useRef<HTMLDivElement | null>(null);
-    const markersRef = useRef<L.Marker[]>([]);
-
     const [selectedCategory, setSelectedCategory] = useState<
         "all" | PlaceType
     >("all");
@@ -103,84 +97,10 @@ function Explore() {
     });
 
     /*
-     * Create the map
-     */
-    useEffect(() => {
-        if (!mapContainerRef.current || mapRef.current) {
-            return;
-        }
-
-        const map = L.map(mapContainerRef.current).setView(
-            [35.6762, 139.6503],
-            12
-        );
-
-        L.tileLayer(
-            "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-            {
-                attribution:
-                    '&copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a>',
-            }
-        ).addTo(map);
-
-        mapRef.current = map;
-
-        return () => {
-            map.remove();
-            mapRef.current = null;
-        };
-    }, []);
-
-    /*
-     * Update map markers whenever filtering changes
-     */
-    useEffect(() => {
-        if (!mapRef.current) {
-            return;
-        }
-
-        // Remove previous markers
-        markersRef.current.forEach((marker) => {
-            marker.remove();
-        });
-
-        markersRef.current = [];
-
-        // Add new markers
-        filteredPlaces.forEach((place) => {
-            const marker = L.marker([place.lat, place.lng])
-                .addTo(mapRef.current!)
-                .bindPopup(`
-                    <strong>${place.name}</strong>
-                    <br />
-                    ⭐ ${place.rating}
-                `);
-
-            marker.on("click", () => {
-                setSelectedPlace(place);
-            });
-
-            markersRef.current.push(marker);
-        });
-    }, [filteredPlaces]);
-
-    /*
      * Focus map on a place
      */
     const focusPlace = (place: Place) => {
         setSelectedPlace(place);
-
-        if (!mapRef.current) {
-            return;
-        }
-
-        mapRef.current.flyTo(
-            [place.lat, place.lng],
-            16,
-            {
-                duration: 1,
-            }
-        );
     };
 
     /*
@@ -214,7 +134,6 @@ function Explore() {
 
     return (
         <div className="explore-page">
-
             {/* Header */}
             <header className="explore-header">
                 <div>
@@ -442,41 +361,6 @@ function Explore() {
                     </div>
                 </aside>
 
-                {/* Map */}
-                <section className="explore-map">
-                    <div
-                        ref={mapContainerRef}
-                        className="map-container"
-                    />
-
-                    {/* Selected place popup */}
-                    {selectedPlace && (
-                        <div className="selected-place">
-                            <button
-                                className="close-selected"
-                                onClick={() =>
-                                    setSelectedPlace(null)
-                                }
-                            >
-                                ×
-                            </button>
-
-                            <span>
-                                {getPlaceIcon(selectedPlace.type)}
-                            </span>
-
-                            <div>
-                                <h3>
-                                    {selectedPlace.name}
-                                </h3>
-
-                                <p>
-                                    ⭐ {selectedPlace.rating}
-                                </p>
-                            </div>
-                        </div>
-                    )}
-                </section>
             </main>
         </div>
     );

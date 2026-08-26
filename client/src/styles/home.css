@@ -1,19 +1,27 @@
 .home-page {
     width: 100%;
     min-height: 100vh;
-
     display: grid;
-    grid-template-columns: 45% 55%;
-
-    overflow: hidden;
-
+    grid-template-columns: 55% 45%;
+    grid-template-rows: auto 1fr;
+    overflow: visible;
     background: #f8f6f2;
+}
+
+.home-page > .navigation {
+    grid-column: 1 / -1;
+    width: min(92%, 72rem);
+    margin: 1rem auto;
+}
+
+.narrative-content {
+    grid-column: 1;
+    min-width: 0;
 }
 
 .home-content {
     width: 100%;
-    min-height: 100vh;
-
+    min-height: 64vh;
     display: flex;
     flex-direction: column;
 }
@@ -25,9 +33,7 @@
 
 .home-main h1 {
     margin: 0;
-
     color: #18232d;
-
     font-family: "Playfair Display", serif;
     font-size: clamp(2.5rem, 4vw, 4rem);
     font-weight: 500;
@@ -37,30 +43,45 @@
 
 .home-main p {
     margin-top: 1rem;
-
     color: #737a7f;
-
     font-size: clamp(0.8rem, 1vw, 1rem);
 }
 
 .home-map {
+    grid-column: 2;
+    grid-row: 2;
     width: 100%;
-    min-height: 100vh;
+    height: calc(100vh - 1rem);
+    min-height: 32rem;
+    position: sticky;
+    top: 1rem;
+    align-self: start;
+}
 
-    position: relative;
+.explore-section {
+    min-height: 100vh;
+    scroll-margin-top: 1.5rem;
 }
 
 @media (max-width: 800px) {
     .home-page {
         display: block;
-        overflow: visible;
+    }
+
+    .home-page > .navigation {
+        width: calc(100% - 2rem);
+    }
+
+    .narrative-content {
+        width: 100%;
     }
 
     .home-content {
-        min-height: auto;
+        min-height: 70vh;
     }
 
     .home-map {
+        position: relative;
         height: 60vh;
         min-height: 25rem;
     }

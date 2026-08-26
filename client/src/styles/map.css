@@ -4,15 +4,16 @@
 
 .map-wrapper {
     position: relative;
-    width: 100%;
+    width: 98%;
     height: 100%;
-    min-height: 100vh;
+    max-height: 100%;
 }
 
 .map-container {
     width: 100%;
     height: 100%;
-    min-height: 100vh;
+    max-height: 95vh;
+    border-radius: 2%;
 }
 
 .map-controls {
@@ -219,7 +220,6 @@
     padding: 0 1rem;
     border: 1px solid rgba(255, 255, 255, 0.4);
     border-radius: 0.55rem;
-    background: rgba(24, 35, 45, 0.9);
     color: #fff;
     cursor: pointer;
     font-family: inherit;
@@ -230,7 +230,6 @@
 }
 
 .save-button:hover:not(:disabled) {
-    background: #263541;
     transform: translateY(-1px);
 }
 

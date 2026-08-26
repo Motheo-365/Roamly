@@ -1,17 +1,14 @@
 .navigation {
     display: flex;
-    align-items: center;
+    align-items: flex;
     justify-content: space-between;
-    align-self: center;
-
-    padding: 1.2rem 4vw;
-    margin-top: 2%;
-
-    position: relative;
-    z-index: 100;
+    position: sticky;
+    top: 1rem;
+    z-index: 999;
     background-color: rgba(12, 9, 9, 0.253);
-    padding: 2%;
+    padding: 1.2rem 3%;
     border-radius: 20px;
+    box-sizing: border-box;
 }
 
 /* =========================
@@ -31,6 +28,10 @@
     color: white;
 
     text-decoration: none;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+    font-family: inherit;
 }
 
 .brand-mark {
@@ -74,7 +75,8 @@
     gap: clamp(1.2rem, 2.5vw, 2.8rem);
 }
 
-.navigation-links a {
+.navigation-links a,
+.navigation-links button {
     position: relative;
 
     padding: 0.4rem 0;
@@ -87,9 +89,14 @@
     text-decoration: none;
 
     transition: color 0.2s ease;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+    font-family: inherit;
 }
 
-.navigation-links a:hover {
+.navigation-links a:hover,
+.navigation-links button:hover {
     color: #18232d;
 }
 
@@ -98,24 +105,6 @@
 .navigation-links a.active {
     color: #18232d;
     font-weight: 600;
-}
-
-.navigation-links a.active::after {
-    content: "";
-
-    position: absolute;
-
-    left: 50%;
-    bottom: -0.45rem;
-
-    width: 0.25rem;
-    aspect-ratio: 1;
-
-    border-radius: 50%;
-
-    background: #b65d47;
-
-    transform: translateX(-50%);
 }
 
 /* =========================

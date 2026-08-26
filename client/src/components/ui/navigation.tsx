@@ -1,30 +1,47 @@
-import { NavLink } from "react-router-dom";
-import "../../styles/navigation.css"
+import { useLocation } from "react-router-dom";
+import "../../styles/navigation.css";
+
+const scrollToSection = (sectionId: string) => {
+    document.getElementById(sectionId)?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+    });
+};
 
 function Navigation() {
+    const location = useLocation();
+
+    if (location.pathname !== "/") {
+        return null;
+    }
+
     return (
         <nav className="navigation">
             <div className="navigation-brand">
-                <NavLink to="/" className="brand-link">
-                </NavLink>
+                <button
+                    type="button"
+                    className="brand-link"
+                    onClick={() => scrollToSection("home")}
+                >
+                </button>
             </div>
 
             <div className="navigation-links">
-                <NavLink to="/" end>
+                <button type="button" onClick={() => scrollToSection("home")}>
                     Home
-                </NavLink>
+                </button>
 
-                <NavLink to="/posts">
-                    Posts
-                </NavLink>
+                <button type="button" onClick={() => scrollToSection("explore")}>
+                    Explore
+                </button>
 
-                <NavLink to="/about">
+                <button type="button" onClick={() => scrollToSection("explore")}>
                     About
-                </NavLink>
+                </button>
 
-                <NavLink to="/profile">
+                <button type="button" onClick={() => scrollToSection("home")}>
                     Profile
-                </NavLink>
+                </button>
             </div>
         </nav>
     );
