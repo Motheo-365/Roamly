@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate} from "react-router-dom";
 import Login from "../pages/login";
 import Signup from "../pages/signup";
 import Dashboard from "../pages/dashboard"
+import Explore from "../pages/explore"
 
 import AuthLayout from "../components/auth/authLayout";
 
@@ -19,6 +20,7 @@ export default function Router() {
 
                 {/* Application */}
                 <Route path="/" element={<Dashboard/>} />
+                <Route path="/explore" element={<Explore/>} />
 
                 <Route
                     path="*"

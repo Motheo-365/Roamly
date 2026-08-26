@@ -2,7 +2,11 @@ import { useEffect, useRef, useState } from "react";
 import L from "leaflet";
 
 import LocationSearch from "./locationSearch";
-import { type LocationResult } from "../../services/locationServices";
+import {
+    searchNearbyLocations,
+    type LocationResult,
+    type NearbyLocationType,
+} from "../../services/locationServices";
 import { getRoute } from "../../services/routeServices";
 
 import "leaflet/dist/leaflet.css";
@@ -17,33 +21,58 @@ interface SavedItem {
     date: string;
 }
 
+const nearbyTypes: NearbyLocationType[] = [
+    "attraction",
+    "hotel",
+    "restaurant",
+];
+
+const nearbyLabels: Record<NearbyLocationType, string> = {
+    attraction: "Attractions",
+    hotel: "Hotels",
+    restaurant: "Restaurants",
+};
+
 function Map() {
     const mapContainerRef = useRef<HTMLDivElement | null>(null);
     const mapRef = useRef<L.Map | null>(null);
     const markerRef = useRef<L.Marker | null>(null);
     const routeRef = useRef<L.Polyline | null>(null);
+    const nearbyLayersRef = useRef<
+        Record<NearbyLocationType, L.LayerGroup>
+    >({
+        attraction: L.layerGroup(),
+        hotel: L.layerGroup(),
+        restaurant: L.layerGroup(),
+    });
 
     const [fromLocation, setFromLocation] = useState<LocationResult | null>(null);
     const [toLocation, setToLocation] = useState<LocationResult | null>(null);
     const [loadingRoute, setLoadingRoute] = useState(false);
     const [routeError, setRouteError] = useState<string | null>(null);
     const [routeSummary, setRouteSummary] = useState<{ distance: number; duration: number } | null>(null);
+    const [nearbyPlaces, setNearbyPlaces] = useState<
+        Record<NearbyLocationType, LocationResult[]>
+    >({ attraction: [], hotel: [], restaurant: [] });
+    const [visibleNearbyTypes, setVisibleNearbyTypes] = useState<
+        Record<NearbyLocationType, boolean>
+    >({ attraction: true, hotel: true, restaurant: true });
+    const [nearbyError, setNearbyError] = useState<string | null>(null);
 
-    // Saved items state
-    const [savedItems, setSavedItems] = useState<SavedItem[]>([]);
-    const [showSavedList, setShowSavedList] = useState(false);
-
-    // Load saved items from localStorage on initial render
-    useEffect(() => {
+    const [savedItems, setSavedItems] = useState<SavedItem[]>(() => {
         const localData = localStorage.getItem("roam_saved_routes");
-        if (localData) {
-            try {
-                setSavedItems(JSON.parse(localData));
-            } catch (e) {
-                console.error("Failed to parse saved routes", e);
-            }
+
+        if (!localData) return [];
+
+        try {
+            const parsed: unknown = JSON.parse(localData);
+            return Array.isArray(parsed) ? parsed as SavedItem[] : [];
+        } catch (error) {
+            console.error("Failed to parse saved routes", error);
+            return [];
         }
-    }, []);
+    });
+    const [showSavedList, setShowSavedList] = useState(false);
 
     useEffect(() => {
         if (!mapContainerRef.current || mapRef.current) {
@@ -65,6 +94,10 @@ function Map() {
 
         mapRef.current = map;
 
+        nearbyTypes.forEach((type) => {
+            nearbyLayersRef.current[type].addTo(map);
+        });
+
         return () => {
             map.remove();
             mapRef.current = null;
@@ -72,6 +105,93 @@ function Map() {
             routeRef.current = null;
         };
     }, []);
+
+    useEffect(() => {
+        if (!toLocation || !mapRef.current) {
+            return;
+        }
+
+        let cancelled = false;
+        setNearbyError(null);
+
+        const loadNearbyPlaces = async () => {
+            try {
+                const results = await Promise.all(
+                    nearbyTypes.map((type) =>
+                        searchNearbyLocations(
+                            Number(toLocation.lat),
+                            Number(toLocation.lon),
+                            type
+                        )
+                    )
+                );
+
+                if (cancelled) return;
+
+                const places = {
+                    attraction: results[0],
+                    hotel: results[1],
+                    restaurant: results[2],
+                };
+                setNearbyPlaces(places);
+
+                nearbyTypes.forEach((type) => {
+                    const layer = nearbyLayersRef.current[type];
+                    layer.clearLayers();
+
+                    places[type].forEach((place) => {
+                        L.circleMarker(
+                            [Number(place.lat), Number(place.lon)],
+                            {
+                                radius: 7,
+                                color: "#18232d",
+                                weight: 1,
+                                fillColor:
+                                    type === "attraction"
+                                        ? "#d46b3c"
+                                        : type === "hotel"
+                                            ? "#397d8a"
+                                            : "#d4a33c",
+                                fillOpacity: 0.9,
+                            }
+                        )
+                            .bindPopup(place.display_name)
+                            .addTo(layer);
+                    });
+                });
+            } catch (error) {
+                if (!cancelled) {
+                    console.error("Nearby places failed:", error);
+                    setNearbyError("Unable to load nearby places.");
+                }
+            }
+        };
+
+        loadNearbyPlaces();
+
+        return () => {
+            cancelled = true;
+        };
+    }, [toLocation]);
+
+    const toggleNearbyType = (type: NearbyLocationType) => {
+        const map = mapRef.current;
+        const layer = nearbyLayersRef.current[type];
+        const isVisible = visibleNearbyTypes[type];
+
+        if (map) {
+            if (isVisible) {
+                layer.removeFrom(map);
+            } else {
+                layer.addTo(map);
+            }
+        }
+
+        setVisibleNearbyTypes((current) => ({
+            ...current,
+            [type]: !isVisible,
+        }));
+    };
 
     const handleLocationSelect = (location: LocationResult) => {
         if (!mapRef.current) return;
@@ -233,6 +353,28 @@ function Map() {
                         {routeError}
                     </div>
                 )}
+
+                <div className="nearby-controls" aria-label="Nearby places">
+                    <span className="nearby-title">Explore nearby</span>
+                    <div className="nearby-toggle-list">
+                        {nearbyTypes.map((type) => (
+                            <button
+                                key={type}
+                                type="button"
+                                className={visibleNearbyTypes[type] ? "nearby-toggle active" : "nearby-toggle"}
+                                disabled={!toLocation || nearbyPlaces[type].length === 0}
+                                onClick={() => toggleNearbyType(type)}
+                            >
+                                {nearbyLabels[type]} ({nearbyPlaces[type].length})
+                            </button>
+                        ))}
+                    </div>
+                    {nearbyError && (
+                        <span className="nearby-error" role="alert">
+                            {nearbyError}
+                        </span>
+                    )}
+                </div>
 
                 {/* Saved Routes Drawer */}
                 <div className="saved-header">

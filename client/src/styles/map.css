@@ -169,6 +169,51 @@
     cursor: not-allowed;
 }
 
+.nearby-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.nearby-title {
+    color: #18232d;
+    font-size: 0.8rem;
+    font-weight: 700;
+}
+
+.nearby-toggle-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+}
+
+.nearby-toggle {
+    padding: 0.45rem 0.65rem;
+    border: 1px solid rgba(24, 35, 45, 0.2);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.8);
+    color: #18232d;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 0.7rem;
+}
+
+.nearby-toggle.active {
+    border-color: #18232d;
+    background: #18232d;
+    color: #fff;
+}
+
+.nearby-toggle:disabled {
+    cursor: not-allowed;
+    opacity: 0.45;
+}
+
+.nearby-error {
+    color: #a13d2b;
+    font-size: 0.72rem;
+}
+
 .save-button {
     height: 46px;
     padding: 0 1rem;

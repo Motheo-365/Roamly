@@ -22,3 +22,25 @@ export async function searchLocations(
 
     return result.data;
 }
+
+export type NearbyLocationType =
+    | "attraction"
+    | "hotel"
+    | "restaurant";
+
+export async function searchNearbyLocations(
+    latitude: number,
+    longitude: number,
+    type: NearbyLocationType
+): Promise<LocationResult[]> {
+    const params = new URLSearchParams({
+        lat: String(latitude),
+        lon: String(longitude),
+        type,
+    });
+    const result = await apiRequest<LocationSearchResponse>(
+        `/api/locations/nearby?${params.toString()}`
+    );
+
+    return result.data;
+}

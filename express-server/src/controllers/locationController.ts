@@ -1,5 +1,9 @@
 import { Request, Response } from "express";
-import { searchLocations } from "../services/locationService.js";
+import {
+    findNearbyLocations,
+    searchLocations,
+    type NearbyLocationType,
+} from "../services/locationService.js";
 
 export async function searchLocationController(
     req: Request,
@@ -28,6 +32,51 @@ export async function searchLocationController(
         return res.status(500).json({
             status: "error",
             message: "Unable to search locations.",
+        });
+    }
+}
+
+export async function nearbyLocationsController(
+    req: Request,
+    res: Response
+) {
+    try {
+        const { lat, lon, type } = req.query;
+        const latitude = Number(lat);
+        const longitude = Number(lon);
+        const validTypes: NearbyLocationType[] = [
+            "attraction",
+            "hotel",
+            "restaurant",
+        ];
+
+        if (
+            !Number.isFinite(latitude) ||
+            !Number.isFinite(longitude) ||
+            !validTypes.includes(type as NearbyLocationType)
+        ) {
+            return res.status(400).json({
+                status: "error",
+                message: "lat, lon and a valid type are required.",
+            });
+        }
+
+        const results = await findNearbyLocations(
+            latitude,
+            longitude,
+            type as NearbyLocationType
+        );
+
+        return res.json({
+            status: "success",
+            data: results,
+        });
+    } catch (error) {
+        console.error("Nearby location error:", error);
+
+        return res.status(500).json({
+            status: "error",
+            message: "Unable to find nearby places.",
         });
     }
 }
