@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import Navigation from "../components/ui/navigation";
 import Map from "../components/ui/map";
+import Carousel from "../components/ui/carousel";
 import Explore from "./explore";
 
 import "../styles/home.css"
@@ -23,6 +24,8 @@ function Dashboard() {
                         <h1>Where will you go next?</h1>
                         <p>Plan your next adventure with Roamly.</p>
                     </div>
+
+                    <Carousel />
                 </motion.section>
 
                 <motion.section

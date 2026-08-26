@@ -1,0 +1,118 @@
+.travel-carousel {
+    width: 80%;
+    margin: 0 auto 4rem;
+}
+
+.carousel-frame {
+    margin-top: 4%;
+    position: relative;
+    min-height: clamp(14rem, 30vw, 22rem);
+    overflow: hidden;
+    border-radius: 1rem;
+    background: #18232d;
+    box-shadow: 0 1.25rem 3rem rgba(24, 35, 45, 0.18);
+}
+
+.carousel-image {
+    display: block;
+    width: 100%;
+    height: 100%;
+    max-height: clamp(14rem, 30vw, 22rem);
+    object-fit: cover;
+}
+
+.carousel-frame::after {
+    content: "";
+    position: absolute;
+    inset: 35% 0 0;
+    pointer-events: none;
+    background: linear-gradient(180deg, transparent, rgba(8, 13, 17, 0.82));
+}
+
+.carousel-caption {
+    position: absolute;
+    right: 1.25rem;
+    bottom: 1.25rem;
+    left: 1.25rem;
+    z-index: 1;
+    color: #fff;
+}
+
+.carousel-caption span {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #f2b48e;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+}
+
+.carousel-caption p {
+    max-width: 80%;
+    margin: 0;
+    font-family: "Playfair Display", serif;
+    font-size: clamp(1rem, 2vw, 1.45rem);
+    line-height: 1.2;
+}
+
+.carousel-controls {
+    position: absolute;
+    right: 1.25rem;
+    bottom: 1.25rem;
+    z-index: 2;
+    display: flex;
+    gap: 0.4rem;
+}
+
+.carousel-arrow {
+    display: grid;
+    width: 2.25rem;
+    height: 2.25rem;
+    place-items: center;
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    border-radius: 50%;
+    background: rgba(24, 35, 45, 0.35);
+    color: #fff;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.carousel-arrow:hover {
+    background: #d46b3c;
+    transform: translateY(-2px);
+}
+
+.carousel-dots {
+    display: flex;
+    justify-content: center;
+    gap: 0.45rem;
+    padding-top: 0.9rem;
+}
+
+.carousel-dot {
+    width: 0.45rem;
+    height: 0.45rem;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: #c9c5be;
+    cursor: pointer;
+    transition: width 0.2s ease, border-radius 0.2s ease, background 0.2s ease;
+}
+
+.carousel-dot.active {
+    width: 1.35rem;
+    border-radius: 1rem;
+    background: #d46b3c;
+}
+
+@media (max-width: 800px) {
+    .travel-carousel {
+        width: 86%;
+    }
+
+    .carousel-caption p {
+        max-width: 68%;
+    }
+}

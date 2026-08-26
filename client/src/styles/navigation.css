@@ -5,10 +5,12 @@
     position: sticky;
     top: 1rem;
     z-index: 999;
-    background-color: rgba(12, 9, 9, 0.253);
+    background-color: rgba(12, 9, 9, 0.64);
     padding: 1.2rem 3%;
     border-radius: 20px;
     box-sizing: border-box;
+    max-width: 45%;
+    right: 50%;
 }
 
 /* =========================
@@ -71,16 +73,14 @@
 
 .navigation-links {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     gap: clamp(1.2rem, 2.5vw, 2.8rem);
-    text-align: center;
-
+    transform: translateX(-50%);
 }
 
 .navigation-links a,
 .navigation-links button {
     position: relative;
-
     padding: 0.4rem 0;
 
     color: white;
