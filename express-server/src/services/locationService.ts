@@ -84,62 +84,64 @@ export async function findNearbyLocations(
     type: NearbyLocationType
 ): Promise<LocationResult[]> {
 
-    const [tagKey, tagValue] =
-        nearbyQueries[type].split("=");
+    const [tagKey, tagValue] = nearbyQueries[type].split("=");
 
     const query = `
-        [out:json][timeout:15];
-        nwr["${tagKey}"="${tagValue}"](around:5000,${latitude},${longitude});
+        [out:json][timeout:25];
+        nwr[
+            "${tagKey}"="${tagValue}"
+        ](
+            around:5000,
+            ${latitude},
+            ${longitude}
+        );
         out center tags;
     `;
+
+    const requestOptions: RequestInit = {
+        method: "POST",
+        body: `data=${encodeURIComponent(query)}`,
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+            "Accept": "application/json",
+            "User-Agent": "Roamly Travel App/1.0",
+        },
+    };
 
     const endpoints = [
         "https://overpass-api.de/api/interpreter",
         "https://overpass.kumi.systems/api/interpreter",
+        "https://overpass.private.coffee/api/interpreter",
     ];
 
-    let lastError: unknown = null;
+    let lastError = "Nearby provider failed.";
 
     for (const endpoint of endpoints) {
-
         try {
+            console.log(`Trying Overpass endpoint: ${endpoint}`);
 
-            console.log(
-                `Trying Overpass (${type}): ${endpoint}`
+            const response = await fetch(
+                endpoint,
+                {
+                    ...requestOptions,
+                    signal: AbortSignal.timeout(30000),
+                }
             );
 
-            const response = await fetch(endpoint, {
-                method: "POST",
-                body: `data=${encodeURIComponent(query)}`,
-                headers: {
-                    "Content-Type":
-                        "application/x-www-form-urlencoded",
-                    "Accept":
-                        "application/json",
-                    "User-Agent":
-                        "Roamly Travel App/1.0",
-                },
-                signal: AbortSignal.timeout(20000),
-            });
-
             console.log(
-                `Overpass response (${type}): ${response.status}`
+                `Overpass ${endpoint} status:`,
+                response.status
             );
 
             if (!response.ok) {
-
-                const errorText =
-                    await response.text();
+                const errorText = await response.text();
 
                 console.error(
-                    `Overpass error (${type}):`,
+                    `Overpass ${endpoint} response:`,
                     errorText
                 );
 
-                lastError = new Error(
-                    `Overpass returned ${response.status}`
-                );
-
+                lastError = `Overpass returned ${response.status}`;
                 continue;
             }
 
@@ -179,21 +181,17 @@ export async function findNearbyLocations(
                 .slice(0, 20);
 
         } catch (error) {
-
             console.error(
-                `Overpass request failed (${type}):`,
+                `Overpass endpoint failed: ${endpoint}`,
                 error
             );
 
-            lastError = error;
+            lastError =
+                error instanceof Error
+                    ? error.message
+                    : "Nearby provider failed.";
         }
     }
 
-    throw (
-        lastError instanceof Error
-            ? lastError
-            : new Error(
-                "All nearby location providers failed."
-            )
-    );
+    throw new Error(lastError);
 }
