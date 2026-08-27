@@ -1,4 +1,7 @@
 import { useState } from "react";
+
+import { updateTrip } from "../../services/apiService";
+
 import "../../styles/createTrips.css";
 
 interface Trip {
@@ -9,6 +12,7 @@ interface Trip {
   endDate: string;
   travellers: number;
   description: string;
+  budget: number;
   image?: string;
   photoAttribute?: string;
 }
@@ -20,33 +24,41 @@ interface EditTripProps {
 
 function EditTrip({ trip, onClose }: EditTripProps) {
   const [destination, setDestination] = useState(trip.destination);
-
-  const [startDate, setStartDate] = useState(trip.startDate);
-
-  const [endDate, setEndDate] = useState(trip.endDate);
-
+  const [startDate, setStartDate] = useState(trip.startDate ? trip.startDate.split("T")[0] : "");
+  const [endDate, setEndDate] = useState(trip.endDate ? trip.endDate.split("T")[0] : "");
   const [travellers, setTravellers] = useState(trip.travellers);
-
   const [description, setDescription] = useState(trip.description);
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    const updatedTrip = {
-      id: trip.id,
-      destination,
-      country: trip.country,
-      startDate,
-      endDate,
-      travellers,
-      description,
-      image: trip.image,
-      photoAttribute: trip.photoAttribute,
-    };
+    setError("");
+    setLoading(true);
 
-    console.log("Updated trip:", updatedTrip);
+    try {
+      await updateTrip(
+        trip.id,
+        destination,
+        startDate,
+        endDate,
+        travellers,
+        description,
+        trip.budget ?? 0,
+      );
 
-    onClose();
+      onClose();
+    } catch (error) {
+      console.error("Error updating trip:", error);
+
+      setError(
+        error instanceof Error ? error.message : "Failed to update trip.",
+      );
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -61,12 +73,15 @@ function EditTrip({ trip, onClose }: EditTripProps) {
           className="close-trip-modal"
           onClick={onClose}
           aria-label="Close"
+          disabled={loading}
         >
           ×
         </button>
       </div>
 
       <form className="create-trip-form" onSubmit={handleSubmit}>
+        {error && <div className="trip-form-error">{error}</div>}
+
         {/* Destination */}
         <div className="form-group">
           <label htmlFor="destination">Destination</label>
@@ -79,6 +94,7 @@ function EditTrip({ trip, onClose }: EditTripProps) {
               value={destination}
               onChange={(event) => setDestination(event.target.value)}
               required
+              disabled={loading}
             />
           </div>
         </div>
@@ -94,6 +110,7 @@ function EditTrip({ trip, onClose }: EditTripProps) {
               value={startDate}
               onChange={(event) => setStartDate(event.target.value)}
               required
+              disabled={loading}
             />
           </div>
 
@@ -107,6 +124,7 @@ function EditTrip({ trip, onClose }: EditTripProps) {
               min={startDate}
               onChange={(event) => setEndDate(event.target.value)}
               required
+              disabled={loading}
             />
           </div>
         </div>
@@ -119,17 +137,21 @@ function EditTrip({ trip, onClose }: EditTripProps) {
             <button
               type="button"
               onClick={() => setTravellers(Math.max(1, travellers - 1))}
+              disabled={loading}
             >
               −
             </button>
 
             <span>
               {travellers}
-
               {travellers === 1 ? " traveller" : " travellers"}
             </span>
 
-            <button type="button" onClick={() => setTravellers(travellers + 1)}>
+            <button
+              type="button"
+              onClick={() => setTravellers(travellers + 1)}
+              disabled={loading}
+            >
               +
             </button>
           </div>
@@ -148,13 +170,15 @@ function EditTrip({ trip, onClose }: EditTripProps) {
             value={description}
             onChange={(event) => setDescription(event.target.value)}
             rows={4}
+            disabled={loading}
           />
         </div>
 
         {/* Submit */}
-        <button className="create-trip-button" type="submit">
-          Save changes
-          <span>→</span>
+        <button className="create-trip-button" type="submit" disabled={loading}>
+          {loading ? "Saving..." : "Save changes"}
+
+          {!loading && <span>→</span>}
         </button>
       </form>
     </div>
