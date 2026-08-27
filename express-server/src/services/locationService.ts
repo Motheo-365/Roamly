@@ -53,23 +53,28 @@ export type NearbyLocationType =
     | "hotel"
     | "restaurant";
 
-const nearbyQueries: Record<NearbyLocationType, string> = {
-    attraction: "tourism=attraction",
-    hotel: "tourism=hotel",
-    restaurant: "amenity=restaurant",
-};
+export interface NearbyPlaces {
+    attraction: LocationResult[];
+    hotel: LocationResult[];
+    restaurant: LocationResult[];
+}
 
 interface OverpassElement {
     type: "node" | "way" | "relation";
     id: number;
+
     lat?: number;
     lon?: number;
+
     center?: {
         lat: number;
         lon: number;
     };
+
     tags?: {
         name?: string;
+        tourism?: string;
+        amenity?: string;
         [key: string]: string | undefined;
     };
 }
@@ -78,23 +83,40 @@ interface OverpassResponse {
     elements: OverpassElement[];
 }
 
+const endpoints = [
+    "https://overpass-api.de/api/interpreter",
+    "https://overpass.kumi.systems/api/interpreter",
+    "https://overpass.private.coffee/api/interpreter",
+];
+
 export async function findNearbyLocations(
     latitude: number,
-    longitude: number,
-    type: NearbyLocationType
-): Promise<LocationResult[]> {
-
-    const [tagKey, tagValue] = nearbyQueries[type].split("=");
+    longitude: number
+): Promise<NearbyPlaces> {
 
     const query = `
-        [out:json][timeout:25];
-        nwr[
-            "${tagKey}"="${tagValue}"
-        ](
-            around:5000,
-            ${latitude},
-            ${longitude}
+        [out:json][timeout:20];
+
+        (
+            nwr["tourism"="attraction"](
+                around:3000,
+                ${latitude},
+                ${longitude}
+            );
+
+            nwr["tourism"="hotel"](
+                around:3000,
+                ${latitude},
+                ${longitude}
+            );
+
+            nwr["amenity"="restaurant"](
+                around:3000,
+                ${latitude},
+                ${longitude}
+            );
         );
+
         out center tags;
     `;
 
@@ -108,25 +130,18 @@ export async function findNearbyLocations(
         },
     };
 
-    const endpoints = [
-        "https://overpass-api.de/api/interpreter",
-        "https://overpass.kumi.systems/api/interpreter",
-        "https://overpass.private.coffee/api/interpreter",
-    ];
-
     let lastError = "Nearby provider failed.";
 
     for (const endpoint of endpoints) {
         try {
-            console.log(`Trying Overpass endpoint: ${endpoint}`);
-
-            const response = await fetch(
-                endpoint,
-                {
-                    ...requestOptions,
-                    signal: AbortSignal.timeout(30000),
-                }
+            console.log(
+                `Trying Overpass endpoint: ${endpoint}`
             );
+
+            const response = await fetch(endpoint, {
+                ...requestOptions,
+                signal: AbortSignal.timeout(25000),
+            });
 
             console.log(
                 `Overpass ${endpoint} status:`,
@@ -141,46 +156,81 @@ export async function findNearbyLocations(
                     errorText
                 );
 
-                lastError = `Overpass returned ${response.status}`;
+                lastError =
+                    `Overpass returned ${response.status}`;
+
                 continue;
             }
 
             const result =
                 await response.json() as OverpassResponse;
 
-            return result.elements
-                .filter(
-                    (element) =>
-                        element.tags?.name
-                )
-                .map((element) => {
+            const places: NearbyPlaces = {
+                attraction: [],
+                hotel: [],
+                restaurant: [],
+            };
 
-                    const coordinates =
-                        element.center ?? {
-                            lat: element.lat,
-                            lon: element.lon,
-                        };
+            for (const element of result.elements) {
 
-                    return {
-                        lat: String(
-                            coordinates.lat
-                        ),
-                        lon: String(
-                            coordinates.lon
-                        ),
-                        display_name:
-                            element.tags?.name ??
-                            "Unnamed place",
-                    };
-                })
-                .filter(
-                    (place) =>
-                        place.lat !== "undefined" &&
-                        place.lon !== "undefined"
-                )
-                .slice(0, 20);
+                if (!element.tags?.name) {
+                    continue;
+                }
+
+                const coordinates = element.center ?? {
+                    lat: element.lat,
+                    lon: element.lon,
+                };
+
+                if (
+                    coordinates.lat === undefined ||
+                    coordinates.lon === undefined
+                ) {
+                    continue;
+                }
+
+                const place: LocationResult = {
+                    lat: String(coordinates.lat),
+                    lon: String(coordinates.lon),
+                    display_name: element.tags.name,
+                };
+
+                if (
+                    element.tags.tourism === "attraction"
+                ) {
+                    places.attraction.push(place);
+                }
+
+                if (
+                    element.tags.tourism === "hotel"
+                ) {
+                    places.hotel.push(place);
+                }
+
+                if (
+                    element.tags.amenity === "restaurant"
+                ) {
+                    places.restaurant.push(place);
+                }
+            }
+
+            places.attraction =
+                places.attraction.slice(0, 20);
+
+            places.hotel =
+                places.hotel.slice(0, 20);
+
+            places.restaurant =
+                places.restaurant.slice(0, 20);
+
+            console.log(
+                `Nearby results: attractions=${places.attraction.length}, hotels=${places.hotel.length}, restaurants=${places.restaurant.length}`
+            );
+
+            return places;
 
         } catch (error) {
+
             console.error(
                 `Overpass endpoint failed: ${endpoint}`,
                 error
