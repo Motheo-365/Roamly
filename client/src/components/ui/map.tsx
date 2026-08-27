@@ -12,8 +12,11 @@ import { getRoute } from "../../services/routeServices";
 import "leaflet/dist/leaflet.css";
 import "../../styles/map.css";
 
+export type NearbyPlaces = Record<NearbyLocationType, LocationResult[]>;
+
 interface MapProps {
     selectedLocation: LocationResult | null;
+    onNearbyPlacesChange: (places: NearbyPlaces) => void;
 }
 
 interface SavedItem {
@@ -37,14 +40,12 @@ const nearbyLabels: Record<NearbyLocationType, string> = {
     restaurant: "Restaurants",
 };
 
-function Map({ selectedLocation }: MapProps) {
+function Map({ selectedLocation, onNearbyPlacesChange }: MapProps) {
     const mapContainerRef = useRef<HTMLDivElement | null>(null);
     const mapRef = useRef<L.Map | null>(null);
     const markerRef = useRef<L.Marker | null>(null);
     const routeRef = useRef<L.Polyline | null>(null);
-    const nearbyLayersRef = useRef<
-        Record<NearbyLocationType, L.LayerGroup>
-    >({
+    const nearbyLayersRef = useRef< Record<NearbyLocationType, L.LayerGroup> >({
         attraction: L.layerGroup(),
         hotel: L.layerGroup(),
         restaurant: L.layerGroup(),
@@ -55,12 +56,9 @@ function Map({ selectedLocation }: MapProps) {
     const [loadingRoute, setLoadingRoute] = useState(false);
     const [routeError, setRouteError] = useState<string | null>(null);
     const [routeSummary, setRouteSummary] = useState<{ distance: number; duration: number } | null>(null);
-    const [nearbyPlaces, setNearbyPlaces] = useState<
-        Record<NearbyLocationType, LocationResult[]>
-    >({ attraction: [], hotel: [], restaurant: [] });
-    const [visibleNearbyTypes, setVisibleNearbyTypes] = useState<
-        Record<NearbyLocationType, boolean>
-    >({ attraction: true, hotel: true, restaurant: true });
+    
+    const [nearbyPlaces, setNearbyPlaces] = useState< Record<NearbyLocationType, LocationResult[]> >({ attraction: [], hotel: [], restaurant: [] });
+    const [visibleNearbyTypes, setVisibleNearbyTypes] = useState< Record<NearbyLocationType, boolean> >({ attraction: true, hotel: true, restaurant: true });
     const [nearbyError, setNearbyError] = useState<string | null>(null);
 
     const [savedItems, setSavedItems] = useState<SavedItem[]>(() => {
@@ -132,12 +130,13 @@ function Map({ selectedLocation }: MapProps) {
 
                 if (cancelled) return;
 
-                const places = {
+                const places: NearbyPlaces = {
                     attraction: results[0],
                     hotel: results[1],
                     restaurant: results[2],
                 };
                 setNearbyPlaces(places);
+                onNearbyPlacesChange(places);
 
                 nearbyTypes.forEach((type) => {
                     const layer = nearbyLayersRef.current[type];
@@ -215,12 +214,33 @@ function Map({ selectedLocation }: MapProps) {
             .openPopup();
     };
 
+    // Effect to move map
     useEffect(() => {
         if (!selectedLocation || !mapRef.current) {
             return;
         }
 
-        handleLocationSelect(selectedLocation);
+        setToLocation(selectedLocation);
+
+        const lat = Number(selectedLocation.lat);
+        const lon = Number(selectedLocation.lon);
+
+        mapRef.current.flyTo( 
+            [lat, lon],
+            15,
+            { duration: 1.2 }
+        );
+
+        if (markerRef.current) {
+            markerRef.current.remove();
+        }
+
+        markerRef.current = L.marker( [lat, lon] )
+            .addTo(mapRef.current)
+            .bindPopup(selectedLocation.display_name)
+            .openPopup();
+
+        // handleLocationSelect(selectedLocation);
     }, [selectedLocation]);
 
     const handleFromSelect = (location: LocationResult) => {

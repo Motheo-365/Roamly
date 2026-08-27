@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 import { useState } from "react";
 
 import Navigation from "../components/ui/navigation";
-import Map from "../components/ui/map";
+import Map, { type NearbyPlaces } from "../components/ui/map";
 import Carousel from "../components/ui/carousel";
 import Explore from "./explore";
 import CreateTrip from "./createTrip";
@@ -14,6 +14,11 @@ import "../styles/home.css"
 
 function Dashboard() {
     const [selectedLocation, setSelectedLocation] = useState<LocationResult | null>(null);
+    const [nearbyPlaces, setNearbyPlaces] = useState<NearbyPlaces>({
+        attraction: [],
+        hotel: [],
+        restaurant: [],
+    });
 
     return (
         <div className="home-page">
@@ -44,7 +49,10 @@ function Dashboard() {
                     viewport={{ once: true, amount: 0.08 }}
                     transition={{ duration: 0.7, ease: "easeOut" }}
                 >
-                    <Explore onLocationSelect={setSelectedLocation}/>
+                    <Explore 
+                        onLocationSelect={setSelectedLocation}
+                        nearbyPlaces={nearbyPlaces}
+                    />
                 </motion.section>
 
                 <motion.section
@@ -71,7 +79,10 @@ function Dashboard() {
             </div>
 
             <aside className="home-map">
-                <Map selectedLocation={selectedLocation}/>
+                <Map
+                    selectedLocation={selectedLocation}
+                    onNearbyPlacesChange={setNearbyPlaces}
+                />
             </aside>
 
     </div>

@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { searchLocations, type LocationResult } from "../services/locationServices";
+import type { NearbyPlaces } from "../components/ui/map";
 
 import "../styles/explore.css";
 
@@ -7,77 +8,14 @@ type PlaceType = "attraction" | "restaurant" | "hotel";
 
 interface ExploreProps {
     onLocationSelect: (location: LocationResult) => void;
+    nearbyPlaces: NearbyPlaces;
 }
 
-
-interface Place {
-    id: number;
-    name: string;
+interface Place extends LocationResult {
     type: PlaceType;
-    rating: number;
-    description: string;
-    lat: number;
-    lng: number;
 }
 
-const places: Place[] = [
-    {
-        id: 1,
-        name: "Tokyo Tower",
-        type: "attraction",
-        rating: 4.6,
-        description: "Iconic landmark with panoramic views of Tokyo.",
-        lat: 35.6586,
-        lng: 139.7454,
-    },
-    {
-        id: 2,
-        name: "Senso-ji Temple",
-        type: "attraction",
-        rating: 4.8,
-        description: "Historic Buddhist temple in Asakusa.",
-        lat: 35.7148,
-        lng: 139.7967,
-    },
-    {
-        id: 3,
-        name: "Shibuya Crossing",
-        type: "attraction",
-        rating: 4.7,
-        description: "One of the world's busiest pedestrian crossings.",
-        lat: 35.6595,
-        lng: 139.7005,
-    },
-    {
-        id: 4,
-        name: "Sushi Saito",
-        type: "restaurant",
-        rating: 4.9,
-        description: "Highly rated Japanese sushi restaurant.",
-        lat: 35.6655,
-        lng: 139.7407,
-    },
-    {
-        id: 5,
-        name: "Ichiran Ramen",
-        type: "restaurant",
-        rating: 4.5,
-        description: "Popular ramen restaurant known for tonkotsu ramen.",
-        lat: 35.6618,
-        lng: 139.6983,
-    },
-    {
-        id: 6,
-        name: "Shinjuku Granbell Hotel",
-        type: "hotel",
-        rating: 4.3,
-        description: "Modern hotel in the heart of Shinjuku.",
-        lat: 35.6951,
-        lng: 139.7037,
-    },
-];
-
-function Explore({onLocationSelect}: ExploreProps) {
+function Explore({ onLocationSelect, nearbyPlaces }: ExploreProps) {
     const [selectedCategory, setSelectedCategory] = useState< "all" | PlaceType>("all");
 
     const [search, setSearch] = useState("");
@@ -153,37 +91,41 @@ function Explore({onLocationSelect}: ExploreProps) {
         }
     };
 
-    const [savedPlaces, setSavedPlaces] = useState<number[]>([]);
+    const [savedPlaces, setSavedPlaces] = useState<string[]>([]);
     const [selectedPlace, setSelectedPlace] = useState<Place | null>(null);
+    const getPlaceId = (place: Place) => `${place.lat}-${place.lon}`;
 
-    /*
-     * Filter places based on category and search
-     */
-    const filteredPlaces = places.filter((place) => {
-        const matchesCategory =
-            selectedCategory === "all" ||
-            place.type === selectedCategory;
+    const allNearbyPlaces: Place[] = [
+        ...nearbyPlaces.attraction.map( (place) => ({
+            ...place,
+            type: "attraction" as PlaceType,
+        })),
+        ...nearbyPlaces.restaurant.map( (place) => ({
+            ...place,
+            type: "restaurant" as PlaceType,
+        })),
+        ...nearbyPlaces.hotel.map( (place) => ({
+            ...place,
+            type: "hotel" as PlaceType,
+        })),
+    ]
 
-        const searchTerm = search.toLowerCase();
-
-        const matchesSearch =
-            place.name.toLowerCase().includes(searchTerm) ||
-            place.description.toLowerCase().includes(searchTerm);
-
-        return matchesCategory && matchesSearch;
-    });
-
+    const filteredPlaces
+        = selectedCategory === "all" ? allNearbyPlaces : allNearbyPlaces.filter(
+                (place) => place.type === selectedCategory
+            );
     /*
      * Focus map on a place
      */
     const focusPlace = (place: Place) => {
         setSelectedPlace(place);
+        onLocationSelect(place);
     };
 
     /*
      * Save / unsave a place
      */
-    const toggleSaved = (id: number) => {
+    const toggleSaved = (id: string) => {
         setSavedPlaces((current) => {
             if (current.includes(id)) {
                 return current.filter((placeId) => placeId !== id);
@@ -397,16 +339,14 @@ function Explore({onLocationSelect}: ExploreProps) {
                             </div>
                         )}
 
-                        {filteredPlaces.map((place) => {
-                            const isSaved =
-                                savedPlaces.includes(place.id);
-
-                            const isSelected =
-                                selectedPlace?.id === place.id;
+                        {filteredPlaces.map((place, index) => {
+                            const isSaved = savedPlaces.includes(getPlaceId(place));
+                            const isSelected = selectedPlace ? getPlaceId(selectedPlace) === getPlaceId(place) : false;
+                            const key = `${place.lat}-${place.lon}-${index}`
 
                             return (
                                 <article
-                                    key={place.id}
+                                    key={key}
                                     className={`place-card ${
                                         isSelected
                                             ? "selected"
@@ -424,7 +364,7 @@ function Explore({onLocationSelect}: ExploreProps) {
 
                                     <div className="place-info">
                                         <div className="place-title">
-                                            <h3>{place.name}</h3>
+                                            <h3>{place.display_name.split(",")[0]}</h3>
                                             <button
                                                 className={`save-button ${
                                                     isSaved
@@ -435,7 +375,7 @@ function Explore({onLocationSelect}: ExploreProps) {
                                                     event.stopPropagation();
 
                                                     toggleSaved(
-                                                        place.id
+                                                        getPlaceId(place)
                                                     );
                                                 }}
                                             >
@@ -449,14 +389,9 @@ function Explore({onLocationSelect}: ExploreProps) {
                                             {place.type}
                                         </span>
 
-                                        <div className="place-rating">
-                                            ⭐ {place.rating}
-                                        </div>
-
                                         <p>
-                                            {place.description}
+                                            {place.display_name}
                                         </p>
-
                                         <button
                                             className="add-button"
                                             onClick={(event) => {
