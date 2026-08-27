@@ -9,7 +9,7 @@
 }
 
 .home-page > .navigation {
-    grid-column: 1 / -1;
+    grid-column: 1;
     width: min(92%, 72rem);
     margin: 1rem auto;
 }

@@ -47,15 +47,6 @@ function Navigation() {
 
     return (
         <nav className="navigation">
-            <div className="navigation-brand">
-                <button
-                    type="button"
-                    className="brand-link"
-                    onClick={() => scrollToSection("home")}
-                >
-                </button>
-            </div>
-
             <div className="navigation-links">
                 <button 
                     type="button" 
