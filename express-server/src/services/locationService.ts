@@ -2,6 +2,18 @@ export interface LocationResult {
     lat: string;
     lon: string;
     display_name: string;
+
+    id?: string;
+    address?: string;
+    rating?: number;
+    userRatingCount?: number;
+    photoUrl?: string | null;
+    googleMapsUri?: string | null;
+    photoAttributions?: {
+        displayName?: string;
+        uri?: string;
+        photoUri?: string;
+    }[];
 }
 
 export async function searchLocations(
@@ -62,15 +74,41 @@ export interface NearbyPlaces {
 }
 
 
+interface GooglePhoto {
+    name: string;
+
+    widthPx?: number;
+    heightPx?: number;
+
+    authorAttributions?: {
+        displayName?: string;
+        uri?: string;
+        photoUri?: string;
+    }[];
+}
+
+
 interface GooglePlace {
+    id?: string;
+
     displayName?: {
         text?: string;
     };
+
+    formattedAddress?: string;
 
     location?: {
         latitude?: number;
         longitude?: number;
     };
+
+    rating?: number;
+
+    userRatingCount?: number;
+
+    photos?: GooglePhoto[];
+
+    googleMapsUri?: string;
 }
 
 
@@ -111,9 +149,18 @@ async function searchGooglePlaces(
 
             headers: {
                 "Content-Type": "application/json",
+
                 "X-Goog-Api-Key": apiKey,
+
                 "X-Goog-FieldMask":
-                    "places.displayName,places.location",
+                    "places.id," +
+                    "places.displayName," +
+                    "places.formattedAddress," +
+                    "places.location," +
+                    "places.rating," +
+                    "places.userRatingCount," +
+                    "places.photos," +
+                    "places.googleMapsUri",
             },
 
             body: JSON.stringify({
@@ -169,18 +216,48 @@ async function searchGooglePlaces(
                 place.location?.latitude !== undefined &&
                 place.location?.longitude !== undefined
         )
-        .map((place) => ({
-            lat: String(
-                place.location!.latitude
-            ),
+        .map((place) => {
 
-            lon: String(
-                place.location!.longitude
-            ),
+            const photoName =
+                place.photos?.[0]?.name;
 
-            display_name:
-                place.displayName!.text!,
-        }));
+            const photoUrl =
+                photoName
+                    ? `https://places.googleapis.com/v1/${photoName}/media?maxWidthPx=600&key=${apiKey}`
+                    : null;
+
+            return {
+                id: place.id,
+
+                lat: String(
+                    place.location!.latitude
+                ),
+
+                lon: String(
+                    place.location!.longitude
+                ),
+
+                display_name:
+                    place.displayName!.text!,
+
+                address:
+                    place.formattedAddress,
+
+                rating:
+                    place.rating,
+
+                userRatingCount:
+                    place.userRatingCount,
+
+                photoUrl,
+
+                googleMapsUri:
+                    place.googleMapsUri,
+
+                photoAttributions:
+                    place.photos?.[0]?.authorAttributions ?? [],
+            };
+        });
 }
 
 
