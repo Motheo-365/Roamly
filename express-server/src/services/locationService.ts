@@ -85,22 +85,35 @@ export async function findNearbyLocations(
 ): Promise<LocationResult[]> {
     const [tagKey, tagValue] = nearbyQueries[type].split("=");
     const query = `
-        [out:json][timeout:25];
-        nwr["${tagKey}"="${tagValue}"](around:15000,${latitude},${longitude});
+        [out:json][timeout:15];
+        nwr["${tagKey}"="${tagValue}"](around:5000,${latitude},${longitude});
         out center tags;
     `;
-    const response = await fetch("https://overpass-api.de/api/interpreter", {
+    const requestOptions: RequestInit = {
         method: "POST",
-        body: new URLSearchParams({ data: query }),
+        body: `data=${encodeURIComponent(query)}`,
         headers: {
             "Content-Type": "application/x-www-form-urlencoded",
             "Accept": "application/json",
             "User-Agent": "Roamly Travel App/1.0 (location search)",
         },
-    });
+        signal: AbortSignal.timeout(20000),
+    };
+
+    let response = await fetch(
+        "https://overpass-api.de/api/interpreter",
+        requestOptions
+    );
 
     if (!response.ok) {
-        throw new Error(`Overpass request failed: ${response.status}`);
+        response = await fetch(
+            "https://overpass.kumi.systems/api/interpreter",
+            requestOptions
+        );
+    }
+
+    if (!response.ok) {
+        throw new Error(`Nearby provider failed: ${response.status}`);
     }
 
     const result = await response.json() as OverpassResponse;

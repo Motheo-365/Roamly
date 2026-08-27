@@ -118,7 +118,7 @@ function Map({ selectedLocation, onNearbyPlacesChange }: MapProps) {
 
         const loadNearbyPlaces = async () => {
             try {
-                const results = await Promise.all(
+                const results = await Promise.allSettled(
                     nearbyTypes.map((type) =>
                         searchNearbyLocations(
                             Number(toLocation.lat),
@@ -130,13 +130,19 @@ function Map({ selectedLocation, onNearbyPlacesChange }: MapProps) {
 
                 if (cancelled) return;
 
+                const failedRequests = results.filter(
+                    (result) => result.status === "rejected"
+                ).length;
                 const places: NearbyPlaces = {
-                    attraction: results[0],
-                    hotel: results[1],
-                    restaurant: results[2],
+                    attraction: results[0].status === "fulfilled" ? results[0].value : [],
+                    hotel: results[1].status === "fulfilled" ? results[1].value : [],
+                    restaurant: results[2].status === "fulfilled" ? results[2].value : [],
                 };
                 setNearbyPlaces(places);
                 onNearbyPlacesChange(places);
+                if (failedRequests > 0) {
+                    setNearbyError("Some nearby place categories could not be loaded.");
+                }
 
                 nearbyTypes.forEach((type) => {
                     const layer = nearbyLayersRef.current[type];
@@ -175,7 +181,7 @@ function Map({ selectedLocation, onNearbyPlacesChange }: MapProps) {
         return () => {
             cancelled = true;
         };
-    }, [toLocation]);
+    }, [onNearbyPlacesChange, toLocation]);
 
     const toggleNearbyType = (type: NearbyLocationType) => {
         const map = mapRef.current;
