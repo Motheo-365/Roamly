@@ -1,0 +1,364 @@
+/* ========================================
+   TRIP DASHBOARD
+======================================== */
+
+.trip-dashboard-page {
+    min-height: 100vh;
+    padding: 2rem 2rem 6rem;
+    background: rgb(254, 250, 242);
+    color: #18232d;
+}
+
+.trip-dashboard-container {
+    width: 90%;
+    margin: 0 auto;
+}
+
+/* ========================================
+   BACK BUTTON
+======================================== */
+
+.back-to-trips {
+    margin-bottom: 1.5rem;
+    padding: 0;
+    border: none;
+    background: transparent;
+    color: #737b80;
+    font-family: inherit;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.back-to-trips:hover {
+    color: #d46b3c;
+}
+
+
+/* ========================================
+   HERO
+======================================== */
+
+.trip-dashboard-hero {
+    margin-top: 2rem;
+    width: 100%;
+    border-radius: 1.4rem;
+    overflow: hidden;
+}
+
+.trip-dashboard-hero-image {
+    position: relative;
+    overflow: hidden;
+    border-radius: 1rem;
+    background: #202b34;
+}
+
+.trip-dashboard-hero-image img {
+    width: 100%;
+    height: clamp(350px, 45vw, 500px);
+    object-fit: cover;
+    display: block;
+}
+
+.trip-dashboard-hero-overlay {
+    position: absolute;
+    inset: 0;
+    background:
+        linear-gradient(
+            90deg,
+            rgba(15, 22, 27, 0.8) 0%,
+            rgba(15, 22, 27, 0.4) 45%,
+            rgba(15, 22, 27, 0.08) 100%
+        );
+}
+
+.trip-dashboard-hero-content {
+    position: absolute;
+    left: 3rem;
+    bottom: 3rem;
+    color: white;
+}
+
+.trip-dashboard-eyebrow {
+    display: block;
+    margin-bottom: 0.6rem;
+    color: #f19a6d;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+}
+
+.trip-dashboard-hero-content h1 {
+    margin: 0;
+    font-family: "Playfair Display", serif;
+    font-size: clamp(3rem, 7vw, 5.5rem);
+    font-weight: 500;
+    line-height: 0.95;
+    letter-spacing: -0.05em;
+}
+
+.trip-dashboard-location {
+    margin: 0.6rem 0 0;
+    font-size: 1.05rem;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.trip-dashboard-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-top: 1.2rem;
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 0.8rem;
+}
+
+.meta-divider {
+    color: rgba(255, 255, 255, 0.4);
+}
+
+
+/* ========================================
+   EDIT BUTTON
+======================================== */
+
+.edit-trip-button {
+    position: absolute;
+    top: 1.5rem;
+    right: 1.5rem;
+
+    height: 2.7rem;
+    padding: 0 1.1rem;
+
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 0.65rem;
+
+    background: rgba(255, 255, 255, 0.92);
+    color: #18232d;
+
+    font-family: inherit;
+    font-size: 0.8rem;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    backdrop-filter: blur(8px);
+
+    transition:
+        background 0.2s ease,
+        transform 0.2s ease;
+}
+
+.edit-trip-button:hover {
+    background: white;
+    transform: translateY(-2px);
+}
+
+
+/* ========================================
+   INTRO
+======================================== */
+
+.trip-dashboard-intro {
+    display: grid;
+    gap: 4rem;
+
+    width: 85%;
+    margin: 0 auto;
+
+    padding: 4.5rem 1rem 3.5rem;
+    align-items: center;
+}
+
+.trip-dashboard-intro > div {
+    text-align: center;
+}
+
+.trip-dashboard-intro p {
+    margin: 0 auto;
+    text-align: center;
+    color: #737b80;
+    font-size: 1.2rem;
+    line-height: 1.7;
+}
+
+.trip-dashboard-intro-label {
+    display: block;
+    margin-bottom: 0.7rem;
+
+    color: #d46b3c;
+
+    font-size: 1.7rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+}
+
+
+/* ========================================
+   SECTION HEADERS
+======================================== */
+
+.trip-dashboard-section-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+
+    margin-bottom: 1.25rem;
+    padding: 0 0.25rem;
+}
+
+.trip-dashboard-section-header span {
+    display: block;
+    margin-bottom: 0.35rem;
+
+    color: #d46b3c;
+
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+}
+
+.trip-dashboard-section-header h2 {
+    margin: 0;
+
+    font-family: "Playfair Display", serif;
+    font-size: 2rem;
+    font-weight: 500;
+    letter-spacing: -0.03em;
+}
+
+.trip-dashboard-section-header button {
+    border: none;
+    background: transparent;
+
+    color: #737b80;
+
+    font-family: inherit;
+    font-size: 0.75rem;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition: color 0.2s ease;
+}
+
+.trip-dashboard-section-header button:hover {
+    color: #d46b3c;
+}
+
+
+/* ========================================
+   ITINERARY
+======================================== */
+
+.trip-dashboard-itinerary {
+    overflow: hidden;
+
+    border: 1px solid #e4dfd8;
+    border-radius: 1.2rem;
+
+    background: #ffffff;
+
+    box-shadow:
+        0 1rem 3rem rgba(24, 35, 45, 0.06);
+}
+
+
+/* ========================================
+   BUDGET
+======================================== */
+
+.budget-section-header {
+    margin-top: 4rem;
+}
+
+.trip-dashboard-budget {
+    overflow: hidden;
+
+    border: 1px solid #e4dfd8;
+    border-radius: 1.2rem;
+
+    background: #ffffff;
+
+    box-shadow:
+        0 1rem 3rem rgba(24, 35, 45, 0.06);
+}
+
+
+/* ========================================
+   NOT FOUND
+======================================== */
+
+.trip-not-found {
+    padding: 5rem 1rem;
+}
+
+.trip-not-found h1 {
+    margin: 0 0 0.5rem;
+
+    font-family: "Playfair Display", serif;
+    font-size: 3rem;
+    font-weight: 500;
+}
+
+.trip-not-found p {
+    color: #737b80;
+}
+
+
+/* ========================================
+   RESPONSIVE
+======================================== */
+
+@media (max-width: 850px) {
+
+    .trip-dashboard-page {
+        padding: 1.5rem 1rem 4rem;
+    }
+
+    .trip-dashboard-hero-image,
+    .trip-dashboard-hero-image img {
+        min-height: 350px;
+    }
+
+    .trip-dashboard-hero-content {
+        left: 2rem;
+        bottom: 2rem;
+    }
+
+    .trip-dashboard-intro {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+        padding: 3rem 0.5rem;
+    }
+
+}
+
+
+@media (max-width: 550px) {
+
+    .trip-dashboard-hero-image,
+    .trip-dashboard-hero-image img {
+        min-height: 450px;
+    }
+
+    .trip-dashboard-hero-content {
+        left: 1.5rem;
+        bottom: 1.5rem;
+    }
+
+    .trip-dashboard-hero-content h1 {
+        font-size: 3.2rem;
+    }
+
+    .trip-dashboard-meta {
+        flex-wrap: wrap;
+    }
+
+    .trip-dashboard-section-header {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+}

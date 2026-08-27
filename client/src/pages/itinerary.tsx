@@ -193,17 +193,6 @@ function Itinerary() {
               </span>
             </div>
           </div>
-
-          <div className="itinerary-actions">
-            <button
-              className="edit-trip-button"
-              onClick={() => setIsEditModalOpen(true)}
-            >
-              Edit trip
-            </button>
-
-            <button className="trip-options-button">⋯</button>
-          </div>
         </header>
 
         <div className="itinerary-layout">

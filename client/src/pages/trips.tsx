@@ -1,4 +1,6 @@
 import { useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
+
 import CreateTrip from "../components/ui/createTrip";
 
 import "../styles/trips.css";
@@ -16,45 +18,45 @@ interface Trip {
 }
 
 const sampleTrips: Trip[] = [
-    {
-        id: 1,
-        destination: "Tokyo",
-        country: "Japan",
-        startDate: "2026-09-12",
-        endDate: "2026-09-20",
-        travellers: 2,
-        description:
-            "Explore Shibuya, visit Tokyo Tower and discover the city.",
-        image: "https://images.unsplash.com/photo-1540959733332-eab4deabeeaf",
-    },
-    {
-        id: 2,
-        destination: "Paris",
-        country: "France",
-        startDate: "2026-10-04",
-        endDate: "2026-10-11",
-        travellers: 1,
-        description:
-            "A week of museums, cafés and exploring the streets of Paris.",
-        image: "https://images.unsplash.com/photo-1502602898657-3e91760cbb34",
-    },
-    {
-        id: 3,
-        destination: "Cape Town",
-        country: "South Africa",
-        startDate: "2026-11-14",
-        endDate: "2026-11-18",
-        travellers: 3,
-        description:
-            "Weekend getaway with hikes, beaches and good food.",
-        image: "https://images.unsplash.com/photo-1580060839134-75a5edca2e99",
-    },
+  {
+    id: 1,
+    destination: "Tokyo",
+    country: "Japan",
+    startDate: "2026-09-12",
+    endDate: "2026-09-20",
+    travellers: 2,
+    description: "Explore Shibuya, visit Tokyo Tower and discover the city.",
+    image: "https://images.unsplash.com/photo-1540959733332-eab4deabeeaf",
+  },
+  {
+    id: 2,
+    destination: "Paris",
+    country: "France",
+    startDate: "2026-10-04",
+    endDate: "2026-10-11",
+    travellers: 1,
+    description: "A week of museums, cafés and exploring the streets of Paris.",
+    image: "https://images.unsplash.com/photo-1502602898657-3e91760cbb34",
+  },
+  {
+    id: 3,
+    destination: "Cape Town",
+    country: "South Africa",
+    startDate: "2026-11-14",
+    endDate: "2026-11-18",
+    travellers: 3,
+    description: "Weekend getaway with hikes, beaches and good food.",
+    image: "https://images.unsplash.com/photo-1580060839134-75a5edca2e99",
+  },
 ];
 
 function Trips() {
+  const navigate = useNavigate();
+
   const [trips] = useState<Trip[]>(sampleTrips);
   const [view, setView] = useState<"upcoming" | "past">("upcoming");
   const [isCreateTripOpen, setIsCreateTripOpen] = useState(false);
+
   const today = new Date();
 
   const upcomingTrips = useMemo(() => {
@@ -128,102 +130,77 @@ function Trips() {
         {displayedTrips.length > 0 ? (
           <div className="trips-grid">
             {displayedTrips.map((trip) => (
-              <article
-                  className="trip-card"
-                  key={trip.id}
-              >
-                  <div className="trip-card-image">
+              <article className="trip-card" key={trip.id}>
+                <div className="trip-card-image">
+                  {trip.image && (
+                    <img
+                      src={trip.image}
+                      alt={`${trip.destination}, ${trip.country}`}
+                    />
+                  )}
 
-                      {trip.image && (
-                          <img
-                              src={trip.image}
-                              alt={`${trip.destination}, ${trip.country}`}
-                          />
-                      )}
+                  <div className="trip-image-overlay" />
 
-                      <div className="trip-image-overlay" />
+                  <div className="trip-card-top">
+                    <span className="trip-status">
+                      {view === "upcoming" ? "UPCOMING" : "COMPLETED"}
+                    </span>
 
-                      <div className="trip-card-top">
-                          <span className="trip-status">
-                              {view === "upcoming"
-                                  ? "UPCOMING"
-                                  : "COMPLETED"}
-                          </span>
-
-                          <button className="trip-menu">
-                              ⋯
-                          </button>
-                      </div>
-
-                      <div className="trip-destination">
-                          <h2>{trip.destination}</h2>
-
-                          <span>{trip.country}</span>
-                      </div>
-
+                    <button className="trip-menu">⋯</button>
                   </div>
 
-                  <div className="trip-card-content">
+                  <div className="trip-destination">
+                    <h2>{trip.destination}</h2>
 
-                      <div className="trip-main-info">
-
-                          <div className="trip-date">
-                              <span className="detail-label">
-                                  TRAVEL DATES
-                              </span>
-
-                              <p>
-                                  {formatDate(trip.startDate)}
-                                  {" — "}
-                                  {formatDate(trip.endDate)}
-                              </p>
-                          </div>
-
-                          <div className="trip-duration">
-                              <span className="detail-label">
-                                  DURATION
-                              </span>
-
-                              <p>
-                                  {getTripDuration(
-                                      trip.startDate,
-                                      trip.endDate
-                                  )} days
-                              </p>
-                          </div>
-
-                      </div>
-
-                      <div className="trip-secondary-info">
-
-                          <div>
-                              <span className="detail-label">
-                                  TRAVELLERS
-                              </span>
-
-                              <p>
-                                  {trip.travellers}{" "}
-                                  {trip.travellers === 1
-                                      ? "traveller"
-                                      : "travellers"}
-                              </p>
-                          </div>
-
-                          <div className="trip-description">
-                              {trip.description}
-                          </div>
-
-                      </div>
-
-                      <button className="view-trip-button">
-                          <span>View trip</span>
-
-                          <span className="view-trip-arrow">
-                              →
-                          </span>
-                      </button>
-
+                    <span>{trip.country}</span>
                   </div>
+                </div>
+
+                <div className="trip-card-content">
+                  <div className="trip-main-info">
+                    <div className="trip-date">
+                      <span className="detail-label">TRAVEL DATES</span>
+
+                      <p>
+                        {formatDate(trip.startDate)}
+                        {" — "}
+                        {formatDate(trip.endDate)}
+                      </p>
+                    </div>
+
+                    <div className="trip-duration">
+                      <span className="detail-label">DURATION</span>
+
+                      <p>
+                        {getTripDuration(trip.startDate, trip.endDate)} days
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="trip-secondary-info">
+                    <div>
+                      <span className="detail-label">TRAVELLERS</span>
+
+                      <p>
+                        {trip.travellers}{" "}
+                        {trip.travellers === 1 ? "traveller" : "travellers"}
+                      </p>
+                    </div>
+
+                    <div className="trip-description">{trip.description}</div>
+                  </div>
+
+                  {/* VIEW TRIP */}
+
+                  <button
+                    className="view-trip-button"
+                    onClick={() => navigate(`/trips/${trip.id}`)}
+                  >
+                    <span>View trip</span>
+
+                    <span className="view-trip-arrow">→</span>
+                  </button>
+                </div>
               </article>
             ))}
           </div>
@@ -240,7 +217,7 @@ function Trips() {
             </p>
 
             {view === "upcoming" && (
-              <button 
+              <button
                 className="new-trip-button"
                 onClick={() => setIsCreateTripOpen(true)}
               >
@@ -249,6 +226,8 @@ function Trips() {
             )}
           </div>
         )}
+
+        {/* CREATE TRIP MODAL */}
 
         {isCreateTripOpen && (
           <div
@@ -259,9 +238,7 @@ function Trips() {
               }
             }}
           >
-              <CreateTrip
-                onClose={() => setIsCreateTripOpen(false)}
-              />
+            <CreateTrip onClose={() => setIsCreateTripOpen(false)} />
           </div>
         )}
       </section>

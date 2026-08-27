@@ -6,8 +6,6 @@ import Map from "../components/ui/map";
 import Carousel from "../components/ui/carousel";
 import Explore from "./explore";
 import Trips from "./trips"
-import Itinerary from "./itinerary"
-import Budget from "./budget";
 
 import type { LocationResult, NearbyPlaces } from "../services/locationServices"
 
@@ -65,28 +63,6 @@ function Dashboard() {
                     transition={{ duration: 0.7, ease: "easeOut" }}
                 >
                     <Trips />
-                </motion.section>
-
-              <motion.section
-                    id="itinerary"
-                    className="narrative-section itinerary-section"
-                    initial={{ opacity: 0, y: 60 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true, amount: 0.08 }}
-                    transition={{ duration: 0.7, ease: "easeOut" }} 
-                >
-                    <Itinerary/>
-                </motion.section>
-
-                <motion.section
-                    id="budget"
-                    className="narrative-section budget-section"
-                    initial={{ opacity: 0, y: 60 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true, amount: 0.08 }}
-                    transition={{ duration: 0.7, ease: "easeOut" }} 
-                >
-                    <Budget/>
                 </motion.section>
             </div>
 

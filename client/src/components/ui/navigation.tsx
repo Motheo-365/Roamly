@@ -71,22 +71,6 @@ function Navigation() {
                 >
                     Trips
                 </button>
-
-                <button
-                    type="button"
-                    className={activeSection === "itinerary" ? "active" : ""}
-                    onClick={() => scrollToSection("itinerary")}
-                >
-                    Itinerary
-                </button>
-
-                <button
-                    type="button"
-                    className={activeSection === "budget" ? "active" : ""}
-                    onClick={() => scrollToSection("budget")}
-                >
-                    Budget
-                </button>
             </div>
         </nav>
     );

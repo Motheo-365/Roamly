@@ -18,6 +18,25 @@
     margin-right: auto;
 }
 
+.trip-navigation {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    position: sticky;
+    top: 1rem;
+    z-index: 999;
+    background-color: rgba(12, 9, 9, 0.64);
+    backdrop-filter: blur(8px);
+    padding: 0.8rem 1.5rem;
+    border-radius: 20px;
+    box-sizing: border-box;
+    
+    width: 25%;
+    margin-left: 4rem;
+    margin-right: auto;
+}
+
 /* =========================
    BRAND (Now on the Right)
 ========================= */

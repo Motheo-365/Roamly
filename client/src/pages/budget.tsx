@@ -263,8 +263,6 @@ function Budget() {
           </button>
 
           <button>Group balances</button>
-
-          <button>Settings</button>
         </div>
       </section>
 
