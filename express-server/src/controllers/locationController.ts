@@ -42,8 +42,10 @@ export async function nearbyLocationsController(
 ) {
     try {
         const { lat, lon, type } = req.query;
+
         const latitude = Number(lat);
         const longitude = Number(lon);
+
         const validTypes: NearbyLocationType[] = [
             "attraction",
             "hotel",
@@ -61,22 +63,34 @@ export async function nearbyLocationsController(
             });
         }
 
+        console.log(
+            `Nearby request: ${type} @ ${latitude}, ${longitude}`
+        );
+
         const results = await findNearbyLocations(
             latitude,
             longitude,
             type as NearbyLocationType
         );
 
+        console.log(
+            `Nearby ${type}: ${results.length} results`
+        );
+
         return res.json({
             status: "success",
             data: results,
         });
+
     } catch (error) {
         console.error("Nearby location error:", error);
 
         return res.status(500).json({
             status: "error",
-            message: "Unable to find nearby places.",
+            message:
+                error instanceof Error
+                    ? error.message
+                    : "Unable to find nearby places.",
         });
     }
 }
