@@ -1,5 +1,5 @@
 import { useState } from "react";
-import "../styles/createTrips.css";
+import "../../styles/createTrips.css";
 
 interface CreateTripProps {
     onClose: () => void;

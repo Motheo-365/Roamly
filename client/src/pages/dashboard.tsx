@@ -68,7 +68,7 @@ function Dashboard() {
                 </motion.section>
 
               <motion.section
-                    id="budget"
+                    id="itinerary"
                     className="narrative-section itinerary-section"
                     initial={{ opacity: 0, y: 60 }}
                     whileInView={{ opacity: 1, y: 0 }}

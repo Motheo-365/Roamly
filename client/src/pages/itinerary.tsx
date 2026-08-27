@@ -1,4 +1,8 @@
 import { useState } from "react";
+
+import EditTrip from "../components/ui/editTrip";
+import AddActivity from "../components/ui/addActivity"
+
 import "../styles/itinerary.css";
 
 interface Activity {
@@ -14,6 +18,18 @@ interface Day {
   date: string;
   title: string;
   activities: Activity[];
+}
+
+interface Trip {
+  id: number;
+  destination: string;
+  country: string;
+  startDate: string;
+  endDate: string;
+  travellers: number;
+  description: string;
+  image?: string;
+  photoAttribute?: string;
 }
 
 const itineraryDays: Day[] = [
@@ -110,8 +126,21 @@ const itineraryDays: Day[] = [
   },
 ];
 
+const trip: Trip = {
+  id: 1,
+  destination: "Tokyo",
+  country: "Japan",
+  startDate: "2026-09-12",
+  endDate: "2026-09-20",
+  travellers: 2,
+  description: "Explore Shibuya, visit Tokyo Tower and discover the city.",
+  image: "https://images.unsplash.com/photo-1540959733332-eab4deabeeaf",
+};
+
 function Itinerary() {
   const [selectedDay, setSelectedDay] = useState(1);
+
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   const currentDay = itineraryDays.find((day) => day.id === selectedDay);
 
@@ -141,37 +170,41 @@ function Itinerary() {
   return (
     <main className="itinerary-page">
       <section className="itinerary-container">
-        {/* =========================
-                    TRIP HEADER
-                ========================= */}
-
         <header className="itinerary-header">
           <div>
             <span className="itinerary-eyebrow">YOUR TRIP</span>
 
-            <h1>Tokyo</h1>
+            <h1>{trip.destination}</h1>
 
-            <p className="itinerary-location">Japan</p>
+            <p className="itinerary-location">{trip.country}</p>
 
             <div className="itinerary-meta">
-              <span>12 Sep — 20 Sep 2026</span>
+              <span>
+                {formatDate(trip.startDate)}
+                {" — "}
+                {formatDate(trip.endDate)}
+              </span>
 
               <span className="meta-divider">·</span>
 
-              <span>2 travellers</span>
+              <span>
+                {trip.travellers}{" "}
+                {trip.travellers === 1 ? "traveller" : "travellers"}
+              </span>
             </div>
           </div>
 
           <div className="itinerary-actions">
-            <button className="edit-trip-button">Edit trip</button>
+            <button
+              className="edit-trip-button"
+              onClick={() => setIsEditModalOpen(true)}
+            >
+              Edit trip
+            </button>
 
             <button className="trip-options-button">⋯</button>
           </div>
         </header>
-
-        {/* =========================
-                    CONTENT
-                ========================= */}
 
         <div className="itinerary-layout">
           {/* DAY NAVIGATION */}
@@ -228,7 +261,7 @@ function Itinerary() {
                             {getTypeLabel(activity.type)}
                           </span>
 
-                          <button className="activity-menu">⋯</button>
+                          <button className="delete-activity">&#128465;</button>
                         </div>
 
                         <h3>{activity.title}</h3>
@@ -240,16 +273,20 @@ function Itinerary() {
                 </div>
 
                 {/* ADD ACTIVITY */}
-
-                <button className="add-activity-button">
-                  <span>+</span>
-                  Add activity
-                </button>
+                  <AddActivity />
               </>
             )}
           </section>
         </div>
       </section>
+
+      {isEditModalOpen && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <EditTrip trip={trip} onClose={() => setIsEditModalOpen(false)} />
+          </div>
+        </div>
+      )}
     </main>
   );
 }

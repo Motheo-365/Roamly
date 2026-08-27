@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import CreateTrip from "./createTrip";
+import CreateTrip from "../components/ui/createTrip";
 
 import "../styles/trips.css";
 
