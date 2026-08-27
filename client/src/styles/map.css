@@ -217,13 +217,14 @@
 
 .save-button {
     height: 46px;
-    padding: 0 1rem;
+    width: 30%;
+    padding: 0 2rem;
     border: 1px solid rgba(255, 255, 255, 0.4);
     border-radius: 0.55rem;
     color: #fff;
     cursor: pointer;
     font-family: inherit;
-    font-size: 0.8rem;
+    font-size: 95% !important;
     font-weight: 600;
     box-shadow: 0 0.5rem 1.5rem rgba(24, 35, 45, 0.12);
     transition: background 0.2s ease, transform 0.2s ease;
@@ -412,10 +413,56 @@
 ========================= */
 
 @media (max-width: 800px) {
+    .map-wrapper {
+        height: 100%;
+        transform: translate(1%, -10%);
+    }
     .map-controls {
         top: 1rem;
         right: 1rem;
         left: 1rem;
+        width: auto;
+
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0.5rem;
+
+        padding: 0.75rem;
+    }
+
+    .location-search,
+    .map-search {
+        flex: 1 1 250px;
+        width: auto;
+    }
+
+    .action-button-group {
+        display: flex;
+        flex: 1 1 auto;
+        width: auto;
+        gap: 0.5rem;
+    }
+
+    .route-button {
+        width: auto;
+        flex: 1;
+        margin-top: 0;
+    }
+
+    .nearby-controls {
+        flex: 1 1 100%;
+        flex-direction: row;
+        align-items: center;
+    }
+
+    .nearby-toggle-list {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+    }
+
+    .saved-header {
+        flex: 1 1 180px;
         width: auto;
     }
 }

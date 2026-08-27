@@ -384,7 +384,7 @@ function Map({ selectedLocation, onNearbyPlacesChange }: MapProps) {
                         onClick={handleSaveRoute}
                         title="Save Route"
                     >
-                        ★ Save
+                        Save
                     </button>
                 </div>
 

@@ -167,7 +167,7 @@
 
     font-size: 0.875rem;
     color: #737a7f;
-    transform: translateX(20%);
+    justify-content: center;
 }
 
 .popular-destinations button {
@@ -629,6 +629,7 @@
     .popular-destinations {
         overflow-x: auto;
         white-space: nowrap;
+        justify-content: center;
     }
 
     .explore-sidebar {
