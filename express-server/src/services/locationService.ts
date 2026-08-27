@@ -85,7 +85,6 @@ interface OverpassResponse {
 
 const endpoints = [
     "https://overpass-api.de/api/interpreter",
-    "https://overpass.kumi.systems/api/interpreter",
 ];
 
 export async function findNearbyLocations(
@@ -93,12 +92,15 @@ export async function findNearbyLocations(
     longitude: number
 ): Promise<NearbyPlaces> {
 
-    const endpoint =
-        "https://overpass-api.de/api/interpreter";
-
     const query = `
         [out:json][timeout:10];
-        node(around:1000,${latitude},${longitude})["tourism"];
+
+        node["amenity"="restaurant"](
+            around:1000,
+            ${latitude},
+            ${longitude}
+        );
+
         out tags;
     `;
 
@@ -106,7 +108,7 @@ export async function findNearbyLocations(
     console.log("Query:", query);
 
     try {
-        const response = await fetch(endpoint, {
+        const response = await fetch(endpoints[0], {
             method: "POST",
             body: `data=${encodeURIComponent(query)}`,
             headers: {
