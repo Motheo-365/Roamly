@@ -80,6 +80,8 @@ class TripService {
         destination: string,
         startDate: string,
         endDate: string,
+        travellers: number,
+        description: string,
         budget: number
     ): Promise<Trip> {
         const start = new Date(startDate);
@@ -103,11 +105,19 @@ class TripService {
             throw new Error("Budget cannot be negative");
         }
 
+        if (!Number.isInteger(travellers) || travellers < 1) {
+            throw new Error("There must be at least one traveller");
+        }
+
+        const cleanDescription = description?.trim() || "";
+
         const trip = await tripRepository.createTrip(
             userId,
             destination,
             startDate,
             endDate,
+            travellers,
+            cleanDescription,
             budget
         );
 
@@ -130,6 +140,8 @@ class TripService {
         destination: string,
         startDate: string,
         endDate: string,
+        travellers: number,
+        description: string,
         budget: number
     ): Promise<Trip | null> {
         const start = new Date(startDate);
@@ -167,7 +179,9 @@ class TripService {
             destination,
             startDate,
             endDate,
-            budget
+            Number(travellers),
+            description,
+            Number(budget)
         );
 
         return updatedTrip;

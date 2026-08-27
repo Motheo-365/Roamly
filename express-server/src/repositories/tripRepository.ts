@@ -13,7 +13,9 @@ export interface Trip {
     destination: string | null;
     start_date: string | null;
     end_date: string | null;
-    budget: number | null;
+    travellers: number;
+    description: string | null;
+    budget: number;
 }
 
 /**
@@ -42,6 +44,8 @@ class TripRepository {
                 destination,
                 start_date,
                 end_date,
+                travellers,
+                description,
                 budget
             FROM trips
             WHERE user_id = $1
@@ -67,6 +71,8 @@ class TripRepository {
                 destination,
                 start_date,
                 end_date,
+                travellers,
+                description,
                 budget
             FROM trips
             WHERE id = $1
@@ -89,6 +95,8 @@ class TripRepository {
         destination: string,
         startDate: string,
         endDate: string,
+        travellers: number,
+        description: string,
         budget: number
     ): Promise<Trip> {
         const result = await pool.query(
@@ -98,18 +106,22 @@ class TripRepository {
                 destination,
                 start_date,
                 end_date,
+                travellers,
+                description,
                 budget
             )
-            VALUES ($1, $2, $3, $4, $5)
+            VALUES ($1, $2, $3, $4, $5, $6, $7)
             RETURNING
                 id,
                 user_id,
                 destination,
                 start_date,
                 end_date,
+                travellers,
+                description,
                 budget
             `,
-            [userId, destination, startDate, endDate, budget]
+            [userId, destination, startDate, endDate, travellers, description, budget]
         );
 
         return result.rows[0];
@@ -130,6 +142,8 @@ class TripRepository {
         destination: string,
         startDate: string,
         endDate: string,
+        travellers: number,
+        description: string | null,
         budget: number
     ): Promise<Trip | null> {
 
@@ -140,21 +154,27 @@ class TripRepository {
                 destination = $1,
                 start_date = $2,
                 end_date = $3,
-                budget = $4
-            WHERE id = $5
-            AND user_id = $6
+                travellers = $4
+                description = $5
+                budget = $6
+            WHERE id = $7
+            AND user_id = $8
             RETURNING
                 id,
                 user_id,
                 destination,
                 start_date,
                 end_date,
+                travellers
+                description
                 budget
             `,
             [
                 destination,
                 startDate,
                 endDate,
+                travellers,
+                description,
                 budget,
                 tripId,
                 userId

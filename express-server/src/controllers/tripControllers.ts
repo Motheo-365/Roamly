@@ -217,6 +217,8 @@ class TripController {
                 destination,
                 startDate,
                 endDate,
+                travellers,
+                description,
                 budget
             } = req.body;
 
@@ -225,6 +227,8 @@ class TripController {
                 destination,
                 startDate,
                 endDate,
+                Number(travellers),
+                description,
                 Number(budget)
             );
 
@@ -273,6 +277,8 @@ class TripController {
                 destination,
                 startDate,
                 endDate,
+                travellers,
+                description,
                 budget
             } = req.body;
 
@@ -282,6 +288,8 @@ class TripController {
                 destination,
                 startDate,
                 endDate,
+                Number(travellers),
+                description,
                 Number(budget)
             );
 
