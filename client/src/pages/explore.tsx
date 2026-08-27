@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { searchLocations, type LocationResult } from "../services/locationServices";
-import type { NearbyPlaces } from "../components/ui/map";
+import { searchLocations, type LocationResult, type NearbyPlaces } from "../services/locationServices";
 
 import "../styles/explore.css";
 
@@ -93,7 +92,12 @@ function Explore({ onLocationSelect, nearbyPlaces }: ExploreProps) {
 
     const [savedPlaces, setSavedPlaces] = useState<string[]>([]);
     const [selectedPlace, setSelectedPlace] = useState<Place | null>(null);
+    
+    const [currentPage, setCurrentPage] = useState(1);
+
     const getPlaceId = (place: Place) => `${place.lat}-${place.lon}`;
+
+    const placesPerPage = 6;
 
     const allNearbyPlaces: Place[] = [
         ...nearbyPlaces.attraction.map( (place) => ({
@@ -110,10 +114,23 @@ function Explore({ onLocationSelect, nearbyPlaces }: ExploreProps) {
         })),
     ]
 
-    const filteredPlaces
-        = selectedCategory === "all" ? allNearbyPlaces : allNearbyPlaces.filter(
+    const filteredPlaces =
+        selectedCategory === "all"
+            ? allNearbyPlaces
+            : allNearbyPlaces.filter(
                 (place) => place.type === selectedCategory
             );
+
+    const totalPages = Math.ceil(
+        filteredPlaces.length / placesPerPage
+    );
+
+    const startIndex = (currentPage - 1) * placesPerPage;
+
+    const currentPlaces = filteredPlaces.slice(
+        startIndex,
+        startIndex + placesPerPage
+    );
     /*
      * Focus map on a place
      */
@@ -279,8 +296,11 @@ function Explore({ onLocationSelect, nearbyPlaces }: ExploreProps) {
                                     ? "active"
                                     : ""
                             }
-                            onClick={() =>
-                                setSelectedCategory("all")
+                            onClick={() => 
+                                {
+                                    setSelectedCategory("all");
+                                    setCurrentPage(1);
+                                }
                             }
                         >
                             All
@@ -293,7 +313,10 @@ function Explore({ onLocationSelect, nearbyPlaces }: ExploreProps) {
                                     : ""
                             }
                             onClick={() =>
-                                setSelectedCategory("attraction")
+                                {   
+                                    setSelectedCategory("attraction");
+                                    setCurrentPage(1);
+                                }
                             }
                         >
                             Attractions
@@ -306,7 +329,10 @@ function Explore({ onLocationSelect, nearbyPlaces }: ExploreProps) {
                                     : ""
                             }
                             onClick={() =>
-                                setSelectedCategory("restaurant")
+                                {
+                                    setSelectedCategory("restaurant");
+                                    setCurrentPage(1);
+                                }
                             }
                         >
                             Restaurants
@@ -319,7 +345,10 @@ function Explore({ onLocationSelect, nearbyPlaces }: ExploreProps) {
                                     : ""
                             }
                             onClick={() =>
-                                setSelectedCategory("hotel")
+                                {
+                                    setSelectedCategory("hotel");
+                                    setCurrentPage(1);
+                                }
                             }
                         >
                             Hotels
@@ -339,7 +368,7 @@ function Explore({ onLocationSelect, nearbyPlaces }: ExploreProps) {
                             </div>
                         )}
 
-                        {filteredPlaces.map((place, index) => {
+                        {currentPlaces.map((place, index) => {
                             const isSaved = savedPlaces.includes(getPlaceId(place));
                             const isSelected = selectedPlace ? getPlaceId(selectedPlace) === getPlaceId(place) : false;
                             const key = `${place.lat}-${place.lon}-${index}`
@@ -408,7 +437,51 @@ function Explore({ onLocationSelect, nearbyPlaces }: ExploreProps) {
                                     </div>
                                 </article>
                             );
-                        })}
+                        })} 
+                        {
+                            totalPages > 1 && (
+                                <div className="pagination">
+                                        <button
+                                            type="button"
+                                            className="pagination-button"
+                                            disabled={currentPage === 1}
+                                            onClick={() => setCurrentPage((page) => page - 1)}
+                                        >
+                                            ←
+                                        </button>
+
+                                        <div className="pagination-pages">
+                                            {Array.from(
+                                                { length: totalPages },
+                                                (_, index) => index + 1
+                                            ).map((page) => (
+                                                <button
+                                                    key={page}
+                                                    type="button"
+                                                    className={`pagination-page ${
+                                                        currentPage === page
+                                                            ? "active"
+                                                            : ""
+                                                    }`}
+                                                    onClick={() => setCurrentPage(page)}
+                                                >
+                                                    {page}
+                                                </button>
+                                            ))}
+                                        </div>
+
+                                        <button
+                                            type="button"
+                                            className="pagination-button"
+                                            disabled={currentPage === totalPages}
+                                            onClick={() =>
+                                                setCurrentPage((page) => page + 1)
+                                            }
+                                        >
+                                            →
+                                        </button>
+                                </div>
+                            )}
                     </div>
                 </aside>
 

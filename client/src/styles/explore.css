@@ -532,6 +532,61 @@
     font-size: 0.8125rem;
 }
 
+
+/* ================================
+   PAGINATION
+================================ */
+
+.pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 1.25rem 0 0.5rem;
+    margin-top: 0.5rem;
+    border-top: 1px solid #eeeeeb;
+}
+
+.pagination-pages {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.pagination-button,
+.pagination-page {
+    width: 2rem;
+    height: 2rem;
+    border: 1px solid #eeeeeb;
+    border-radius: 0.45rem;
+    background: #ffffff;
+    color: #4e575e;
+    font-size: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition:
+        background 0.2s ease,
+        color 0.2s ease,
+        border-color 0.2s ease;
+}
+
+.pagination-button:hover:not(:disabled),
+.pagination-page:hover {
+    background: #f8f6f2;
+    border-color: #d0d4d6;
+}
+
+.pagination-page.active {
+    background: #d46b3c;
+    color: #ffffff;
+    border-color: #d46b3c;
+}
+
+.pagination-button:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+}
+
 /* ================================
    RESPONSIVE MEDIA QUERIES
 ================================ */
