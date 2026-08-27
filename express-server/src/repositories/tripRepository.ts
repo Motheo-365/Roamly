@@ -154,8 +154,8 @@ class TripRepository {
                 destination = $1,
                 start_date = $2,
                 end_date = $3,
-                travellers = $4
-                description = $5
+                travellers = $4,
+                description = $5,
                 budget = $6
             WHERE id = $7
             AND user_id = $8
@@ -165,8 +165,8 @@ class TripRepository {
                 destination,
                 start_date,
                 end_date,
-                travellers
-                description
+                travellers,
+                description,
                 budget
             `,
             [
