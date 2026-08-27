@@ -226,6 +226,7 @@
 
 .trip-card:hover .trip-card-image img {
   transform: scale(1.05);
+  cursor:pointer;
 }
 
 /* =========================
@@ -282,7 +283,7 @@
   letter-spacing: 0.12em;
 }
 
-.trip-menu {
+.delete-trip {
   display: grid;
 
   width: 2rem;
@@ -306,8 +307,121 @@
   transition: background 0.2s ease;
 }
 
-.trip-menu:hover {
+.delete-trip:hover {
   background: rgba(0, 0, 0, 0.4);
+}
+
+.delete-modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 2000;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 1.5rem;
+
+    background: rgba(24, 35, 45, 0.45);
+    backdrop-filter: blur(6px);
+}
+
+.delete-modal {
+    width: 100%;
+    max-width: 480px;
+
+    padding: 2.5rem;
+
+    border: 1px solid #e4dfd8;
+    border-radius: 1.2rem;
+
+    background: #ffffff;
+
+    box-shadow:
+        0 2rem 5rem rgba(24, 35, 45, 0.18);
+}
+
+.delete-modal-eyebrow {
+    display: block;
+    margin-bottom: 0.7rem;
+
+    color: #d46b3c;
+
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+}
+
+.delete-modal h2 {
+    margin: 0;
+
+    color: #18232d;
+
+    font-family: "Playfair Display", serif;
+    font-size: 2rem;
+    font-weight: 500;
+    line-height: 1.1;
+}
+
+.delete-modal p {
+    margin: 1rem 0 0;
+
+    color: #737b80;
+
+    font-size: 0.95rem;
+    line-height: 1.7;
+}
+
+.delete-modal p strong {
+    color: #18232d;
+    font-weight: 600;
+}
+
+.delete-modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+
+    margin-top: 2rem;
+}
+
+.delete-cancel-button,
+.delete-confirm-button {
+    height: 2.7rem;
+    padding: 0 1.2rem;
+
+    border-radius: 0.65rem;
+
+    font-family: inherit;
+    font-size: 0.8rem;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        transform 0.2s ease;
+}
+
+.delete-cancel-button {
+    border: 1px solid #ded8d0;
+    background: #f7f4ef;
+    color: #18232d;
+}
+
+.delete-cancel-button:hover {
+    background: #ece7df;
+}
+
+.delete-confirm-button {
+    border: 1px solid #c65b32;
+    background: #d46b3c;
+    color: white;
+}
+
+.delete-confirm-button:hover {
+    background: #bd5931;
+    transform: translateY(-1px);
 }
 
 /* =========================

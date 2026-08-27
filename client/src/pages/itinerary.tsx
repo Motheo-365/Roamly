@@ -141,9 +141,7 @@ function Itinerary() {
   const [days, setDays] = useState<Day[]>(itineraryDays);
   const [selectedDay, setSelectedDay] = useState(1);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [activityToDelete, setActivityToDelete] = useState<Activity | null>(
-    null,
-  );
+  const [activityToDelete, setActivityToDelete] = useState<Activity | null>(null);
 
   const currentDay = itineraryDays.find((day) => day.id === selectedDay);
 

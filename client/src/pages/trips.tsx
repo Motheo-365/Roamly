@@ -53,9 +53,10 @@ const sampleTrips: Trip[] = [
 function Trips() {
   const navigate = useNavigate();
 
-  const [trips] = useState<Trip[]>(sampleTrips);
+  const [trips, setTrips] = useState<Trip[]>(sampleTrips);
   const [view, setView] = useState<"upcoming" | "past">("upcoming");
   const [isCreateTripOpen, setIsCreateTripOpen] = useState(false);
+  const [tripToDelete, setTripToDelete] = useState<Trip | null>(null);
 
   const today = new Date();
 
@@ -86,15 +87,23 @@ function Trips() {
     return Math.ceil(difference / (1000 * 60 * 60 * 24));
   };
 
+  const deleteTrip = () => {
+    if (!tripToDelete) return;
+
+    setTrips((currentTrips) =>
+      currentTrips.filter((trip) => trip.id !== tripToDelete.id)
+    );
+
+    setTripToDelete(null);
+  };
+
   return (
     <main className="trips-page">
       <section className="trips-container">
         <div className="trips-header">
           <div>
             <span className="trips-eyebrow">YOUR ADVENTURES</span>
-
             <h1>My trips</h1>
-
             <p>
               Keep track of where you're going and everything you're planning.
             </p>
@@ -102,14 +111,14 @@ function Trips() {
 
           <button
             className="new-trip-button"
-            onClick={() => setIsCreateTripOpen(true)}
           >
-            <span>+</span>
-            New trip
+            + New trip
           </button>
         </div>
 
-        <div className="trip-tabs">
+        <div
+          className="trip-tabs"
+        >
           <button
             className={view === "upcoming" ? "active" : ""}
             onClick={() => setView("upcoming")}
@@ -136,6 +145,7 @@ function Trips() {
                     <img
                       src={trip.image}
                       alt={`${trip.destination}, ${trip.country}`}
+                      onClick={() => navigate(`/trips/${trip.id}`)}
                     />
                   )}
 
@@ -146,12 +156,18 @@ function Trips() {
                       {view === "upcoming" ? "UPCOMING" : "COMPLETED"}
                     </span>
 
-                    <button className="trip-menu">⋯</button>
+                    <button
+                      type="button"
+                      className="delete-trip"
+                      onClick={() => setTripToDelete(trip)}
+                      aria-label={`Delete to ${trip.country}`}
+                    >
+                        &#128465;
+                    </button>
                   </div>
 
                   <div className="trip-destination">
                     <h2>{trip.destination}</h2>
-
                     <span>{trip.country}</span>
                   </div>
                 </div>
@@ -242,6 +258,46 @@ function Trips() {
           </div>
         )}
       </section>
+      {tripToDelete && (
+        <div
+          className="delete-modal-overlay"
+          onMouseDown={(event) => {
+            if (event.target === event.currentTarget) {
+              setTripToDelete(null);
+            }
+          }}
+        >
+          <div className="delete-modal">
+            <span className="delete-modal-eyebrow">REMOVE TRIP</span>
+
+            <h2>Delete this trip?</h2>
+
+            <p>
+              Are you sure you want to delete this trip to{" "}
+              <strong>{tripToDelete.destination}</strong>? This action cannot
+              be undone.
+            </p>
+
+            <div className="delete-modal-actions">
+              <button
+                type="button"
+                className="delete-cancel-button"
+                onClick={() => setTripToDelete(null)}
+              >
+                Cancel
+              </button>
+
+              <button
+                type="button"
+                className="delete-confirm-button"
+                onClick={deleteTrip}
+              >
+                Delete trip
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </main>
   );
 }
