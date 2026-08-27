@@ -59,35 +59,66 @@ const nearbyQueries: Record<NearbyLocationType, string> = {
     restaurant: "amenity=restaurant",
 };
 
+interface OverpassElement {
+    type: "node" | "way" | "relation";
+    id: number;
+    lat?: number;
+    lon?: number;
+    center?: {
+        lat: number;
+        lon: number;
+    };
+    tags?: {
+        name?: string;
+        [key: string]: string | undefined;
+    };
+}
+
+interface OverpassResponse {
+    elements: OverpassElement[];
+}
+
 export async function findNearbyLocations(
     latitude: number,
     longitude: number,
     type: NearbyLocationType
 ): Promise<LocationResult[]> {
-    const offset = 0.15;
-    const url = new URL("https://nominatim.openstreetmap.org/search");
-
-    url.searchParams.set("format", "json");
-    url.searchParams.set("q", nearbyQueries[type]);
-    url.searchParams.set(
-        "viewbox",
-        `${longitude - offset},${latitude + offset},${longitude + offset},${latitude - offset}`
-    );
-    url.searchParams.set("bounded", "1");
-    url.searchParams.set("limit", "20");
-    url.searchParams.set("addressdetails", "1");
-    url.searchParams.set("accept-language", "en");
-
-    const response = await fetch(url, {
+    const [tagKey, tagValue] = nearbyQueries[type].split("=");
+    const query = `
+        [out:json][timeout:25];
+        nwr["${tagKey}"="${tagValue}"](around:15000,${latitude},${longitude});
+        out center tags;
+    `;
+    const response = await fetch("https://overpass-api.de/api/interpreter", {
+        method: "POST",
+        body: new URLSearchParams({ data: query }),
         headers: {
-            "User-Agent": "Roamly Travel App",
+            "Content-Type": "application/x-www-form-urlencoded",
             "Accept": "application/json",
+            "User-Agent": "Roamly Travel App/1.0 (location search)",
         },
     });
 
     if (!response.ok) {
-        throw new Error(`Nominatim request failed: ${response.status}`);
+        throw new Error(`Overpass request failed: ${response.status}`);
     }
 
-    return response.json();
+    const result = await response.json() as OverpassResponse;
+
+    return result.elements
+        .filter((element) => element.tags?.name)
+        .map((element) => {
+            const coordinates = element.center ?? {
+                lat: element.lat,
+                lon: element.lon,
+            };
+
+            return {
+                lat: String(coordinates.lat),
+                lon: String(coordinates.lon),
+                display_name: element.tags?.name ?? "Unnamed place",
+            };
+        })
+        .filter((place) => place.lat !== "undefined" && place.lon !== "undefined")
+        .slice(0, 20);
 }
