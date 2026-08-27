@@ -48,10 +48,12 @@ export async function searchLocations(
     return response.json();
 }
 
+
 export type NearbyLocationType =
     | "attraction"
     | "hotel"
     | "restaurant";
+
 
 export interface NearbyPlaces {
     attraction: LocationResult[];
@@ -59,92 +61,169 @@ export interface NearbyPlaces {
     restaurant: LocationResult[];
 }
 
-interface OverpassElement {
-    type: "node" | "way" | "relation";
-    id: number;
 
-    lat?: number;
-    lon?: number;
-
-    center?: {
-        lat: number;
-        lon: number;
+interface GooglePlace {
+    displayName?: {
+        text?: string;
     };
 
-    tags?: {
-        name?: string;
-        tourism?: string;
-        amenity?: string;
-        [key: string]: string | undefined;
+    location?: {
+        latitude?: number;
+        longitude?: number;
     };
 }
 
-interface OverpassResponse {
-    elements: OverpassElement[];
+
+interface GooglePlacesResponse {
+    places?: GooglePlace[];
 }
 
-const endpoints = [
-    "https://overpass-api.de/api/interpreter",
-];
+
+const googlePlaceTypes: Record<
+    NearbyLocationType,
+    string
+> = {
+    attraction: "tourist_attraction",
+    hotel: "hotel",
+    restaurant: "restaurant",
+};
+
+
+async function searchGooglePlaces(
+    latitude: number,
+    longitude: number,
+    type: NearbyLocationType
+): Promise<LocationResult[]> {
+
+    const apiKey =
+        process.env.GOOGLE_PLACES_API_KEY;
+
+    if (!apiKey) {
+        throw new Error(
+            "GOOGLE_PLACES_API_KEY is not configured."
+        );
+    }
+
+    const response = await fetch(
+        "https://places.googleapis.com/v1/places:searchNearby",
+        {
+            method: "POST",
+
+            headers: {
+                "Content-Type": "application/json",
+                "X-Goog-Api-Key": apiKey,
+                "X-Goog-FieldMask":
+                    "places.displayName,places.location",
+            },
+
+            body: JSON.stringify({
+                includedTypes: [
+                    googlePlaceTypes[type],
+                ],
+
+                maxResultCount: 20,
+
+                locationRestriction: {
+                    circle: {
+                        center: {
+                            latitude,
+                            longitude,
+                        },
+
+                        radius: 3000,
+                    },
+                },
+
+                rankPreference: "DISTANCE",
+            }),
+        }
+    );
+
+    console.log(
+        `Google Places ${type} status:`,
+        response.status
+    );
+
+    if (!response.ok) {
+
+        const errorText =
+            await response.text();
+
+        console.error(
+            `Google Places ${type} response:`,
+            errorText
+        );
+
+        throw new Error(
+            `Google Places request failed: ${response.status}`
+        );
+    }
+
+    const result =
+        await response.json() as GooglePlacesResponse;
+
+    return (result.places ?? [])
+        .filter(
+            (place) =>
+                place.displayName?.text &&
+                place.location?.latitude !== undefined &&
+                place.location?.longitude !== undefined
+        )
+        .map((place) => ({
+            lat: String(
+                place.location!.latitude
+            ),
+
+            lon: String(
+                place.location!.longitude
+            ),
+
+            display_name:
+                place.displayName!.text!,
+        }));
+}
+
 
 export async function findNearbyLocations(
     latitude: number,
     longitude: number
 ): Promise<NearbyPlaces> {
 
-    const query = `
-        [out:json][timeout:10];
+    console.log(
+        `Google nearby request @ ${latitude}, ${longitude}`
+    );
 
-        node["amenity"="restaurant"](
-            around:1000,
-            ${latitude},
-            ${longitude}
-        );
+    const [
+        attractions,
+        hotels,
+        restaurants,
+    ] = await Promise.all([
+        searchGooglePlaces(
+            latitude,
+            longitude,
+            "attraction"
+        ),
 
-        out tags;
-    `;
+        searchGooglePlaces(
+            latitude,
+            longitude,
+            "hotel"
+        ),
 
-    console.log("Testing Overpass...");
-    console.log("Query:", query);
+        searchGooglePlaces(
+            latitude,
+            longitude,
+            "restaurant"
+        ),
+    ]);
 
-    try {
-        const response = await fetch(endpoints[0], {
-            method: "POST",
-            body: `data=${encodeURIComponent(query)}`,
-            headers: {
-                "Content-Type":
-                    "application/x-www-form-urlencoded",
-                "Accept": "application/json",
-                "User-Agent":
-                    "Roamly Travel App/1.0",
-            },
-            signal: AbortSignal.timeout(15000),
-        });
+    console.log(
+        `Nearby results: attractions=${attractions.length}, hotels=${hotels.length}, restaurants=${restaurants.length}`
+    );
 
-        console.log(
-            "Overpass test status:",
-            response.status
-        );
-
-        const text = await response.text();
-
-        console.log(
-            "Overpass test response:",
-            text.slice(0, 1000)
-        );
-
-        return {
-            attraction: [],
-            hotel: [],
-            restaurant: [],
-        };
-
-    } catch (error) {
-        console.error(
-            "OVERPASS TEST FAILED:",
-            error
-        );
-
-        throw error;
-    }
+    return {
+        attraction: attractions,
+        hotel: hotels,
+        restaurant: restaurants,
+    };
 }
