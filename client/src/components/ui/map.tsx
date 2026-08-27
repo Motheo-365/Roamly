@@ -12,6 +12,10 @@ import { getRoute } from "../../services/routeServices";
 import "leaflet/dist/leaflet.css";
 import "../../styles/map.css";
 
+interface MapProps {
+    selectedLocation: LocationResult | null;
+}
+
 interface SavedItem {
     id: string;
     type: "route";
@@ -33,7 +37,7 @@ const nearbyLabels: Record<NearbyLocationType, string> = {
     restaurant: "Restaurants",
 };
 
-function Map() {
+function Map({ selectedLocation }: MapProps) {
     const mapContainerRef = useRef<HTMLDivElement | null>(null);
     const mapRef = useRef<L.Map | null>(null);
     const markerRef = useRef<L.Marker | null>(null);
@@ -210,6 +214,14 @@ function Map() {
             .bindPopup(location.display_name)
             .openPopup();
     };
+
+    useEffect(() => {
+        if (!selectedLocation || !mapRef.current) {
+            return;
+        }
+
+        handleLocationSelect(selectedLocation);
+    }, [selectedLocation]);
 
     const handleFromSelect = (location: LocationResult) => {
         setFromLocation(location);

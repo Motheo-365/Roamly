@@ -1,4 +1,6 @@
 import { motion } from "framer-motion";
+import { useState } from "react";
+
 import Navigation from "../components/ui/navigation";
 import Map from "../components/ui/map";
 import Carousel from "../components/ui/carousel";
@@ -6,9 +8,13 @@ import Explore from "./explore";
 import CreateTrip from "./createTrip";
 import Budget from "./budget";
 
+import type { LocationResult } from "../services/locationServices"
+
 import "../styles/home.css"
 
 function Dashboard() {
+    const [selectedLocation, setSelectedLocation] = useState<LocationResult | null>(null);
+
     return (
         <div className="home-page">
             <Navigation />
@@ -38,7 +44,7 @@ function Dashboard() {
                     viewport={{ once: true, amount: 0.08 }}
                     transition={{ duration: 0.7, ease: "easeOut" }}
                 >
-                    <Explore />
+                    <Explore onLocationSelect={setSelectedLocation}/>
                 </motion.section>
 
                 <motion.section
@@ -65,7 +71,7 @@ function Dashboard() {
             </div>
 
             <aside className="home-map">
-                <Map />
+                <Map selectedLocation={selectedLocation}/>
             </aside>
 
     </div>

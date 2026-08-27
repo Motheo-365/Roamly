@@ -1,7 +1,14 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
+import { searchLocations, type LocationResult } from "../services/locationServices";
+
 import "../styles/explore.css";
 
 type PlaceType = "attraction" | "restaurant" | "hotel";
+
+interface ExploreProps {
+    onLocationSelect: (location: LocationResult) => void;
+}
+
 
 interface Place {
     id: number;
@@ -70,12 +77,82 @@ const places: Place[] = [
     },
 ];
 
-function Explore() {
-    const [selectedCategory, setSelectedCategory] = useState<
-        "all" | PlaceType
-    >("all");
+function Explore({onLocationSelect}: ExploreProps) {
+    const [selectedCategory, setSelectedCategory] = useState< "all" | PlaceType>("all");
 
     const [search, setSearch] = useState("");
+    const [searchResults, setSearchResults] = useState<LocationResult[]>([]);
+    const [loadingSearch, setLoadingSearch] = useState(false);
+    const [showSearchResults, setShowSearchResults] = useState(false);
+
+    const selectingLocation = useRef(false);
+
+    useEffect(() => {
+        if (selectingLocation.current) {
+            selectingLocation.current = false;
+            return;
+        }
+
+        if (search.trim().length < 2) return;
+
+        const controller = new AbortController();
+
+        const searchLocation = async () => {
+            try {
+                setLoadingSearch(true);
+
+                const results = await searchLocations(
+                    search,
+                    controller.signal
+                );
+
+                setSearchResults(results);
+                setShowSearchResults(true);
+            } catch (error) {
+                if (
+                    error instanceof DOMException &&
+                    error.name === "AbortError"
+                ) {
+                    return;
+                }
+
+                console.error("Location search failed:", error);
+                setSearchResults([]);
+                setShowSearchResults(false);
+            } finally {
+                setLoadingSearch(false);
+            }
+        };
+
+        const timeout = setTimeout(searchLocation, 400);
+
+        return () => {
+            clearTimeout(timeout);
+            controller.abort();
+        };
+    }, [search]);
+
+    // Add a function to select a location
+    const handleLocationSelect = (location: LocationResult) => {
+        selectingLocation.current = true;
+
+        setSearch(location.display_name);
+        setSearchResults([]);
+        setShowSearchResults(false);
+
+        onLocationSelect(location);
+    };
+
+
+    // For search button
+    const handleSearchSubmit = ( event: React.FormEvent<HTMLFormElement> ) => {
+        event.preventDefault();
+
+        if (searchResults.length > 0) {
+            handleLocationSelect(searchResults[0]);
+        }
+    };
+
     const [savedPlaces, setSavedPlaces] = useState<number[]>([]);
     const [selectedPlace, setSelectedPlace] = useState<Place | null>(null);
 
@@ -145,25 +222,66 @@ function Explore() {
 
                 <div className="search-wrapper">
                     {/* Search */}
-                    <div className="explore-search">
+                    <form className="explore-search" onSubmit={handleSearchSubmit} >
                         <input
                             type="text"
                             placeholder="Search a city, area or destination..."
                             value={search}
-                            onChange={(event) =>
-                                setSearch(event.target.value)
-                            }
+                            onChange={(event) => {
+                                const value = event.target.value;
+                                setSearch(value);
+
+                                if (value.trim().length < 2) {
+                                    setSearchResults([]);
+                                    setShowSearchResults(false);
+                                }
+                            }}
+                            onFocus={() => {
+                                if (searchResults.length > 0) {
+                                    setShowSearchResults(true);
+                                }
+                            }}
                         />
+
+                        {loadingSearch && (
+                            <span className="explore-search-loading">
+                                Searching...
+                            </span>
+                        )}
 
                         {search && (
                             <button
+                                type="button"
                                 className="clear-search"
-                                onClick={() => setSearch("")}
+                                onClick={() => {
+                                    setSearch("");
+                                    setSearchResults([]);
+                                    setShowSearchResults(false);
+                                }}
                             >
                                 ×
                             </button>
                         )}
-                    </div>
+
+                        {showSearchResults && searchResults.length > 0 && (
+                            <div className="explore-search-results">
+                                {searchResults.map((location, index) => (
+                                    <button
+                                        type="button"
+                                        key={`${location.lat}-${location.lon}-${index}`}
+                                        className="explore-search-result"
+                                        onClick={() =>
+                                            handleLocationSelect(location)
+                                        }
+                                    >
+                                        <span>
+                                            {location.display_name}
+                                        </span>
+                                    </button>
+                                ))}
+                            </div>
+                        )}
+                    </form>
 
                     {/* Popular destinations */}
                     <div className="popular-destinations">
