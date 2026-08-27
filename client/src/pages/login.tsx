@@ -1,90 +1,104 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
-
 import Button from "../components/ui/button";
 import Input from "../components/ui/input";
+import { loginUser } from "../services/apiService";
 
-// Styling
-import '../styles/login.css'
+import "../styles/login.css";
 
 function Login() {
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const navigate = useNavigate();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
-    const handleSubmit = (event: React.FormEvent) => {
-        event.preventDefault();
+  const navigate = useNavigate();
 
-        console.log({
-            email,
-            password,
-        });
+  const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
 
-        navigate("/");
-    };
+    setError("");
+    setLoading(true);
 
-    return (
-        <div className="login-container">
-            <div className="login-header">
-                <span className="eyebrow">
-                    WELCOME BACK
-                </span>
+    try {
+      const response = await loginUser(email, password);
 
-                <h1>Welcome back.</h1>
+      const token = response.data.token;
 
-                <p>
-                    Pick up where you left off and
-                    continue planning your next adventure.
-                </p>
+      if (!token) {
+        throw new Error("Login succeeded but no token was returned.");
+      }
 
-            </div>
+      localStorage.setItem("roamly_token", token);
+      localStorage.setItem(
+        "roamly_user",
+        JSON.stringify({
+          id: response.data.id,
+          email: response.data.email,
+        }),
+      );
 
-            <form onSubmit={handleSubmit}>
-                <Input
-                    label="Email"
-                    type="email"
-                    placeholder="you@example.com"
-                    value={email}
-                    onChange={setEmail}
-                />
+      navigate("/");
+    } catch (error) {
+      setError(error instanceof Error ? error.message : "Login failed.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-                <Input
-                    label="Password"
-                    type="password"
-                    placeholder="Enter your password"
-                    value={password}
-                    onChange={setPassword}
-                />
+  return (
+    <div className="login-container">
+      <div className="login-header">
+        <span className="eyebrow">WELCOME BACK</span>
 
-                <div className="form-options">
-                    <label className="remember">
-                        <input type="checkbox" />
-                        <span>Remember me</span>
-                    </label>
+        <h1>Welcome back.</h1>
 
-                    <Link to="#">
-                        Forgot password?
-                    </Link>
-                </div>
+        <p>
+          Pick up where you left off and continue planning your next adventure.
+        </p>
+      </div>
 
-                <Button type="submit">
-                    Log in
-                </Button>
-            </form>
+      <form onSubmit={handleSubmit}>
+        <Input
+          label="Email"
+          type="email"
+          placeholder="you@example.com"
+          value={email}
+          onChange={setEmail}
+        />
 
-            <div className="divider">
-                <span>or</span>
-            </div>
+        <Input
+          label="Password"
+          type="password"
+          placeholder="Enter your password"
+          value={password}
+          onChange={setPassword}
+        />
 
-            <p className="signup-text">
-                Don't have an account?{" "}
-                <Link to="/signup">
-                    Create one
-                </Link>
-            </p>
+        {error && <p className="form-error">{error}</p>}
+
+        <div className="form-options">
+          <label className="remember">
+            <input type="checkbox" />
+            <span>Remember me</span>
+          </label>
+
+          <Link to="#">Forgot password?</Link>
         </div>
-    );
+
+        <Button type="submit">{loading ? "Logging in..." : "Log in"}</Button>
+      </form>
+
+      <div className="divider">
+        <span>or</span>
+      </div>
+
+      <p className="signup-text">
+        Don't have an account? <Link to="/signup">Create one</Link>
+      </p>
+    </div>
+  );
 }
 
 export default Login;

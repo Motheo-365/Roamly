@@ -1,4 +1,4 @@
-import { apiRequest } from "./api";
+import { apiRequest } from "./apiService";
 
 export interface LocationResult {
     lat: string;

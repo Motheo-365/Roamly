@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { createTrip } from "../../services/apiService";
 import "../../styles/createTrips.css";
 
 interface CreateTripProps {
@@ -12,22 +13,37 @@ function CreateTrip({ onClose }: CreateTripProps) {
     const [travellers, setTravellers] = useState(1);
     const [description, setDescription] = useState("");
 
-    const handleSubmit = (
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState("");
+
+    const handleSubmit = async (
         event: React.FormEvent<HTMLFormElement>
     ) => {
         event.preventDefault();
 
-        const trip = {
-            destination,
-            startDate,
-            endDate,
-            travellers,
-            description,
-        };
+        setError("");
+        setLoading(true);
 
-        console.log("New trip:", trip);
+        try {
+            await createTrip(
+                destination,
+                startDate,
+                endDate,
+                travellers,
+                description,
+                0
+            );
 
-        onClose();
+            onClose();
+        } catch (error) {
+            setError(
+                error instanceof Error
+                    ? error.message
+                    : "Failed to create trip."
+            );
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
@@ -42,6 +58,7 @@ function CreateTrip({ onClose }: CreateTripProps) {
                     className="close-trip-modal"
                     onClick={onClose}
                     aria-label="Close"
+                    disabled={loading}
                 >
                     ×
                 </button>
@@ -51,6 +68,12 @@ function CreateTrip({ onClose }: CreateTripProps) {
                 className="create-trip-form"
                 onSubmit={handleSubmit}
             >
+                {error && (
+                    <div className="trip-form-error">
+                        {error}
+                    </div>
+                )}
+
                 <div className="form-group">
                     <label htmlFor="destination">
                         Destination
@@ -66,6 +89,7 @@ function CreateTrip({ onClose }: CreateTripProps) {
                                 setDestination(event.target.value)
                             }
                             required
+                            disabled={loading}
                         />
                     </div>
                 </div>
@@ -84,6 +108,7 @@ function CreateTrip({ onClose }: CreateTripProps) {
                                 setStartDate(event.target.value)
                             }
                             required
+                            disabled={loading}
                         />
                     </div>
 
@@ -101,6 +126,7 @@ function CreateTrip({ onClose }: CreateTripProps) {
                                 setEndDate(event.target.value)
                             }
                             required
+                            disabled={loading}
                         />
                     </div>
                 </div>
@@ -121,6 +147,7 @@ function CreateTrip({ onClose }: CreateTripProps) {
                                     )
                                 )
                             }
+                            disabled={loading}
                         >
                             −
                         </button>
@@ -139,6 +166,7 @@ function CreateTrip({ onClose }: CreateTripProps) {
                                     travellers + 1
                                 )
                             }
+                            disabled={loading}
                         >
                             +
                         </button>
@@ -162,15 +190,18 @@ function CreateTrip({ onClose }: CreateTripProps) {
                             setDescription(event.target.value)
                         }
                         rows={4}
+                        disabled={loading}
                     />
                 </div>
 
                 <button
                     className="create-trip-button"
                     type="submit"
+                    disabled={loading}
                 >
-                    Create trip
-                    <span>→</span>
+                    {loading ? "Creating..." : "Create trip"}
+
+                    {!loading && <span>→</span>}
                 </button>
             </form>
         </div>

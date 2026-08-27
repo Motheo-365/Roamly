@@ -538,6 +538,44 @@ ERRORS
     font-size: 0.7rem;
 }
 
+.password-requirements {
+    margin-top: -0.5rem;
+    margin-bottom: 1.2rem;
+    font-size: 0.82rem;
+}
+
+.password-requirements p {
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+}
+
+.requirement {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.3rem;
+    color: #777;
+}
+
+.requirement span {
+    width: 16px;
+    font-size: 0.8rem;
+}
+
+.requirement.valid {
+    color: #3d7a50;
+}
+
+.requirement.valid span {
+    font-weight: 700;
+}
+
+.form-error {
+    margin: 0 0 1rem;
+    color: #b44a4a;
+    font-size: 0.85rem;
+}
+
 /* =========================
 TABLET
 ========================= */

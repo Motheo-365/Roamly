@@ -4,7 +4,7 @@ export interface RouteResult {
     geometry: [number, number][];
 }
 
-import { apiRequest } from "./api";
+import { apiRequest } from "./apiService";
 
 interface RouteResponse {
     data: RouteResult;

@@ -1,7 +1,13 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import CreateTrip from "../components/ui/createTrip";
+import {
+  getTrips,
+  getDestinationImage,
+  deleteTrip as deleteTripApi,
+  type Trip as ApiTrip,
+} from "../services/apiService";
 
 import "../styles/trips.css";
 
@@ -13,64 +19,132 @@ interface Trip {
   endDate: string;
   travellers: number;
   description: string;
+  budget: number;
   image?: string;
-  photoAttribute?: string;
 }
-
-const sampleTrips: Trip[] = [
-  {
-    id: 1,
-    destination: "Tokyo",
-    country: "Japan",
-    startDate: "2026-09-12",
-    endDate: "2026-09-20",
-    travellers: 2,
-    description: "Explore Shibuya, visit Tokyo Tower and discover the city.",
-    image: "https://images.unsplash.com/photo-1540959733332-eab4deabeeaf",
-  },
-  {
-    id: 2,
-    destination: "Paris",
-    country: "France",
-    startDate: "2026-10-04",
-    endDate: "2026-10-11",
-    travellers: 1,
-    description: "A week of museums, cafés and exploring the streets of Paris.",
-    image: "https://images.unsplash.com/photo-1502602898657-3e91760cbb34",
-  },
-  {
-    id: 3,
-    destination: "Cape Town",
-    country: "South Africa",
-    startDate: "2026-11-14",
-    endDate: "2026-11-18",
-    travellers: 3,
-    description: "Weekend getaway with hikes, beaches and good food.",
-    image: "https://images.unsplash.com/photo-1580060839134-75a5edca2e99",
-  },
-];
 
 function Trips() {
   const navigate = useNavigate();
 
-  const [trips, setTrips] = useState<Trip[]>(sampleTrips);
+  const [trips, setTrips] = useState<Trip[]>([]);
   const [view, setView] = useState<"upcoming" | "past">("upcoming");
+
   const [isCreateTripOpen, setIsCreateTripOpen] = useState(false);
+
   const [tripToDelete, setTripToDelete] = useState<Trip | null>(null);
 
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [deleting, setDeleting] = useState(false);
+
+  // =========================
+  // FETCH TRIPS
+  // =========================
+
+  const fetchTrips = async () => {
+      try {
+          setLoading(true);
+          setError("");
+
+          const response = await getTrips();
+
+          const formattedTrips: Trip[] = await Promise.all(
+              response.data.map(async (trip: ApiTrip) => {
+                  const destination =
+                      trip.destination ?? "Unknown destination";
+
+                  const parts = destination
+                      .split(",")
+                      .map((part) => part.trim());
+
+                  let image = "";
+
+                  try {
+                      const imageResponse =
+                          await getDestinationImage(destination);
+
+                      image = imageResponse.data.url;
+                  } catch (imageError) {
+                      console.warn(
+                          `Could not load image for ${destination}:`,
+                          imageError
+                      );
+                  }
+
+                  return {
+                      id: trip.id,
+                      destination: parts[0] || destination,
+                      country: parts[1] || "",
+                      startDate: trip.start_date ?? "",
+                      endDate: trip.end_date ?? "",
+                      travellers: trip.travellers ?? 1,
+                      description: trip.description ?? "",
+                      budget: trip.budget ?? 0,
+                      image,
+                  };
+              })
+          );
+
+          setTrips(formattedTrips);
+      } catch (error) {
+          console.error("Error fetching trips:", error);
+
+          setError(
+              error instanceof Error
+                  ? error.message
+                  : "Failed to load trips."
+          );
+      } finally {
+          setLoading(false);
+      }
+  };
+
+  useEffect(() => {
+    const timeoutId = window.setTimeout(() => {
+      void fetchTrips();
+    }, 0);
+
+    return () => window.clearTimeout(timeoutId);
+  }, []);
+
+  // =========================
+  // FILTER TRIPS
+  // =========================
+
   const today = new Date();
+  today.setHours(0, 0, 0, 0);
 
   const upcomingTrips = useMemo(() => {
-    return trips.filter((trip) => new Date(trip.endDate) >= today);
+    return trips.filter((trip) => {
+      if (!trip.endDate) return true;
+
+      const endDate = new Date(trip.endDate);
+      endDate.setHours(0, 0, 0, 0);
+
+      return endDate >= today;
+    });
   }, [trips]);
 
   const pastTrips = useMemo(() => {
-    return trips.filter((trip) => new Date(trip.endDate) < today);
+    return trips.filter((trip) => {
+      if (!trip.endDate) return false;
+
+      const endDate = new Date(trip.endDate);
+      endDate.setHours(0, 0, 0, 0);
+
+      return endDate < today;
+    });
   }, [trips]);
 
   const displayedTrips = view === "upcoming" ? upcomingTrips : pastTrips;
 
+  // =========================
+  // FORMAT DATE
+  // =========================
+
   const formatDate = (date: string) => {
+    if (!date) return "Date not set";
+
     return new Date(date).toLocaleDateString("en-US", {
       day: "numeric",
       month: "short",
@@ -78,32 +152,65 @@ function Trips() {
     });
   };
 
+  // =========================
+  // TRIP DURATION
+  // =========================
+
   const getTripDuration = (startDate: string, endDate: string) => {
+    if (!startDate || !endDate) return 0;
+
     const start = new Date(startDate);
     const end = new Date(endDate);
 
     const difference = end.getTime() - start.getTime();
 
-    return Math.ceil(difference / (1000 * 60 * 60 * 24));
+    return Math.ceil(difference / (1000 * 60 * 60 * 24)) + 1;
   };
 
-  const deleteTrip = () => {
+  // =========================
+  // DELETE TRIP
+  // =========================
+
+  const handleDeleteTrip = async () => {
     if (!tripToDelete) return;
 
-    setTrips((currentTrips) =>
-      currentTrips.filter((trip) => trip.id !== tripToDelete.id)
-    );
+    try {
+      setDeleting(true);
+      setError("");
 
-    setTripToDelete(null);
+      await deleteTripApi(tripToDelete.id);
+
+      setTrips((currentTrips) =>
+        currentTrips.filter((trip) => trip.id !== tripToDelete.id),
+      );
+
+      setTripToDelete(null);
+    } catch (error) {
+      console.error("Error deleting trip:", error);
+
+      setError(
+        error instanceof Error ? error.message : "Failed to delete trip.",
+      );
+    } finally {
+      setDeleting(false);
+    }
   };
+
+  // =========================
+  // RENDER
+  // =========================
 
   return (
     <main className="trips-page">
       <section className="trips-container">
+        {/* HEADER */}
+
         <div className="trips-header">
           <div>
             <span className="trips-eyebrow">YOUR ADVENTURES</span>
+
             <h1>My trips</h1>
+
             <p>
               Keep track of where you're going and everything you're planning.
             </p>
@@ -111,14 +218,19 @@ function Trips() {
 
           <button
             className="new-trip-button"
+            onClick={() => setIsCreateTripOpen(true)}
           >
             + New trip
           </button>
         </div>
 
-        <div
-          className="trip-tabs"
-        >
+        {/* ERROR */}
+
+        {error && <div className="trips-error">{error}</div>}
+
+        {/* TABS */}
+
+        <div className="trip-tabs">
           <button
             className={view === "upcoming" ? "active" : ""}
             onClick={() => setView("upcoming")}
@@ -136,7 +248,19 @@ function Trips() {
           </button>
         </div>
 
-        {displayedTrips.length > 0 ? (
+        {/* LOADING */}
+
+        {loading ? (
+          <div className="empty-trips">
+            <div className="empty-icon">...</div>
+
+            <h2>Loading your trips</h2>
+
+            <p>We're getting your adventures ready.</p>
+          </div>
+        ) : displayedTrips.length > 0 ? (
+          /* TRIP GRID */
+
           <div className="trips-grid">
             {displayedTrips.map((trip) => (
               <article className="trip-card" key={trip.id}>
@@ -160,15 +284,16 @@ function Trips() {
                       type="button"
                       className="delete-trip"
                       onClick={() => setTripToDelete(trip)}
-                      aria-label={`Delete to ${trip.country}`}
+                      aria-label={`Delete trip to ${trip.destination}`}
                     >
-                        &#128465;
+                      &#128465;
                     </button>
                   </div>
 
                   <div className="trip-destination">
                     <h2>{trip.destination}</h2>
-                    <span>{trip.country}</span>
+
+                    {trip.country && <span>{trip.country}</span>}
                   </div>
                 </div>
 
@@ -203,10 +328,10 @@ function Trips() {
                       </p>
                     </div>
 
-                    <div className="trip-description">{trip.description}</div>
+                    {trip.description && (
+                      <div className="trip-description">{trip.description}</div>
+                    )}
                   </div>
-
-                  {/* VIEW TRIP */}
 
                   <button
                     className="view-trip-button"
@@ -221,6 +346,8 @@ function Trips() {
             ))}
           </div>
         ) : (
+          /* EMPTY STATE */
+
           <div className="empty-trips">
             <div className="empty-icon">+</div>
 
@@ -254,15 +381,29 @@ function Trips() {
               }
             }}
           >
-            <CreateTrip onClose={() => setIsCreateTripOpen(false)} />
+            <CreateTrip
+              onClose={() => {
+                setIsCreateTripOpen(false);
+
+                /*
+                 * Fetch the trips again
+                 * so the newly created
+                 * database trip appears.
+                 */
+                fetchTrips();
+              }}
+            />
           </div>
         )}
       </section>
+
+      {/* DELETE MODAL */}
+
       {tripToDelete && (
         <div
           className="delete-modal-overlay"
           onMouseDown={(event) => {
-            if (event.target === event.currentTarget) {
+            if (event.target === event.currentTarget && !deleting) {
               setTripToDelete(null);
             }
           }}
@@ -274,8 +415,8 @@ function Trips() {
 
             <p>
               Are you sure you want to delete this trip to{" "}
-              <strong>{tripToDelete.destination}</strong>? This action cannot
-              be undone.
+              <strong>{tripToDelete.destination}</strong>? This action cannot be
+              undone.
             </p>
 
             <div className="delete-modal-actions">
@@ -283,6 +424,7 @@ function Trips() {
                 type="button"
                 className="delete-cancel-button"
                 onClick={() => setTripToDelete(null)}
+                disabled={deleting}
               >
                 Cancel
               </button>
@@ -290,9 +432,10 @@ function Trips() {
               <button
                 type="button"
                 className="delete-confirm-button"
-                onClick={deleteTrip}
+                onClick={handleDeleteTrip}
+                disabled={deleting}
               >
-                Delete trip
+                {deleting ? "Deleting..." : "Delete trip"}
               </button>
             </div>
           </div>
