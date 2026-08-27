@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 import EditTrip from "../components/ui/editTrip";
-import AddActivity from "../components/ui/addActivity"
+import AddActivity from "../components/ui/addActivity";
 
 import "../styles/itinerary.css";
 
@@ -138,9 +138,12 @@ const trip: Trip = {
 };
 
 function Itinerary() {
+  const [days, setDays] = useState<Day[]>(itineraryDays);
   const [selectedDay, setSelectedDay] = useState(1);
-
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [activityToDelete, setActivityToDelete] = useState<Activity | null>(
+    null,
+  );
 
   const currentDay = itineraryDays.find((day) => day.id === selectedDay);
 
@@ -165,6 +168,21 @@ function Itinerary() {
       default:
         return "Activity";
     }
+  };
+
+  const deleteActivity = () => {
+    if (!activityToDelete) return;
+
+    setDays((currentDays) =>
+      currentDays.map((day) => ({
+        ...day,
+        activities: day.activities.filter(
+          (activity) => activity.id !== activityToDelete.id,
+        ),
+      })),
+    );
+
+    setActivityToDelete(null);
   };
 
   return (
@@ -250,7 +268,14 @@ function Itinerary() {
                             {getTypeLabel(activity.type)}
                           </span>
 
-                          <button className="delete-activity">&#128465;</button>
+                          <button
+                            type="button"
+                            className="delete-activity"
+                            onClick={() => setActivityToDelete(activity)}
+                            aria-label={`Delete ${activity.title}`}
+                          >
+                            &#128465;
+                          </button>
                         </div>
 
                         <h3>{activity.title}</h3>
@@ -262,17 +287,56 @@ function Itinerary() {
                 </div>
 
                 {/* ADD ACTIVITY */}
-                  <AddActivity />
+                <AddActivity />
               </>
             )}
           </section>
         </div>
       </section>
-
       {isEditModalOpen && (
         <div className="modal-overlay">
           <div className="modal-content">
             <EditTrip trip={trip} onClose={() => setIsEditModalOpen(false)} />
+          </div>
+        </div>
+      )}
+      {activityToDelete && (
+        <div
+          className="delete-modal-overlay"
+          onMouseDown={(event) => {
+            if (event.target === event.currentTarget) {
+              setActivityToDelete(null);
+            }
+          }}
+        >
+          <div className="delete-modal">
+            <span className="delete-modal-eyebrow">REMOVE ACTIVITY</span>
+
+            <h2>Delete this activity?</h2>
+
+            <p>
+              Are you sure you want to remove{" "}
+              <strong>{activityToDelete.title}</strong> from your itinerary?
+              This action cannot be undone.
+            </p>
+
+            <div className="delete-modal-actions">
+              <button
+                type="button"
+                className="delete-cancel-button"
+                onClick={() => setActivityToDelete(null)}
+              >
+                Cancel
+              </button>
+
+              <button
+                type="button"
+                className="delete-confirm-button"
+                onClick={deleteActivity}
+              >
+                Delete activity
+              </button>
+            </div>
           </div>
         </div>
       )}
