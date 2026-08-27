@@ -81,11 +81,6 @@ export async function searchNearbyLocations(
                     `/api/locations/nearby?${params.toString()}`
                 );
 
-            console.log(
-                `Nearby API response for ${type}:`,
-                result
-            );
-
             return {
                 type,
                 places: result.data[type] ?? [],

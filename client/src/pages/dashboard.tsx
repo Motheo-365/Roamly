@@ -2,13 +2,14 @@ import { motion } from "framer-motion";
 import { useState } from "react";
 
 import Navigation from "../components/ui/navigation";
-import Map, { type NearbyPlaces } from "../components/ui/map";
+import Map from "../components/ui/map";
 import Carousel from "../components/ui/carousel";
 import Explore from "./explore";
-import CreateTrip from "./createTrip";
+import Trips from "./trips"
+import Itinerary from "./itinerary"
 import Budget from "./budget";
 
-import type { LocationResult } from "../services/locationServices"
+import type { LocationResult, NearbyPlaces } from "../services/locationServices"
 
 import "../styles/home.css"
 
@@ -63,7 +64,18 @@ function Dashboard() {
                     viewport={{ once: true, amount: 0.08 }}
                     transition={{ duration: 0.7, ease: "easeOut" }}
                 >
-                    <CreateTrip />
+                    <Trips />
+                </motion.section>
+
+              <motion.section
+                    id="budget"
+                    className="narrative-section itinerary-section"
+                    initial={{ opacity: 0, y: 60 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, amount: 0.08 }}
+                    transition={{ duration: 0.7, ease: "easeOut" }} 
+                >
+                    <Itinerary/>
                 </motion.section>
 
                 <motion.section

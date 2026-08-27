@@ -119,10 +119,6 @@ function Map({ selectedLocation, onNearbyPlacesChange }: MapProps) {
             try {
                 setNearbyError(null);
 
-                console.log(
-                    "Loading nearby places..."
-                );
-
                 const places =
                     await searchNearbyLocations(
                         Number(toLocation.lat),
@@ -133,10 +129,6 @@ function Map({ selectedLocation, onNearbyPlacesChange }: MapProps) {
                     return;
                 }
 
-                console.log(
-                    "Nearby places loaded:",
-                    JSON.stringify(places, null, 2)
-                );
 
                 setNearbyPlaces(places);
 
