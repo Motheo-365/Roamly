@@ -6,13 +6,13 @@ import {
     searchNearbyLocations,
     type LocationResult,
     type NearbyLocationType,
+    type NearbyPlaces
 } from "../../services/locationServices";
+
 import { getRoute } from "../../services/routeServices";
 
 import "leaflet/dist/leaflet.css";
 import "../../styles/map.css";
-
-export type NearbyPlaces = Record<NearbyLocationType, LocationResult[]>;
 
 interface MapProps {
     selectedLocation: LocationResult | null;
@@ -114,43 +114,47 @@ function Map({ selectedLocation, onNearbyPlacesChange }: MapProps) {
         }
 
         let cancelled = false;
-        setNearbyError(null);
 
         const loadNearbyPlaces = async () => {
             try {
-                const results = await Promise.allSettled(
-                    nearbyTypes.map((type) =>
-                        searchNearbyLocations(
-                            Number(toLocation.lat),
-                            Number(toLocation.lon),
-                            type
-                        )
-                    )
+                setNearbyError(null);
+
+                console.log(
+                    "Loading nearby places..."
                 );
 
-                if (cancelled) return;
+                const places =
+                    await searchNearbyLocations(
+                        Number(toLocation.lat),
+                        Number(toLocation.lon)
+                    );
 
-                const failedRequests = results.filter(
-                    (result) => result.status === "rejected"
-                ).length;
-                const places: NearbyPlaces = {
-                    attraction: results[0].status === "fulfilled" ? results[0].value : [],
-                    hotel: results[1].status === "fulfilled" ? results[1].value : [],
-                    restaurant: results[2].status === "fulfilled" ? results[2].value : [],
-                };
-                setNearbyPlaces(places);
-                onNearbyPlacesChange(places);
-                if (failedRequests > 0) {
-                    setNearbyError("Some nearby place categories could not be loaded.");
+                if (cancelled) {
+                    return;
                 }
 
+                console.log(
+                    "Nearby places loaded:",
+                    JSON.stringify(places, null, 2)
+                );
+
+                setNearbyPlaces(places);
+
+                onNearbyPlacesChange(places);
+
                 nearbyTypes.forEach((type) => {
-                    const layer = nearbyLayersRef.current[type];
+                    const layer =
+                        nearbyLayersRef.current[type];
+
                     layer.clearLayers();
 
                     places[type].forEach((place) => {
+
                         L.circleMarker(
-                            [Number(place.lat), Number(place.lon)],
+                            [
+                                Number(place.lat),
+                                Number(place.lon),
+                            ],
                             {
                                 radius: 7,
                                 color: "#18232d",
@@ -164,14 +168,25 @@ function Map({ selectedLocation, onNearbyPlacesChange }: MapProps) {
                                 fillOpacity: 0.9,
                             }
                         )
-                            .bindPopup(place.display_name)
+                            .bindPopup(
+                                place.display_name
+                            )
                             .addTo(layer);
                     });
                 });
+
             } catch (error) {
+
                 if (!cancelled) {
-                    console.error("Nearby places failed:", error);
-                    setNearbyError("Unable to load nearby places.");
+
+                    console.error(
+                        "Nearby places failed:",
+                        error
+                    );
+
+                    setNearbyError(
+                        "Unable to load nearby places."
+                    );
                 }
             }
         };
@@ -181,7 +196,8 @@ function Map({ selectedLocation, onNearbyPlacesChange }: MapProps) {
         return () => {
             cancelled = true;
         };
-    }, [onNearbyPlacesChange, toLocation]);
+
+    }, [toLocation, onNearbyPlacesChange]);
 
     const toggleNearbyType = (type: NearbyLocationType) => {
         const map = mapRef.current;
