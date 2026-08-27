@@ -320,14 +320,26 @@
     width: 5.375rem;
     height: 5.375rem;
     border-radius: 0.55rem;
-
-    background: #18232d; /* Dark slate background for placeholder icons */
+    background: #1a252f52;
     color: #ffffff;
-
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 1.75rem;
+    overflow: hidden;
+}
+
+.place-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+#place-no-image {
+    background: black;
+    padding: 20%;
+    font-size: 0.5em;
 }
 
 .place-info {

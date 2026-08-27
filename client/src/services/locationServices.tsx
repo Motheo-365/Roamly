@@ -4,6 +4,19 @@ export interface LocationResult {
     lat: string;
     lon: string;
     display_name: string;
+
+    id?: string;
+    address?: string;
+    rating?: number;
+    userRatingCount?: number;
+    photoUrl?: string | null;
+    googleMapsUri?: string | null;
+
+    photoAttributions?: {
+        displayName?: string;
+        uri?: string;
+        photoUri?: string;
+    }[];
 }
 
 interface LocationSearchResponse {

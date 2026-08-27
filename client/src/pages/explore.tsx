@@ -152,22 +152,6 @@ function Explore({ onLocationSelect, nearbyPlaces }: ExploreProps) {
         });
     };
 
-    /*
-     * Get icon for place type
-     */
-    const getPlaceIcon = (type: PlaceType) => {
-        switch (type) {
-            case "attraction":
-                return "📍";
-
-            case "restaurant":
-                return "🍜";
-
-            case "hotel":
-                return "🏨";
-        }
-    };
-
     return (
         <div className="explore-page">
             {/* Header */}
@@ -386,9 +370,16 @@ function Explore({ onLocationSelect, nearbyPlaces }: ExploreProps) {
                                     }
                                 >
                                     <div className="place-image">
-                                        <span>
-                                            {getPlaceIcon(place.type)}
-                                        </span>
+                                        {place.photoUrl ? (
+                                            <img
+                                                src={place.photoUrl}
+                                                alt={place.display_name}
+                                            />
+                                        ) : (
+                                            <p id="place-no-image">
+                                                Photo Not Available
+                                            </p>
+                                        )}
                                     </div>
 
                                     <div className="place-info">
