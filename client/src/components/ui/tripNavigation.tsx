@@ -1,4 +1,4 @@
-import { useLocation, useNavigate, useParams, Link } from "react-router-dom";
+import { useLocation, useParams, Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 
 import "../../styles/navigation.css";
@@ -19,7 +19,6 @@ const scrollToSection = (sectionId: string) => {
 };
 
 function TripNavigation() {
-  const navigate = useNavigate();
   const location = useLocation();
   const { tripId } = useParams();
 
@@ -69,14 +68,6 @@ function TripNavigation() {
       : location.pathname.includes("/budget")
         ? "budget"
         : activeSection;
-
-  const handleDashboardClick = () => {
-    if (location.pathname === basePath) {
-      scrollToSection("top");
-    } else {
-      navigate(basePath);
-    }
-  };
 
   return (
     <nav className="trip-navigation">

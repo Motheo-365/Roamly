@@ -40,11 +40,13 @@
    HERO
 ======================================== */
 .trip-dashboard-hero {
-    width: 105%; /* Changed from 100rem to fill available container width */
+    width: 100%; /* Changed from 100rem to fill available container width */
     max-width: 150%; /* Ensures it doesn't overflow parent containers */
     overflow: hidden;
-    transform: translate(-2.5%, -10%);
     border-radius: 0px;
+    margin: 0 auto 2%;
+    position: sticky;
+    transform: translateY(-5%);
 }
 
 .trip-dashboard-hero-image {
@@ -56,7 +58,6 @@
 
 .trip-dashboard-hero-image img {
     width: 100%;
-    height: clamp(350px, 45vw, 500px);
     object-fit: cover;
     display: block;
 }

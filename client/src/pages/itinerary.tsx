@@ -93,7 +93,6 @@ function Itinerary({ trip }: ItineraryProps) {
   const [days, setDays] = useState<Day[]>([]);
   const [selectedDay, setSelectedDay] = useState(1);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [isEditTripOpen, setIsEditTripOpen] = useState(false);
 
   const [activityToDelete, setActivityToDelete] = useState<Activity | null>( null,);
 
@@ -278,51 +277,6 @@ function Itinerary({ trip }: ItineraryProps) {
   return (
     <main className="itinerary-page">
       <section className="itinerary-container">
-        {/* HERO */}
-        <header id="home" className="trip-dashboard-hero">
-          <div className="trip-dashboard-hero-image">
-            {trip.image && (
-              <img
-                src={trip.image}
-                alt={`${trip.destination}, ${trip.country}`}
-              />
-            )}
-
-            <div className="trip-dashboard-hero-overlay" />
-
-            <button
-              className="edit-trip-button"
-              onClick={() => setIsEditTripOpen(true)}
-            >
-              Edit trip
-            </button>
-
-            <div className="trip-dashboard-hero-content">
-              <h1>{trip.destination}</h1>
-              <p>{trip.description}</p>
-
-              {trip.country && (
-                <p className="trip-dashboard-location">{trip.country}</p>
-              )}
-
-              <div className="trip-dashboard-meta">
-                <span>
-                  {formatDate(trip.startDate)}
-                  {" — "}
-                  {formatDate(trip.endDate)}{" "}
-                </span>
-
-                <span className="meta-divider">·</span>
-
-                <span>
-                  {trip.travellers}{" "}
-                  {trip.travellers === 1 ? "traveller" : "travellers"}
-                </span>
-              </div>
-            </div>
-          </div>
-        </header>
-
         <div className="itinerary-layout">
           {/* DAY NAVIGATION */}
 
@@ -462,24 +416,6 @@ function Itinerary({ trip }: ItineraryProps) {
           </div>
         </div>
       )}
-        {/* EDIT TRIP MODAL */}
-        {isEditTripOpen && (
-          <div
-            className="create-trip-modal-overlay"
-            onMouseDown={(event) => {
-              if (event.target === event.currentTarget) {
-                setIsEditTripOpen(false);
-              }
-            }}
-          >
-            <EditTrip
-              trip={trip}
-              onClose={() => {
-                setIsEditTripOpen(false);
-              }}
-            />
-          </div>
-        )}
     </main>
   );
 }
