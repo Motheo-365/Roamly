@@ -30,8 +30,8 @@ function Carousel() {
                         className="carousel-image"
                         src={activeImage.link}
                         alt={activeImage.caption}
-                        initial={{ opacity: 0, scale: 1.04 }}
-                        animate={{ opacity: 1, scale: 1 }}
+                        initial={{ opacity: 0, scale: 1.04, filter: "blur(8px)" }}
+                        animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
                         exit={{ opacity: 0, scale: 0.98 }}
                         transition={{ duration: 0.45, ease: "easeOut" }}
                     />

@@ -22,12 +22,11 @@ function Dashboard() {
     return (
         <div className="home-page">
             <Navigation />
-
             <div className="narrative-content">
                 <motion.section
                     id="home"
                     className="home-content narrative-section"
-                    initial={{ opacity: 0, y: 60 }}
+                    initial={{ opacity: 0.5, y: 60 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true, amount: 0.2 }}
                     transition={{ duration: 0.7, ease: "easeOut" }}
@@ -72,7 +71,6 @@ function Dashboard() {
                     onNearbyPlacesChange={setNearbyPlaces}
                 />
             </aside>
-
     </div>
     );
 }

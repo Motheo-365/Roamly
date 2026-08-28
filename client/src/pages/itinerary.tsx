@@ -2,6 +2,9 @@ import { useEffect, useState } from "react";
 
 import EditTrip from "../components/ui/editTrip";
 import AddActivity from "../components/ui/addActivity";
+import ItineraryClock from "../components/ui/itineraryClock";
+
+import { useItineraryNotifications } from "../hooks/useItineraryNotifications";
 
 import {
   getActivitiesByTripId,
@@ -97,6 +100,13 @@ function Itinerary({ trip }: ItineraryProps) {
   const [activityToDelete, setActivityToDelete] = useState<Activity | null>( null,);
 
   const [loading, setLoading] = useState(true);
+
+  const [notificationSettings, setNotificationSettings] = useState({
+    thirtyMinutes: true,
+    tenMinutes: true,
+    atStart: true,
+  });
+  
   const [error, setError] = useState("");
 
   const handleActivityAdded = (newActivity: ApiActivity) => {
@@ -274,7 +284,21 @@ function Itinerary({ trip }: ItineraryProps) {
     }
   };
 
-  return (
+  const notificationActivities = days.flatMap((day) =>
+    day.activities.map((activity) => ({
+      id: activity.id,
+      title: activity.title,
+      date: day.date,
+      time: activity.time,
+    })),
+  );
+
+  useItineraryNotifications(
+    notificationActivities,
+    notificationSettings,
+  );
+
+return (
     <main className="itinerary-page">
       <section className="itinerary-container">
         <div className="itinerary-layout">
@@ -353,6 +377,11 @@ function Itinerary({ trip }: ItineraryProps) {
                         <h3>{activity.title}</h3>
 
                         <p>{activity.location}</p>
+
+                        <ItineraryClock
+                            date={currentDay.date}
+                            time={activity.time}
+                        />
                       </div>
                     </article>
                   ))}

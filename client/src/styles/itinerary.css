@@ -593,6 +593,30 @@
   transform: translateY(-1px);
 }
 
+
+/* =========================
+   ACTIVITY STATUS
+========================= */
+
+.itinerary-clock {
+    display: inline-block;
+
+    margin-top: 0.65rem;
+
+    font-size: 0.65rem;
+    font-weight: 700;
+    color: #d46b3c;
+    letter-spacing: 0.04em;
+}
+
+.activity-status-current {
+    color: #4f8a67;
+}
+
+.passed {
+    color: #a0a5a8;
+}
+
 /* =========================================================
    MEDIA QUERIES
 ========================================================= */
