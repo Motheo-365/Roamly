@@ -87,14 +87,14 @@ function TripNavigation() {
         >
             ←
         </Link>
-
+{/* 
         <button
           type="button"
           className={displayedSection === "home" ? "active" : ""}
           onClick={handleDashboardClick}
         >
           Trip
-        </button>
+        </button> */}
 
         <button
           type="button"

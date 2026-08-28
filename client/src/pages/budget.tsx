@@ -397,44 +397,42 @@ function Budget() {
       </section>
       {expenseToDelete && (
         <div
-            className="delete-modal-overlay"
-            onMouseDown={(event) => {
-                if (event.target === event.currentTarget) {
-                    setExpenseToDelete(null);
-                }
-            }}
+          className="delete-modal-overlay"
+          onMouseDown={(event) => {
+            if (event.target === event.currentTarget) {
+              setExpenseToDelete(null);
+            }
+          }}
         >
-            <div className="delete-modal">
-                <span className="delete-modal-eyebrow">
-                    REMOVE EXPENSE
-                </span>
+          <div className="delete-modal">
+            <span className="delete-modal-eyebrow">REMOVE EXPENSE</span>
 
-                <h2>Delete this expense?</h2>
+            <h2>Delete this expense?</h2>
 
-                <p>
-                    Are you sure you want to remove{" "}
-                    <strong>{expenseToDelete.name}</strong> from your
-                    trip budget? This action cannot be undone.
-                </p>
+            <p>
+              Are you sure you want to remove{" "}
+              <strong>{expenseToDelete.name}</strong> from your trip budget?
+              This action cannot be undone.
+            </p>
 
-                <div className="delete-modal-actions">
-                    <button
-                        type="button"
-                        className="delete-cancel-button"
-                        onClick={() => setExpenseToDelete(null)}
-                    >
-                        Cancel
-                    </button>
+            <div className="delete-modal-actions">
+              <button
+                type="button"
+                className="delete-cancel-button"
+                onClick={() => setExpenseToDelete(null)}
+              >
+                Cancel
+              </button>
 
-                    <button
-                        type="button"
-                        className="delete-confirm-button"
-                        onClick={deleteExpense}
-                    >
-                        Delete expense
-                    </button>
-                </div>
+              <button
+                type="button"
+                className="delete-confirm-button"
+                onClick={deleteExpense}
+              >
+                Delete expense
+              </button>
             </div>
+          </div>
         </div>
       )}
     </main>

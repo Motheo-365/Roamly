@@ -256,7 +256,7 @@ function Trips() {
 
             <h2>Loading your trips</h2>
 
-            <p>We're getting your adventures ready.</p>
+            <p>We're getting your trips ready.</p>
           </div>
         ) : displayedTrips.length > 0 ? (
           /* TRIP GRID */

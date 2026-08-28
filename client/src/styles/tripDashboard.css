@@ -10,7 +10,7 @@
 }
 
 .trip-dashboard-container {
-    width: 90%;
+    width: 100%;
     margin: 0 auto;
 }
 
@@ -39,12 +39,12 @@
 /* ========================================
    HERO
 ======================================== */
-
 .trip-dashboard-hero {
-    margin-top: 2rem;
-    width: 100%;
-    border-radius: 1.4rem;
+    width: 105%; /* Changed from 100rem to fill available container width */
+    max-width: 150%; /* Ensures it doesn't overflow parent containers */
     overflow: hidden;
+    transform: translate(-2.5%, -10%);
+    border-radius: 0px;
 }
 
 .trip-dashboard-hero-image {

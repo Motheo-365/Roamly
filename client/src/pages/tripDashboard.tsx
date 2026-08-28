@@ -33,7 +33,6 @@ function TripDashboard() {
   const { tripId } = useParams();
 
   const [trip, setTrip] = useState<Trip | null>(null);
-  const [isEditTripOpen, setIsEditTripOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -92,25 +91,6 @@ function TripDashboard() {
     void fetchTrip();
   }, [tripId]);
 
-  const formatDate = (dateString: string) => {
-    if (!dateString) {
-      return "Date not set";
-    }
-
-    const normalisedDate = dateString.replace(/\//g, "-");
-    const [year, month, day] = normalisedDate.split("-").map(Number);
-
-    if (!year || !month || !day) {
-      return "Date not set";
-    }
-
-    return new Date(year, month - 1, day).toLocaleDateString("en-US", {
-      day: "numeric",
-      month: "short",
-      year: "numeric",
-    });
-  };
-
   if (loading) {
     return (
       <main className="trip-dashboard-page">
@@ -119,7 +99,7 @@ function TripDashboard() {
         <section className="trip-dashboard-container">
           <div className="trip-not-found">
             <h1>Loading your trip...</h1>
-            <p>We're getting your adventure ready.</p>
+            <p>We're getting your trip ready.</p>
           </div>
         </section>
       </main>
@@ -151,59 +131,6 @@ function TripDashboard() {
       <TripNavigation />
 
       <section className="trip-dashboard-container">
-        {/* HERO */}
-        <header id="home" className="trip-dashboard-hero">
-          <div className="trip-dashboard-hero-image">
-            {trip.image && (
-              <img
-                src={trip.image}
-                alt={`${trip.destination}, ${trip.country}`}
-              />
-            )}
-
-            <div className="trip-dashboard-hero-overlay" />
-
-            <button
-              className="edit-trip-button"
-              onClick={() => setIsEditTripOpen(true)}
-            >
-              Edit trip
-            </button>
-
-            <div className="trip-dashboard-hero-content">
-              <h1>{trip.destination}</h1>
-
-              {trip.country && (
-                <p className="trip-dashboard-location">{trip.country}</p>
-              )}
-
-              <div className="trip-dashboard-meta">
-                <span>
-                  {formatDate(trip.startDate)}
-                  {" — "}
-                  {formatDate(trip.endDate)}{" "}
-                </span>
-
-                <span className="meta-divider">·</span>
-
-                <span>
-                  {trip.travellers}{" "}
-                  {trip.travellers === 1 ? "traveller" : "travellers"}
-                </span>
-              </div>
-            </div>
-          </div>
-        </header>
-
-        {/* INTRO */}
-        <section className="trip-dashboard-intro">
-          <div>
-            <span className="trip-dashboard-intro-label">YOUR ADVENTURE</span>
-
-            <p>{trip.description || "Your adventure starts here."}</p>
-          </div>
-        </section>
-
         {/* TRIP CONTENT */}
         <section className="trip-dashboard-content">
           <motion.section
@@ -226,7 +153,7 @@ function TripDashboard() {
               ease: "easeOut",
             }}
           >
-            <Itinerary />
+            <Itinerary trip={trip}/>
           </motion.section>
 
           <motion.section
@@ -252,25 +179,6 @@ function TripDashboard() {
             <Budget />
           </motion.section>
         </section>
-
-        {/* EDIT TRIP MODAL */}
-        {isEditTripOpen && (
-          <div
-            className="create-trip-modal-overlay"
-            onMouseDown={(event) => {
-              if (event.target === event.currentTarget) {
-                setIsEditTripOpen(false);
-              }
-            }}
-          >
-            <EditTrip
-              trip={trip}
-              onClose={() => {
-                setIsEditTripOpen(false);
-              }}
-            />
-          </div>
-        )}
       </section>
     </main>
   );

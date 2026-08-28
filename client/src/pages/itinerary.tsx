@@ -1,9 +1,16 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import EditTrip from "../components/ui/editTrip";
 import AddActivity from "../components/ui/addActivity";
 
+import {
+  getActivitiesByTripId,
+  deleteActivity as deleteActivityApi,
+  type Activity as ApiActivity,
+} from "../services/apiService";
+
 import "../styles/itinerary.css";
+import "../styles/tripDashboard.css"
 
 interface Activity {
   id: number;
@@ -11,6 +18,7 @@ interface Activity {
   title: string;
   location: string;
   type: "activity" | "food" | "transport" | "hotel";
+  cost: number;
 }
 
 interface Day {
@@ -27,128 +35,202 @@ interface Trip {
   startDate: string;
   endDate: string;
   travellers: number;
+  budget: number;
   description: string;
   image?: string;
   photoAttribute?: string;
 }
 
-const itineraryDays: Day[] = [
-  {
-    id: 1,
-    date: "2026-09-12",
-    title: "Arrival & Shibuya",
-    activities: [
-      {
-        id: 1,
-        time: "09:30",
-        title: "Arrive at Haneda Airport",
-        location: "Haneda Airport",
-        type: "transport",
-      },
-      {
-        id: 2,
-        time: "11:00",
-        title: "Check in",
-        location: "Shibuya",
-        type: "hotel",
-      },
-      {
-        id: 3,
-        time: "14:00",
-        title: "Explore Shibuya",
-        location: "Shibuya Crossing",
-        type: "activity",
-      },
-      {
-        id: 4,
-        time: "19:00",
-        title: "Dinner",
-        location: "Shibuya",
-        type: "food",
-      },
-    ],
-  },
-  {
-    id: 2,
-    date: "2026-09-13",
-    title: "Tokyo highlights",
-    activities: [
-      {
-        id: 5,
-        time: "09:00",
-        title: "Meiji Shrine",
-        location: "Shibuya",
-        type: "activity",
-      },
-      {
-        id: 6,
-        time: "12:30",
-        title: "Lunch",
-        location: "Harajuku",
-        type: "food",
-      },
-      {
-        id: 7,
-        time: "15:00",
-        title: "Tokyo Tower",
-        location: "Minato",
-        type: "activity",
-      },
-    ],
-  },
-  {
-    id: 3,
-    date: "2026-09-14",
-    title: "Asakusa & Akihabara",
-    activities: [
-      {
-        id: 8,
-        time: "09:30",
-        title: "Senso-ji Temple",
-        location: "Asakusa",
-        type: "activity",
-      },
-      {
-        id: 9,
-        time: "13:00",
-        title: "Lunch in Asakusa",
-        location: "Asakusa",
-        type: "food",
-      },
-      {
-        id: 10,
-        time: "16:00",
-        title: "Explore Akihabara",
-        location: "Akihabara",
-        type: "activity",
-      },
-    ],
-  },
-];
 
-const trip: Trip = {
-  id: 1,
-  destination: "Tokyo",
-  country: "Japan",
-  startDate: "2026-09-12",
-  endDate: "2026-09-20",
-  travellers: 2,
-  description: "Explore Shibuya, visit Tokyo Tower and discover the city.",
-  image: "https://images.unsplash.com/photo-1540959733332-eab4deabeeaf",
-};
+function getActivityType(title: string): Activity["type"] {
+  const value = title.toLowerCase();
 
-function Itinerary() {
-  const [days, setDays] = useState<Day[]>(itineraryDays);
+  if (
+    value.includes("dinner") ||
+    value.includes("lunch") ||
+    value.includes("breakfast") ||
+    value.includes("restaurant") ||
+    value.includes("food")
+  ) {
+    return "food";
+  }
+
+  if (
+    value.includes("airport") ||
+    value.includes("train") ||
+    value.includes("flight") ||
+    value.includes("bus") ||
+    value.includes("transport")
+  ) {
+    return "transport";
+  }
+
+  if (
+    value.includes("hotel") ||
+    value.includes("check in") ||
+    value.includes("check-in") ||
+    value.includes("stay")
+  ) {
+    return "hotel";
+  }
+
+  return "activity";
+}
+
+function getDayTitle(dayNumber: number, activities: Activity[]) {
+  if (activities.length === 0) {
+    return `Day ${dayNumber}`;
+  }
+
+  return activities[0].title;
+}
+
+interface ItineraryProps {
+  trip: Trip;
+}
+
+function Itinerary({ trip }: ItineraryProps) {
+  const [days, setDays] = useState<Day[]>([]);
   const [selectedDay, setSelectedDay] = useState(1);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [activityToDelete, setActivityToDelete] = useState<Activity | null>(null);
+  const [isEditTripOpen, setIsEditTripOpen] = useState(false);
 
-  const currentDay = itineraryDays.find((day) => day.id === selectedDay);
+  const [activityToDelete, setActivityToDelete] = useState<Activity | null>( null,);
 
-  const formatDate = (date: string) => {
-    return new Date(date).toLocaleDateString("en-US", {
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  const handleActivityAdded = (newActivity: ApiActivity) => {
+    const formattedActivity: Activity = {
+      id: newActivity.id,
+      time: newActivity.time || "",
+      title: newActivity.title || "",
+      location: newActivity.location || "",
+      cost: newActivity.cost || 0,
+      type: getActivityType(newActivity.title || ""),
+    };
+
+    setDays((currentDays) =>
+      currentDays.map((day) => {
+        if (day.date !== newActivity.date?.split("T")[0]) {
+          return day;
+        }
+
+        const updatedActivities = [...day.activities, formattedActivity].sort(
+          (a, b) => a.time.localeCompare(b.time),
+        );
+
+        return {
+          ...day,
+          title: getDayTitle(day.id, updatedActivities),
+          activities: updatedActivities,
+        };
+      }),
+    );
+  };
+
+  useEffect(() => {
+    async function loadActivities() {
+      if (
+        !Number.isInteger(Number(trip.id)) ||
+        Number(trip.id) <= 0
+      ) {
+        setError("Invalid trip ID.");
+        setLoading(false);
+        return;
+      }
+
+      if (!trip.startDate || !trip.endDate) {
+        setError("This trip does not have valid start and end dates.");
+        setLoading(false);
+        return;
+      }
+
+      try {
+        setLoading(true);
+        setError("");
+
+        const response = await getActivitiesByTripId(Number(trip.id));
+
+        const activities = response.data;
+
+        const groupedDays: Day[] = [];
+
+        const start = new Date(trip.startDate);
+        const end = new Date(trip.endDate);
+
+        let dayNumber = 1;
+        const current = new Date(start);
+
+        while (current <= end) {
+          const dateString = current.toISOString().split("T")[0];
+
+          const dayActivities = activities
+            .filter((activity) => {
+              if (!activity.date) return false;
+
+              return activity.date.startsWith(dateString);
+            })
+            .map((activity) => ({
+              id: activity.id,
+              time: activity.time || "",
+              title: activity.title || "",
+              location: activity.location || "",
+              cost: activity.cost || 0,
+              type: getActivityType(activity.title || ""),
+            }))
+            .sort((a, b) => a.time.localeCompare(b.time));
+
+          groupedDays.push({
+            id: dayNumber,
+            date: dateString,
+            title: getDayTitle(dayNumber, dayActivities),
+            activities: dayActivities,
+          });
+
+          current.setDate(current.getDate() + 1);
+          dayNumber++;
+        }
+
+        setDays(groupedDays);
+
+        if (groupedDays.length > 0) {
+          setSelectedDay(groupedDays[0].id);
+        }
+      } catch (error) {
+        console.error("Error loading activities:", error);
+
+        setError(
+          error instanceof Error
+            ? error.message
+            : "Failed to load itinerary",
+        );
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    void loadActivities();
+  }, [trip.id, trip.startDate, trip.endDate]);
+
+      const currentDay = days.find((day) => day.id === selectedDay);
+
+  const formatDate = (dateString: string) => {
+    if (!dateString) {
+      return "Date not set";
+    }
+
+    const normalisedDate = dateString.replace(/\//g, "-");
+    const [year, month, day] = normalisedDate.split("-").map(Number);
+
+    if (!year || !month || !day) {
+      return "Date not set";
+    }
+
+    return new Date(year, month - 1, day).toLocaleDateString("en-US", {
       day: "numeric",
       month: "short",
+      year: "numeric",
     });
   };
 
@@ -168,45 +250,75 @@ function Itinerary() {
     }
   };
 
-  const deleteActivity = () => {
+  const deleteActivity = async () => {
     if (!activityToDelete) return;
 
-    setDays((currentDays) =>
-      currentDays.map((day) => ({
-        ...day,
-        activities: day.activities.filter(
-          (activity) => activity.id !== activityToDelete.id,
-        ),
-      })),
-    );
+    try {
+      await deleteActivityApi(activityToDelete.id);
 
-    setActivityToDelete(null);
+      setDays((currentDays) =>
+        currentDays.map((day) => ({
+          ...day,
+          activities: day.activities.filter(
+            (activity) => activity.id !== activityToDelete.id,
+          ),
+        })),
+      );
+
+      setActivityToDelete(null);
+    } catch (error) {
+      console.error("Error deleting activity:", error);
+
+      alert(
+        error instanceof Error ? error.message : "Failed to delete activity",
+      );
+    }
   };
 
   return (
     <main className="itinerary-page">
       <section className="itinerary-container">
-        <header className="itinerary-header">
-          <div>
-            <span className="itinerary-eyebrow">YOUR TRIP</span>
+        {/* HERO */}
+        <header id="home" className="trip-dashboard-hero">
+          <div className="trip-dashboard-hero-image">
+            {trip.image && (
+              <img
+                src={trip.image}
+                alt={`${trip.destination}, ${trip.country}`}
+              />
+            )}
 
-            <h1>{trip.destination}</h1>
+            <div className="trip-dashboard-hero-overlay" />
 
-            <p className="itinerary-location">{trip.country}</p>
+            <button
+              className="edit-trip-button"
+              onClick={() => setIsEditTripOpen(true)}
+            >
+              Edit trip
+            </button>
 
-            <div className="itinerary-meta">
-              <span>
-                {formatDate(trip.startDate)}
-                {" — "}
-                {formatDate(trip.endDate)}
-              </span>
+            <div className="trip-dashboard-hero-content">
+              <h1>{trip.destination}</h1>
+              <p>{trip.description}</p>
 
-              <span className="meta-divider">·</span>
+              {trip.country && (
+                <p className="trip-dashboard-location">{trip.country}</p>
+              )}
 
-              <span>
-                {trip.travellers}{" "}
-                {trip.travellers === 1 ? "traveller" : "travellers"}
-              </span>
+              <div className="trip-dashboard-meta">
+                <span>
+                  {formatDate(trip.startDate)}
+                  {" — "}
+                  {formatDate(trip.endDate)}{" "}
+                </span>
+
+                <span className="meta-divider">·</span>
+
+                <span>
+                  {trip.travellers}{" "}
+                  {trip.travellers === 1 ? "traveller" : "travellers"}
+                </span>
+              </div>
             </div>
           </div>
         </header>
@@ -215,10 +327,10 @@ function Itinerary() {
           {/* DAY NAVIGATION */}
 
           <aside className="day-navigation">
-            <span className="day-navigation-label">ITINERARY</span>
+            <span className="day-navigation-label">Itinerary</span>
 
             <div className="day-list">
-              {itineraryDays.map((day) => (
+              {days.map((day) => (
                 <button
                   key={day.id}
                   className={
@@ -237,6 +349,14 @@ function Itinerary() {
           {/* CURRENT DAY */}
 
           <section className="day-content">
+            {loading && (
+              <p className="itinerary-status">Loading your itinerary...</p>
+            )}
+
+            {error && (
+              <p className="itinerary-status itinerary-error">{error}</p>
+            )}
+
             {currentDay && (
               <>
                 <div className="day-heading">
@@ -285,7 +405,11 @@ function Itinerary() {
                 </div>
 
                 {/* ADD ACTIVITY */}
-                <AddActivity />
+                <AddActivity
+                  tripId={Number(trip?.id)}
+                  date={currentDay.date}
+                  onActivityAdded={handleActivityAdded}
+                />
               </>
             )}
           </section>
@@ -338,6 +462,24 @@ function Itinerary() {
           </div>
         </div>
       )}
+        {/* EDIT TRIP MODAL */}
+        {isEditTripOpen && (
+          <div
+            className="create-trip-modal-overlay"
+            onMouseDown={(event) => {
+              if (event.target === event.currentTarget) {
+                setIsEditTripOpen(false);
+              }
+            }}
+          >
+            <EditTrip
+              trip={trip}
+              onClose={() => {
+                setIsEditTripOpen(false);
+              }}
+            />
+          </div>
+        )}
     </main>
   );
 }
