@@ -13,6 +13,7 @@ import "../styles/home.css"
 
 function Dashboard() {
     const [selectedLocation, setSelectedLocation] = useState<LocationResult | null>(null);
+    const [showMap, setShowMap] = useState(true);
     const [nearbyPlaces, setNearbyPlaces] = useState<NearbyPlaces>({
         attraction: [],
         hotel: [],
@@ -65,12 +66,20 @@ function Dashboard() {
                 </motion.section>
             </div>
 
-            <aside className="home-map">
+            {showMap ? (
                 <Map
                     selectedLocation={selectedLocation}
                     onNearbyPlacesChange={setNearbyPlaces}
+                    onClose={() => setShowMap(false)}
                 />
-            </aside>
+            ) : (
+                <button
+                    type="button"
+                    onClick={() => setShowMap(true)}
+                >
+                    Open map
+                </button>
+            )}
     </div>
     );
 }

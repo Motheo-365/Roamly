@@ -98,7 +98,6 @@ function Map({ selectedLocation, onNearbyPlacesChange, onClose }: MapProps) {
   });
 
   const [showSavedList, setShowSavedList] = useState(false);
-  const [showMap, setShowMap] = useState(true);
 
   useEffect(() => {
     if (!mapContainerRef.current || mapRef.current) {
@@ -504,20 +503,6 @@ function Map({ selectedLocation, onNearbyPlacesChange, onClose }: MapProps) {
               )}
             </div>
           )}
-          {showMap ? (
-                <Map
-                    selectedLocation={selectedLocation}
-                    onNearbyPlacesChange={onNearbyPlacesChange}
-                    onClose={() => setShowMap(false)}
-                />
-            ) : (
-                <button
-                    type="button"
-                    onClick={() => setShowMap(true)}
-                >
-                    Open map
-                </button>
-            )}
         </div>
       </div>
 
