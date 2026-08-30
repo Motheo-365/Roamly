@@ -12,6 +12,7 @@ export interface TripBudget {
     total_expenses: number;
     start_date: string;
     end_date: string;
+    travellers: number;
 }
 
 /**
@@ -38,6 +39,7 @@ class BudgetRepository {
                 SELECT
                     t.id AS trip_id,
                     t.budget,
+                    t.travellers,
                     t.start_date,
                     t.end_date,
                     COALESCE(SUM(e.amount), 0) AS total_expenses
@@ -49,6 +51,7 @@ class BudgetRepository {
                 GROUP BY
                     t.id,
                     t.budget,
+                    t.travellers,
                     t.start_date,
                     t.end_date
             `,
@@ -64,7 +67,8 @@ class BudgetRepository {
             budget: Number(result.rows[0].budget),
             total_expenses: Number(result.rows[0].total_expenses),
             start_date: result.rows[0].start_date,
-            end_date: result.rows[0].end_date
+            end_date: result.rows[0].end_date,
+            travellers: Number(result.rows[0].travellers)
         };
     }
 }
