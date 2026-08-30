@@ -189,56 +189,54 @@ class AuthService {
 
     const resetUrl = `${frontendUrl}/reset-password?token=${resetToken}`;
 
-    const {data, error } = await resend.emails.send({
+  const { data, error } = await resend.emails.send({
       from: "Roamly <onboarding@resend.dev>",
       to: email,
       subject: "Reset your Roamly password",
       html: `
-                <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto;">
-                    <h1>Reset your password</h1>
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto;">
+          <h1>Reset your password</h1>
 
-                    <p>
-                        We received a request to reset your Roamly password.
-                    </p>
+          <p>
+            We received a request to reset your Roamly password.
+          </p>
 
-                    <p>
-                        Click the button below to choose a new password.
-                    </p>
+          <p>
+            Click the button below to choose a new password.
+          </p>
 
-                    <p>
-                        <a
-                            href="${resetUrl}"
-                            style="
-                                display: inline-block;
-                                padding: 12px 20px;
-                                background: #d46b3c;
-                                color: white;
-                                text-decoration: none;
-                                border-radius: 6px;
-                            "
-                        >
-                            Reset password
-                        </a>
-                    </p>
+          <p>
+            <a
+              href="${resetUrl}"
+              style="
+                display: inline-block;
+                padding: 12px 20px;
+                background: #d46b3c;
+                color: white;
+                text-decoration: none;
+                border-radius: 6px;
+              "
+            >
+              Reset password
+            </a>
+          </p>
 
-                    <p>
-                        This link will expire in 1 hour.
-                    </p>
+          <p>This link will expire in 1 hour.</p>
 
-                    <p>
-                        If you didn't request a password reset,
-                        you can safely ignore this email.
-                    </p>
-                </div>
-            `,
+          <p>
+            If you didn't request a password reset,
+            you can safely ignore this email.
+          </p>
+        </div>
+      `,
     });
 
     if (error) {
-      console.error("Password reset email failed:", error);
+      console.error("RESEND ERROR:", error);
       throw new Error("Unable to send password reset email.");
     }
 
-    console.log("Password reset email sent: ", data);
+    console.log("RESEND SUCCESS:", data);;
   }
 
   async resetPassword(token: string, password: string): Promise<void> {
