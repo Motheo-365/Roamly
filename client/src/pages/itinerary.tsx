@@ -6,7 +6,6 @@ import ItineraryClock from "../components/ui/itineraryClock";
 import { 
   getActivitiesByTripId,
   deleteActivity as deleteActivityApi,
-  createExpense, 
   type Activity as ApiActivity, 
   type Expense as ApiExpense 
 } from "../services/apiService"
