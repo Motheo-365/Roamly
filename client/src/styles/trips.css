@@ -283,6 +283,11 @@
   letter-spacing: 0.12em;
 }
 
+.trip-status-current {
+  background: #c17e19;
+  color: white;
+}
+
 .delete-trip {
   display: grid;
 

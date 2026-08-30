@@ -27,7 +27,9 @@ function Trips() {
   const navigate = useNavigate();
 
   const [trips, setTrips] = useState<Trip[]>([]);
-  const [view, setView] = useState<"upcoming" | "past">("upcoming");
+  const [view, setView] = useState<"upcoming" | "current" | "completed">(
+    "upcoming",
+  );
 
   const [isCreateTripOpen, setIsCreateTripOpen] = useState(false);
 
@@ -42,61 +44,55 @@ function Trips() {
   // =========================
 
   const fetchTrips = async () => {
-      try {
-          setLoading(true);
-          setError("");
+    try {
+      setLoading(true);
+      setError("");
 
-          const response = await getTrips();
+      const response = await getTrips();
 
-          const formattedTrips: Trip[] = await Promise.all(
-              response.data.map(async (trip: ApiTrip) => {
-                  const destination =
-                      trip.destination ?? "Unknown destination";
+      const formattedTrips: Trip[] = await Promise.all(
+        response.data.map(async (trip: ApiTrip) => {
+          const destination = trip.destination ?? "Unknown destination";
 
-                  const parts = destination
-                      .split(",")
-                      .map((part) => part.trim());
+          const parts = destination.split(",").map((part) => part.trim());
 
-                  let image = "";
+          let image = "";
 
-                  try {
-                      const imageResponse =
-                          await getDestinationImage(destination);
+          try {
+            const imageResponse = await getDestinationImage(destination);
 
-                      image = imageResponse.data.url;
-                  } catch (imageError) {
-                      console.warn(
-                          `Could not load image for ${destination}:`,
-                          imageError
-                      );
-                  }
+            image = imageResponse.data.url;
+          } catch (imageError) {
+            console.warn(
+              `Could not load image for ${destination}:`,
+              imageError,
+            );
+          }
 
-                  return {
-                      id: trip.id,
-                      destination: parts[0] || destination,
-                      country: parts[1] || "",
-                      startDate: trip.start_date ?? "",
-                      endDate: trip.end_date ?? "",
-                      travellers: trip.travellers ?? 1,
-                      description: trip.description ?? "",
-                      budget: trip.budget ?? 0,
-                      image,
-                  };
-              })
-          );
+          return {
+            id: trip.id,
+            destination: parts[0] || destination,
+            country: parts[1] || "",
+            startDate: trip.start_date ?? "",
+            endDate: trip.end_date ?? "",
+            travellers: trip.travellers ?? 1,
+            description: trip.description ?? "",
+            budget: trip.budget ?? 0,
+            image,
+          };
+        }),
+      );
 
-          setTrips(formattedTrips);
-      } catch (error) {
-          console.error("Error fetching trips:", error);
+      setTrips(formattedTrips);
+    } catch (error) {
+      console.error("Error fetching trips:", error);
 
-          setError(
-              error instanceof Error
-                  ? error.message
-                  : "Failed to load trips."
-          );
-      } finally {
-          setLoading(false);
-      }
+      setError(
+        error instanceof Error ? error.message : "Failed to load trips.",
+      );
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -116,16 +112,30 @@ function Trips() {
 
   const upcomingTrips = useMemo(() => {
     return trips.filter((trip) => {
-      if (!trip.endDate) return true;
+      if (!trip.startDate) return false;
 
-      const endDate = new Date(trip.endDate);
-      endDate.setHours(0, 0, 0, 0);
+      const startDate = new Date(trip.startDate);
+      startDate.setHours(0, 0, 0, 0);
 
-      return endDate >= today;
+      return startDate > today;
     });
   }, [trips]);
 
-  const pastTrips = useMemo(() => {
+  const currentTrips = useMemo(() => {
+    return trips.filter((trip) => {
+      if (!trip.startDate || !trip.endDate) return false;
+
+      const startDate = new Date(trip.startDate);
+      const endDate = new Date(trip.endDate);
+
+      startDate.setHours(0, 0, 0, 0);
+      endDate.setHours(0, 0, 0, 0);
+
+      return startDate <= today && endDate >= today;
+    });
+  }, [trips]);
+
+  const completedTrips = useMemo(() => {
     return trips.filter((trip) => {
       if (!trip.endDate) return false;
 
@@ -136,8 +146,35 @@ function Trips() {
     });
   }, [trips]);
 
-  const displayedTrips = view === "upcoming" ? upcomingTrips : pastTrips;
+  const displayedTrips =
+      view === "upcoming"
+        ? upcomingTrips
+        : view === "current"
+          ? currentTrips
+          : completedTrips;
 
+  const getTripStatus = (
+    startDate: string,
+    endDate: string,
+  ): "UPCOMING" | "CURRENT" | "COMPLETED" => {
+    if (!startDate) return "UPCOMING";
+
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+
+    start.setHours(0, 0, 0, 0);
+    end.setHours(0, 0, 0, 0);
+
+    if (start > today) {
+      return "UPCOMING";
+    }
+
+    if (end >= today) {
+      return "CURRENT";
+    }
+
+    return "COMPLETED";
+  };
   // =========================
   // FORMAT DATE
   // =========================
@@ -229,7 +266,6 @@ function Trips() {
         {error && <div className="trips-error">{error}</div>}
 
         {/* TABS */}
-
         <div className="trip-tabs">
           <button
             className={view === "upcoming" ? "active" : ""}
@@ -240,11 +276,19 @@ function Trips() {
           </button>
 
           <button
-            className={view === "past" ? "active" : ""}
-            onClick={() => setView("past")}
+            className={view === "current" ? "active" : ""}
+            onClick={() => setView("current")}
           >
-            Past
-            <span>{pastTrips.length}</span>
+            Current
+            <span>{currentTrips.length}</span>
+          </button>
+
+          <button
+            className={view === "completed" ? "active" : ""}
+            onClick={() => setView("completed")}
+          >
+            Completed
+            <span>{completedTrips.length}</span>
           </button>
         </div>
 
@@ -276,8 +320,13 @@ function Trips() {
                   <div className="trip-image-overlay" />
 
                   <div className="trip-card-top">
-                    <span className="trip-status">
-                      {view === "upcoming" ? "UPCOMING" : "COMPLETED"}
+                    <span
+                      className={`trip-status trip-status-${getTripStatus(
+                        trip.startDate,
+                        trip.endDate,
+                      ).toLowerCase()}`}
+                    >
+                      {getTripStatus(trip.startDate, trip.endDate)}
                     </span>
 
                     <button
@@ -351,12 +400,22 @@ function Trips() {
           <div className="empty-trips">
             <div className="empty-icon">+</div>
 
-            <h2>No {view === "upcoming" ? "upcoming" : "past"} trips</h2>
+            <h2>
+              No{" "}
+              {view === "upcoming"
+                ? "upcoming"
+                : view === "current"
+                  ? "current"
+                  : "completed"}{" "}
+              trips
+            </h2>
 
             <p>
               {view === "upcoming"
                 ? "Start planning your next adventure."
-                : "Your completed trips will appear here."}
+                : view === "current"
+                  ? "Trips you're currently enjoying will appear here."
+                  : "Your completed trips will appear here."}
             </p>
 
             {view === "upcoming" && (
@@ -367,11 +426,8 @@ function Trips() {
                 Create your first trip
               </button>
             )}
-          </div>
-        )}
 
         {/* CREATE TRIP MODAL */}
-
         {isCreateTripOpen && (
           <div
             className="create-trip-modal-overlay"
@@ -395,7 +451,9 @@ function Trips() {
             />
           </div>
         )}
-      </section>
+      </div>
+    )}
+  </section>
 
       {/* DELETE MODAL */}
 
