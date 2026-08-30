@@ -1,12 +1,13 @@
 import { useState } from "react";
 
 import AddExpense from "../components/ui/addExpense";
-import { type Expense } from "../services/apiService"
+import { type Expense } from "../services/apiService";
 
 import "../styles/budget.css";
 
 interface BudgetProps {
   tripId: number;
+  travellers: number;
   expenses: Expense[];
   onExpenseAdded: (expense: Expense) => void;
   onExpenseDeleted: (expenseId: number) => void;
@@ -14,39 +15,34 @@ interface BudgetProps {
 
 function Budget({
   tripId,
+  travellers,
   expenses,
   onExpenseAdded,
   onExpenseDeleted,
 }: BudgetProps) {
   const [budget, setBudget] = useState(15000);
-
   const [showBudgetInput, setShowBudgetInput] = useState(false);
-
   const [newBudget, setNewBudget] = useState("15000");
-
-  const [showExpenses, setShowExpenses] =useState(true);
-
+  const [showExpenses, setShowExpenses] = useState(true);
   const [expenseToDelete, setExpenseToDelete] = useState<Expense | null>(null);
 
   const [sortOption, setSortOption] = useState<
-    "date-newest" |
-    "date-oldest" |
-    "amount-high" |
-    "amount-low"
+    "date-newest" | "date-oldest" | "amount-high" | "amount-low"
   >("date-newest");
 
   const totalSpent = expenses.reduce(
-    (total, expense) =>
-      total + Number(expense.amount),
+    (total, expense) => total + Number(expense.amount),
     0,
   );
+
+  const safeTravellers = Math.max(Number(travellers) || 1, 1);
+  const spentPerson = totalSpent / safeTravellers;
+  const budgetPerson = budget / safeTravellers;
 
   const remaining = budget - totalSpent;
 
   const percentageSpent =
-    budget > 0
-      ? Math.min((totalSpent / budget) * 100, 100)
-      : 0;
+    budget > 0 ? Math.min((totalSpent / budget) * 100, 100) : 0;
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat("en-ZA", {
@@ -75,8 +71,7 @@ function Budget({
     switch (sortOption) {
       case "date-oldest":
         return (
-          new Date(a.date ?? 0).getTime() -
-          new Date(b.date ?? 0).getTime()
+          new Date(a.date ?? 0).getTime() - new Date(b.date ?? 0).getTime()
         );
 
       case "amount-high":
@@ -88,8 +83,7 @@ function Budget({
       case "date-newest":
       default:
         return (
-          new Date(b.date ?? 0).getTime() -
-          new Date(a.date ?? 0).getTime()
+          new Date(b.date ?? 0).getTime() - new Date(a.date ?? 0).getTime()
         );
     }
   });
@@ -99,72 +93,71 @@ function Budget({
       {/* Header */}
       <header className="budget-header">
         <div>
-          <span className="budget-eyebrow">
-            TOKYO ADVENTURE
-          </span>
+          <span className="budget-eyebrow">TOKYO ADVENTURE</span>
 
           <h1>Budgeting</h1>
         </div>
 
         {/* ADD EXPENSE MODAL */}
 
-        <AddExpense
-          tripId={tripId}
-          onExpenseAdded={onExpenseAdded}
-        />
+        <AddExpense tripId={tripId} onExpenseAdded={onExpenseAdded} />
       </header>
 
       {/* Budget overview */}
       <section className="budget-overview">
-        <div className="budget-total">
-          <span className="budget-label">
-            Total spent
-          </span>
+        {/* Top statistics */}
+        <div className="budget-stats">
+          <div className="budget-total">
+            <span className="budget-label">Total spent</span>
 
-          <h2>
-            {formatCurrency(totalSpent)}
-          </h2>
+            <h2>{formatCurrency(totalSpent)}</h2>
 
-          <p>
-            of {formatCurrency(budget)} budget
-          </p>
-        </div>
-
-        <div className="budget-progress">
-          <div className="progress-track">
-            <div
-              className="progress-fill"
-              style={{
-                width: `${percentageSpent}%`,
-              }}
-            />
+            <p>of {formatCurrency(budget)} budget</p>
           </div>
 
-          <div className="progress-info">
-            <span>
-              {Math.round(percentageSpent)}% spent
-            </span>
+          <div className="budget-total">
+            <span className="budget-label">Travellers</span>
 
-            <span>
-              {formatCurrency(remaining)} remaining
-            </span>
+            <h2>{safeTravellers}</h2>
+
+            <p>{safeTravellers === 1 ? "traveller" : "travellers"}</p>
+          </div>
+
+          <div className="budget-total">
+            <span className="budget-label">Spent per person</span>
+
+            <h2>{formatCurrency(spentPerson)}</h2>
+
+            <p>budget per person: {formatCurrency(budgetPerson)}</p>
           </div>
         </div>
 
-        <div className="budget-actions">
-          <button
-            onClick={() =>
-              setShowBudgetInput(
-                !showBudgetInput,
-              )
-            }
-          >
-            Set budget
-          </button>
+        {/* Progress + actions */}
+        <div className="budget-overview-bottom">
+          <div className="budget-progress">
+            <div className="progress-track">
+              <div
+                className="progress-fill"
+                style={{
+                  width: `${percentageSpent}%`,
+                }}
+              />
+            </div>
 
-          <button>
-            Group balances
-          </button>
+            <div className="progress-info">
+              <span>{Math.round(percentageSpent)}% spent</span>
+
+              <span>{formatCurrency(remaining)} remaining</span>
+            </div>
+          </div>
+
+          <div className="budget-actions">
+            <button onClick={() => setShowBudgetInput(!showBudgetInput)}>
+              Set budget
+            </button>
+
+            <button>Group balances</button>
+          </div>
         </div>
       </section>
 
@@ -172,9 +165,7 @@ function Budget({
       {showBudgetInput && (
         <section className="set-budget-panel">
           <div>
-            <h3>
-              Set your trip budget
-            </h3>
+            <h3>Set your trip budget</h3>
           </div>
 
           <div className="budget-input-wrapper">
@@ -183,16 +174,10 @@ function Budget({
             <input
               type="number"
               value={newBudget}
-              onChange={(event) =>
-                setNewBudget(
-                  event.target.value,
-                )
-              }
+              onChange={(event) => setNewBudget(event.target.value)}
             />
 
-            <button onClick={saveBudget}>
-              Save
-            </button>
+            <button onClick={saveBudget}>Save</button>
           </div>
         </section>
       )}
@@ -203,25 +188,15 @@ function Budget({
           {/* Clickable expenses header */}
           <button
             className="section-title"
-            onClick={() =>
-              setShowExpenses(!showExpenses)
-            }
-            aria-label={
-              showExpenses
-                ? "Collapse expenses"
-                : "Expand expenses"
-            }
+            onClick={() => setShowExpenses(!showExpenses)}
+            aria-label={showExpenses ? "Collapse expenses" : "Expand expenses"}
           >
             <span className="section-chevron">
-              {showExpenses
-                ? "Hide Expenses"
-                : "Show Expenses"}
+              {showExpenses ? "Hide Expenses" : "Show Expenses"}
             </span>
 
             <div>
-              <span>
-                {expenses.length} expenses
-              </span>
+              <span>{expenses.length} expenses</span>
             </div>
           </button>
 
@@ -249,17 +224,13 @@ function Budget({
           >
             <strong>Sort:</strong>
 
-            {sortOption === "date-newest" &&
-              "Date (newest first)"}
+            {sortOption === "date-newest" && "Date (newest first)"}
 
-            {sortOption === "date-oldest" &&
-              "Date (oldest first)"}
+            {sortOption === "date-oldest" && "Date (oldest first)"}
 
-            {sortOption === "amount-high" &&
-              "Amount (highest first)"}
+            {sortOption === "amount-high" && "Amount (highest first)"}
 
-            {sortOption === "amount-low" &&
-              "Amount (lowest first)"}
+            {sortOption === "amount-low" && "Amount (lowest first)"}
           </button>
         </div>
 
@@ -268,80 +239,52 @@ function Budget({
           <>
             {expenses.length === 0 ? (
               <div className="empty-expenses">
-                <div className="empty-icon">
-                  R
-                </div>
+                <div className="empty-icon">R</div>
 
-                <h3>
-                  You haven't added any
-                  expenses yet.
-                </h3>
+                <h3>You haven't added any expenses yet.</h3>
 
                 <p>
-                  Start tracking your spending
-                  to stay on top of your trip
+                  Start tracking your spending to stay on top of your trip
                   budget.
                 </p>
 
                 {/* This opens the SAME AddExpense modal */}
-                <AddExpense
-                  tripId={tripId}
-                  onExpenseAdded={
-                    onExpenseAdded
-                  }
-                />
+                <AddExpense tripId={tripId} onExpenseAdded={onExpenseAdded} />
               </div>
             ) : (
               <div className="expense-list">
-                {sortedExpenses.map(
-                  (expense) => (
-                    <article
-                      key={expense.id}
-                      className="expense-item"
+                {sortedExpenses.map((expense) => (
+                  <article key={expense.id} className="expense-item">
+                    <div className="expense-details">
+                      <h3>{expense.description}</h3>
+
+                      <span>{expense.category}</span>
+                    </div>
+
+                    <div className="expense-date">
+                      {expense.date
+                        ? new Date(expense.date).toLocaleDateString("en-ZA", {
+                            day: "numeric",
+                            month: "short",
+                            year: "numeric",
+                          })
+                        : "Date not set"}
+                    </div>
+
+                    <strong className="expense-amount">
+                      {formatCurrency(Number(expense.amount))}
+                    </strong>
+
+                    <button
+                      type="button"
+                      className="delete-expense"
+                      onClick={() => setExpenseToDelete(expense)}
+                      aria-label={`Delete ${expense.description}`}
                     >
-                      <div className="expense-details">
-                        <h3>
-                          {expense.description}
-                        </h3>
-
-                        <span>
-                          {expense.category}
-                        </span>
-                      </div>
-
-                      <div className="expense-date">
-                        {expense.date
-                          ? new Date(expense.date).toLocaleDateString("en-ZA", {
-                              day: "numeric",
-                              month: "short",
-                              year: "numeric"
-                            })
-                          : "Date not set"}
-                      </div>
-
-                      <strong className="expense-amount">
-                        {formatCurrency(
-                          Number(
-                            expense.amount,
-                          ),
-                        )}
-                      </strong>
-
-                      <button
-                        type="button"
-                        className="delete-expense"
-                        onClick={() =>
-                          setExpenseToDelete(
-                            expense,
-                          )
-                        }
-                        aria-label={`Delete ${expense.description}`}
-                      >
-                        &#128465;
-                      </button>
-                    </article>
-                  ),
-                )}
+                      &#128465;
+                    </button>
+                  </article>
+                ))}
               </div>
             )}
           </>
@@ -353,39 +296,27 @@ function Budget({
         <div
           className="delete-modal-overlay"
           onMouseDown={(event) => {
-            if (
-              event.target ===
-              event.currentTarget
-            ) {
+            if (event.target === event.currentTarget) {
               setExpenseToDelete(null);
             }
           }}
         >
           <div className="delete-modal">
-            <span className="delete-modal-eyebrow">
-              REMOVE EXPENSE
-            </span>
+            <span className="delete-modal-eyebrow">REMOVE EXPENSE</span>
 
-            <h2>
-              Delete this expense?
-            </h2>
+            <h2>Delete this expense?</h2>
 
             <p>
               Are you sure you want to remove{" "}
-              <strong>
-                {expenseToDelete.description}
-              </strong>{" "}
-              from your trip budget? This
-              action cannot be undone.
+              <strong>{expenseToDelete.description}</strong> from your trip
+              budget? This action cannot be undone.
             </p>
 
             <div className="delete-modal-actions">
               <button
                 type="button"
                 className="delete-cancel-button"
-                onClick={() =>
-                  setExpenseToDelete(null)
-                }
+                onClick={() => setExpenseToDelete(null)}
               >
                 Cancel
               </button>

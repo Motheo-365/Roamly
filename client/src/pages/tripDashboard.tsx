@@ -324,6 +324,7 @@ function TripDashboard() {
             {!expensesLoading && (
               <Budget
                 tripId={trip.id}
+                travellers={trip.travellers}
                 expenses={expenses}
                 onExpenseAdded={handleExpenseAdded}
                 onExpenseDeleted={handleExpenseDeleted}

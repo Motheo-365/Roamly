@@ -219,13 +219,25 @@
 ================================= */
 
 .budget-overview {
-    display: grid;
-    grid-template-columns: 1.2fr 1.5fr 1fr;
-    gap: 2rem;
-    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2.5rem;
+
+    padding: 2.5rem;
     margin-bottom: 2rem;
+
     border-radius: 1.25rem;
     background: #f4f5f6;
+}
+
+/* =================================
+   BUDGET STATISTICS
+================================= */
+
+.budget-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 3rem;
 }
 
 .budget-total {
@@ -235,22 +247,43 @@
 }
 
 .budget-label {
+    display: block;
+    margin-bottom: 0.5rem;
+
     color: #7c858b;
     font-size: 0.8rem;
+    font-weight: 500;
 }
 
 .budget-total h2 {
-    margin: 0.2rem 0;
+    margin: 0;
+
+    color: #18232d;
     font-size: clamp(2rem, 4vw, 2.8rem);
     font-weight: 400;
+    line-height: 1.15;
 }
 
 .budget-total p {
-    margin: 0;
+    margin: 0.45rem 0 0;
+
     color: #899197;
     font-size: 0.8rem;
 }
 
+/* =================================
+   OVERVIEW BOTTOM
+================================= */
+
+.budget-overview-bottom {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: 3rem;
+
+    padding-top: 1.5rem;
+    border-top: 1px solid #e2e4e5;
+}
 
 /* =================================
    PROGRESS
@@ -260,33 +293,40 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
+    min-width: 0;
 }
 
 .progress-track,
 .category-track {
     width: 100%;
     height: 0.6rem;
+
     overflow: hidden;
     border-radius: 1rem;
+
     background: #dfe3e5;
 }
 
 .progress-fill,
 .category-fill {
     height: 100%;
+
     border-radius: inherit;
+
     background: #ff5b47;
+
     transition: width 0.4s ease;
 }
 
 .progress-info {
     display: flex;
     justify-content: space-between;
+
     margin-top: 0.65rem;
+
     color: #6f787e;
     font-size: 0.75rem;
 }
-
 
 /* =================================
    BUDGET ACTIONS
@@ -296,35 +336,41 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
-    gap: 0.5rem;
+
+    gap: 0.4rem;
+
+    min-width: 9rem;
 }
 
 .budget-actions button {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
-    padding: 0.55rem;
+
+    padding: 0.55rem 0.75rem;
+
     border: none;
+    border-radius: 0.5rem;
+
     background: transparent;
+
     color: #68747c;
+
     font-size: 0.82rem;
     font-weight: 600;
+
     text-align: left;
+
     cursor: pointer;
-    border-radius: 0.5rem;
+
+    transition:
+        background 0.2s ease,
+        color 0.2s ease;
 }
 
 .budget-actions button:hover {
     background: #e9ebed;
     color: #18232d;
 }
-
-.budget-actions span {
-    width: 1.3rem;
-    font-size: 1rem;
-    text-align: center;
-}
-
 
 /* =================================
    SET BUDGET
@@ -885,14 +931,20 @@ button:hover.sort-button {
 ================================= */
 
 @media (max-width: 900px) {
-    .budget-overview {
+
+    .budget-stats {
         grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+    }
+
+    .budget-overview-bottom {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
     }
 
     .budget-actions {
-        grid-column: 1 / -1;
-
         flex-direction: row;
+        min-width: auto;
     }
 
     .category-list {
@@ -901,6 +953,7 @@ button:hover.sort-button {
 }
 
 @media (max-width: 650px) {
+
     .budget-page,
     .breakdown-page {
         padding: 2rem 1rem 4rem;
@@ -920,20 +973,26 @@ button:hover.sort-button {
     }
 
     .budget-overview {
-        grid-template-columns: 1fr;
-
         padding: 1.5rem;
+        gap: 2rem;
+    }
+
+    .budget-stats {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+
+    .budget-overview-bottom {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
     }
 
     .budget-actions {
-        grid-column: auto;
-
         flex-direction: column;
     }
 
     .section-heading {
         align-items: flex-start;
-
         gap: 1rem;
     }
 
@@ -961,163 +1020,163 @@ button:hover.sort-button {
     .budget-input-wrapper {
         width: 100%;
     }
+    
+    /* =================================
+    EXPENSE MODAL
+    ================================= */
 
+    .expense-modal-overlay {
+        position: fixed;
+        inset: 0;
+        z-index: 1000;
 
-/* =================================
-   EXPENSE MODAL
-================================= */
+        display: flex;
+        align-items: center;
+        justify-content: center;
 
-.expense-modal-overlay {
-    position: fixed;
-    inset: 0;
-    z-index: 1000;
+        padding: 2rem;
 
-    display: flex;
-    align-items: center;
-    justify-content: center;
+        background: rgba(24, 35, 45, 0.45);
+        backdrop-filter: blur(6px);
+    }
 
-    padding: 2rem;
+    .expense-modal {
+        width: min(100%, 500px);
+        padding: 2.5rem;
 
-    background: rgba(24, 35, 45, 0.45);
-    backdrop-filter: blur(6px);
-}
+        border-radius: 1.2rem;
 
-.expense-modal {
-    width: min(100%, 500px);
-    padding: 2.5rem;
+        background: #ffffff;
 
-    border-radius: 1.2rem;
+        box-shadow: 0 2rem 5rem rgba(24, 35, 45, 0.2);
+    }
 
-    background: #ffffff;
+    .expense-modal-eyebrow {
+        display: block;
+        margin-bottom: 0.7rem;
 
-    box-shadow: 0 2rem 5rem rgba(24, 35, 45, 0.2);
-}
+        color: #d46b3c;
 
-.expense-modal-eyebrow {
-    display: block;
-    margin-bottom: 0.7rem;
+        font-size: 0.65rem;
+        font-weight: 700;
+        letter-spacing: 0.14em;
+    }
 
-    color: #d46b3c;
+    .expense-modal h2 {
+        margin: 0 0 1.5rem;
 
-    font-size: 0.65rem;
-    font-weight: 700;
-    letter-spacing: 0.14em;
-}
+        color: #18232d;
 
-.expense-modal h2 {
-    margin: 0 0 1.5rem;
+        font-family: "Playfair Display", serif;
+        font-size: 2rem;
+        font-weight: 500;
+    }
 
-    color: #18232d;
+    .expense-form-fields {
+        display: flex;
+        flex-direction: column;
+        gap: 1.2rem;
 
-    font-family: "Playfair Display", serif;
-    font-size: 2rem;
-    font-weight: 500;
-}
+        margin-bottom: 2rem;
+    }
 
-.expense-form-fields {
-    display: flex;
-    flex-direction: column;
-    gap: 1.2rem;
+    .form-field {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
 
-    margin-bottom: 2rem;
-}
+    .form-field label {
+        color: #18232d;
 
-.form-field {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-}
+        font-size: 0.85rem;
+        font-weight: 600;
+    }
 
-.form-field label {
-    color: #18232d;
+    .form-field input,
+    .form-field select {
+        padding: 0.75rem 0.9rem;
 
-    font-size: 0.85rem;
-    font-weight: 600;
-}
+        border: 1px solid #e4dfd8;
+        border-radius: 0.6rem;
 
-.form-field input,
-.form-field select {
-    padding: 0.75rem 0.9rem;
+        font-family: inherit;
+        font-size: 0.9rem;
 
-    border: 1px solid #e4dfd8;
-    border-radius: 0.6rem;
+        background: #ffffff;
+        color: #18232d;
+    }
 
-    font-family: inherit;
-    font-size: 0.9rem;
+    .form-field input::placeholder {
+        color: #b0b5ba;
+    }
 
-    background: #ffffff;
-    color: #18232d;
-}
+    .form-field input:focus,
+    .form-field select:focus {
+        outline: none;
+        border-color: #d46b3c;
+        box-shadow: 0 0 0 3px rgba(212, 107, 60, 0.1);
+    }
 
-.form-field input::placeholder {
-    color: #b0b5ba;
-}
+    .amount-input {
+        position: relative;
+    }
 
-.form-field input:focus,
-.form-field select:focus {
-    outline: none;
-    border-color: #d46b3c;
-    box-shadow: 0 0 0 3px rgba(212, 107, 60, 0.1);
-}
+    .amount-input input {
+        padding-left: 2rem;
+    }
 
-.amount-input {
-    position: relative;
-}
+    .amount-input::before {
+        content: "R";
+        position: absolute;
+        left: 0.9rem;
+        top: 50%;
+        transform: translateY(-50%);
 
-.amount-input input {
-    padding-left: 2rem;
-}
+        color: #737b80;
 
-.amount-input::before {
-    content: "R";
-    position: absolute;
-    left: 0.9rem;
-    top: 50%;
-    transform: translateY(-50%);
+        font-weight: 600;
+    }
 
-    color: #737b80;
+    .expense-modal-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 0.75rem;
+    }
 
-    font-weight: 600;
-}
+    .cancel-button,
+    .save-expense-button {
+        height: 2.7rem;
+        padding: 0 1.2rem;
 
-.expense-modal-actions {
-    display: flex;
-    justify-content: flex-end;
-    gap: 0.75rem;
-}
+        border-radius: 0.6rem;
 
-.cancel-button,
-.save-expense-button {
-    height: 2.7rem;
-    padding: 0 1.2rem;
+        font-family: inherit;
+        font-size: 0.8rem;
+        font-weight: 600;
 
-    border-radius: 0.6rem;
+        cursor: pointer;
+    }
 
-    font-family: inherit;
-    font-size: 0.8rem;
-    font-weight: 600;
+    .cancel-button {
+        border: 1px solid #e4dfd8;
+        background: #ffffff;
+        color: #737b80;
+    }
 
-    cursor: pointer;
-}
+    .save-expense-button {
+        border: none;
+        background: #d46b3c;
+        color: white;
+    }
 
-.cancel-button {
-    border: 1px solid #e4dfd8;
-    background: #ffffff;
-    color: #737b80;
-}
+    .cancel-button:hover {
+        background: #f7f4ef;
+    }
 
-.save-expense-button {
-    border: none;
-    background: #d46b3c;
-    color: white;
-}
-
-.cancel-button:hover {
-    background: #f7f4ef;
-}
-
-.save-expense-button:hover {
-    background: #bd5c32;
+    .save-expense-button:hover {
+        background: #bd5c32;
+    }
 }
 
 @media (max-width: 650px) {
@@ -1138,5 +1197,4 @@ button:hover.sort-button {
     .save-expense-button {
         width: 100%;
     }
-}
 }
