@@ -189,7 +189,7 @@ class AuthService {
 
     const resetUrl = `${frontendUrl}/reset-password?token=${resetToken}`;
 
-    const {error } = await resend.emails.send({
+    const {data, error } = await resend.emails.send({
       from: "Roamly <onboarding@resend.dev>",
       to: email,
       subject: "Reset your Roamly password",
@@ -237,6 +237,8 @@ class AuthService {
       console.error("Password reset email failed:", error);
       throw new Error("Unable to send password reset email.");
     }
+
+    console.log("Password reset email sent: ", data);
   }
 
   async resetPassword(token: string, password: string): Promise<void> {
