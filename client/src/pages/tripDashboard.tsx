@@ -10,7 +10,10 @@ import EditTrip from "../components/ui/editTrip";
 import {
   getTrip,
   getDestinationImage,
+  getExpensesByTripId,
+  deleteExpense as deleteExpenseApi,
   type Trip as ApiTrip,
+  type Expense as ApiExpense,
 } from "../services/apiService";
 
 import "../styles/tripDashboard.css";
@@ -43,7 +46,6 @@ const formatDate = (dateString: string) => {
   });
 };
 
-// Motion variant definitions for smooth staggered entrance
 const sectionVariants: Variants = {
   hidden: { opacity: 0, y: 40 },
   visible: {
@@ -57,10 +59,19 @@ function TripDashboard() {
   const { tripId } = useParams();
 
   const [trip, setTrip] = useState<Trip | null>(null);
+
+  const [expenses, setExpenses] = useState<ApiExpense[]>([]);
+
   const [loading, setLoading] = useState(true);
+  const [expensesLoading, setExpensesLoading] = useState(true);
+
   const [error, setError] = useState("");
+
   const [isEditTripOpen, setIsEditTripOpen] = useState(false);
 
+  /*
+   * Load trip
+   */
   useEffect(() => {
     const fetchTrip = async () => {
       if (!tripId) {
@@ -75,23 +86,38 @@ function TripDashboard() {
 
         const response = await getTrip(Number(tripId));
         const apiTrip: ApiTrip = response.data;
-        const destination = apiTrip.destination ?? "Unknown destination";
-        const parts = destination.split(",").map((part) => part.trim());
+
+        const destination =
+          apiTrip.destination ?? "Unknown destination";
+
+        const parts = destination
+          .split(",")
+          .map((part) => part.trim());
 
         let image = "";
+
         try {
-          const imageResponse = await getDestinationImage(destination);
+          const imageResponse =
+            await getDestinationImage(destination);
+
           image = imageResponse.data.url;
         } catch (imageError) {
-          console.warn(`Could not load image for ${destination}:`, imageError);
+          console.warn(
+            `Could not load image for ${destination}:`,
+            imageError
+          );
         }
 
         setTrip({
           id: apiTrip.id,
           destination: parts[0] || destination,
           country: parts[1] || "",
-          startDate: apiTrip.start_date ? apiTrip.start_date.split("T")[0] : "",
-          endDate: apiTrip.end_date ? apiTrip.end_date.split("T")[0] : "",
+          startDate: apiTrip.start_date
+            ? apiTrip.start_date.split("T")[0]
+            : "",
+          endDate: apiTrip.end_date
+            ? apiTrip.end_date.split("T")[0]
+            : "",
           travellers: apiTrip.travellers ?? 1,
           description: apiTrip.description ?? "",
           budget: apiTrip.budget ?? 0,
@@ -99,8 +125,11 @@ function TripDashboard() {
         });
       } catch (err) {
         console.error("Error fetching trip:", err);
+
         setError(
-          err instanceof Error ? err.message : "Failed to load trip."
+          err instanceof Error
+            ? err.message
+            : "Failed to load trip."
         );
       } finally {
         setLoading(false);
@@ -110,10 +139,76 @@ function TripDashboard() {
     void fetchTrip();
   }, [tripId]);
 
+  /*
+   * Load expenses for this trip
+   */
+  useEffect(() => {
+    const fetchExpenses = async () => {
+      if (!tripId) {
+        setExpenses([]);
+        setExpensesLoading(false);
+        return;
+      }
+
+      try {
+        setExpensesLoading(true);
+
+        const response =
+          await getExpensesByTripId(Number(tripId));
+
+        setExpenses(response.data);
+      } catch (err) {
+        console.error("Error fetching expenses:", err);
+
+        setExpenses([]);
+      } finally {
+        setExpensesLoading(false);
+      }
+    };
+
+    void fetchExpenses();
+  }, [tripId]);
+
+  /*
+   * Add an expense to the shared TripDashboard state.
+   *
+   * Both Budget and Itinerary use this callback.
+   */
+  const handleExpenseAdded = (expense: ApiExpense) => {
+    setExpenses((currentExpenses) => [
+      expense,
+      ...currentExpenses,
+    ]);
+  };
+
+  /*
+   * Delete an expense from the shared state.
+   */
+  const handleExpenseDeleted = async (expenseId: number) => {
+    try {
+      await deleteExpenseApi(expenseId);
+
+      setExpenses((currentExpenses) =>
+        currentExpenses.filter(
+          (expense) => expense.id !== expenseId
+        )
+      );
+    } catch (err) {
+      console.error("Error deleting expense:", err);
+
+      alert(
+        err instanceof Error
+          ? err.message
+          : "Failed to delete expense"
+      );
+    }
+  };
+
   if (loading) {
     return (
       <main className="trip-dashboard-page">
         <TripNavigation />
+
         <section className="trip-dashboard-container">
           <div className="trip-not-found">
             <h1>Loading your trip...</h1>
@@ -128,10 +223,15 @@ function TripDashboard() {
     return (
       <main className="trip-dashboard-page">
         <TripNavigation />
+
         <section className="trip-dashboard-container">
           <div className="trip-not-found">
             <h1>Trip not found</h1>
-            <p>{error || "We couldn't find the trip you're looking for."}</p>
+
+            <p>
+              {error ||
+                "We couldn't find the trip you're looking for."}
+            </p>
           </div>
         </section>
       </main>
@@ -144,7 +244,10 @@ function TripDashboard() {
         <TripNavigation />
 
         {/* HERO SECTION */}
-        <header id="home" className="trip-dashboard-hero">
+        <header
+          id="home"
+          className="trip-dashboard-hero"
+        >
           <div className="trip-dashboard-hero-image">
             {trip.image && (
               <img
@@ -164,10 +267,13 @@ function TripDashboard() {
 
             <div className="trip-dashboard-hero-content">
               <h1>{trip.destination}</h1>
+
               <p>{trip.description}</p>
 
               {trip.country && (
-                <p className="trip-dashboard-location">{trip.country}</p>
+                <p className="trip-dashboard-location">
+                  {trip.country}
+                </p>
               )}
 
               <div className="trip-dashboard-meta">
@@ -176,10 +282,16 @@ function TripDashboard() {
                   {" — "}
                   {formatDate(trip.endDate)}
                 </span>
-                <span className="meta-divider">·</span>
+
+                <span className="meta-divider">
+                  ·
+                </span>
+
                 <span>
                   {trip.travellers}{" "}
-                  {trip.travellers === 1 ? "traveller" : "travellers"}
+                  {trip.travellers === 1
+                    ? "traveller"
+                    : "travellers"}
                 </span>
               </div>
             </div>
@@ -187,7 +299,7 @@ function TripDashboard() {
         </header>
 
         {/* TWO-COLUMN CONTENT WITH STAGGERED MOTION */}
-        <motion.section 
+        <motion.section
           className="trip-dashboard-content"
           initial="hidden"
           animate="visible"
@@ -198,7 +310,10 @@ function TripDashboard() {
             className="narrative-section itinerary-section"
             variants={sectionVariants}
           >
-            <Itinerary trip={trip} />
+            <Itinerary
+              trip={trip}
+              onExpenseAdded={handleExpenseAdded}
+            />
           </motion.section>
 
           <motion.section
@@ -206,7 +321,14 @@ function TripDashboard() {
             className="narrative-section budget-section"
             variants={sectionVariants}
           >
-            <Budget />
+            {!expensesLoading && (
+              <Budget
+                tripId={trip.id}
+                expenses={expenses}
+                onExpenseAdded={handleExpenseAdded}
+                onExpenseDeleted={handleExpenseDeleted}
+              />
+            )}
           </motion.section>
         </motion.section>
 
@@ -215,7 +337,9 @@ function TripDashboard() {
           <div
             className="create-trip-modal-overlay"
             onMouseDown={(event) => {
-              if (event.target === event.currentTarget) {
+              if (
+                event.target === event.currentTarget
+              ) {
                 setIsEditTripOpen(false);
               }
             }}

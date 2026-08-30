@@ -3,15 +3,16 @@ import { useEffect, useState } from "react";
 import EditTrip from "../components/ui/editTrip";
 import AddActivity from "../components/ui/addActivity";
 import ItineraryClock from "../components/ui/itineraryClock";
-
-import { useItineraryNotifications } from "../hooks/useItineraryNotifications";
-
-import {
+import { 
   getActivitiesByTripId,
   deleteActivity as deleteActivityApi,
-  type Activity as ApiActivity,
-  type Expense,
-} from "../services/apiService";
+  createExpense, 
+  type Activity as ApiActivity, 
+  type Expense as ApiExpense 
+} from "../services/apiService"
+
+
+import { useItineraryNotifications } from "../hooks/useItineraryNotifications";
 
 import "../styles/itinerary.css";
 import "../styles/tripDashboard.css"
@@ -91,7 +92,7 @@ function getDayTitle(dayNumber: number, activities: Activity[]) {
 
 interface ItineraryProps {
   trip: Trip;
-  onExpenseAdded: (expense: Expense) => void;
+  onExpenseAdded: (expense: ApiExpense) => void;
 }
 
 function Itinerary({ trip, onExpenseAdded }: ItineraryProps) {
@@ -111,32 +112,43 @@ function Itinerary({ trip, onExpenseAdded }: ItineraryProps) {
   
   const [error, setError] = useState("");
 
-  const handleActivityAdded = (newActivity: ApiActivity) => {
+  const handleActivityAdded = (
+    newActivity: ApiActivity
+  ) => {
     const formattedActivity: Activity = {
       id: newActivity.id,
       time: newActivity.time || "",
       title: newActivity.title || "",
       location: newActivity.location || "",
-      cost: newActivity.cost || 0,
+      cost: Number(newActivity.cost) || 0,
       type: getActivityType(newActivity.title || ""),
     };
 
     setDays((currentDays) =>
       currentDays.map((day) => {
-        if (day.date !== newActivity.date?.split("T")[0]) {
+        if (
+          day.date !==
+          newActivity.date?.split("T")[0]
+        ) {
           return day;
         }
 
-        const updatedActivities = [...day.activities, formattedActivity].sort(
-          (a, b) => a.time.localeCompare(b.time),
+        const updatedActivities = [
+          ...day.activities,
+          formattedActivity,
+        ].sort((a, b) =>
+          a.time.localeCompare(b.time)
         );
 
         return {
           ...day,
-          title: getDayTitle(day.id, updatedActivities),
+          title: getDayTitle(
+            day.id,
+            updatedActivities
+          ),
           activities: updatedActivities,
         };
-      }),
+      })
     );
   };
 

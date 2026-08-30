@@ -10,7 +10,7 @@ import {
 interface AddActivityProps {
   tripId: number;
   date: string;
-  onActivityAdded: (activity: Activity) => void;
+  onActivityAdded: (activity: Activity) => void | Promise<void>;
   onExpenseAdded: (expense: Expense) => void;
 }
 
