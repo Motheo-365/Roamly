@@ -70,6 +70,15 @@
         box-shadow 0.2s ease;
 }
 
+.add-first-expense-button {
+    border: none;
+    background: transparent;
+    color: #d46b3c;
+    font-weight: 600;
+    cursor: pointer;
+    margin: 0 auto;
+}
+
 .add-expense-button span {
     font-size: 1.4rem;
     font-weight: 400;
@@ -674,14 +683,11 @@ button:hover.sort-button {
 
 .empty-expenses button {
     border: none;
-
     background: transparent;
-
     color: #d46b3c;
-
     font-weight: 600;
-
     cursor: pointer;
+    margin: 0 auto;
 }
 
 
@@ -956,7 +962,179 @@ button:hover.sort-button {
         width: 100%;
     }
 
-    .budget-input-wrapper input {
-        flex: 1;
-    }
+
+/* =================================
+   EXPENSE MODAL
+================================= */
+
+.expense-modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 2rem;
+
+    background: rgba(24, 35, 45, 0.45);
+    backdrop-filter: blur(6px);
 }
+
+.expense-modal {
+    width: min(100%, 500px);
+    padding: 2.5rem;
+
+    border-radius: 1.2rem;
+
+    background: #ffffff;
+
+    box-shadow: 0 2rem 5rem rgba(24, 35, 45, 0.2);
+}
+
+.expense-modal-eyebrow {
+    display: block;
+    margin-bottom: 0.7rem;
+
+    color: #d46b3c;
+
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+}
+
+.expense-modal h2 {
+    margin: 0 0 1.5rem;
+
+    color: #18232d;
+
+    font-family: "Playfair Display", serif;
+    font-size: 2rem;
+    font-weight: 500;
+}
+
+.expense-form-fields {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+
+    margin-bottom: 2rem;
+}
+
+.form-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.form-field label {
+    color: #18232d;
+
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.form-field input,
+.form-field select {
+    padding: 0.75rem 0.9rem;
+
+    border: 1px solid #e4dfd8;
+    border-radius: 0.6rem;
+
+    font-family: inherit;
+    font-size: 0.9rem;
+
+    background: #ffffff;
+    color: #18232d;
+}
+
+.form-field input::placeholder {
+    color: #b0b5ba;
+}
+
+.form-field input:focus,
+.form-field select:focus {
+    outline: none;
+    border-color: #d46b3c;
+    box-shadow: 0 0 0 3px rgba(212, 107, 60, 0.1);
+}
+
+.amount-input {
+    position: relative;
+}
+
+.amount-input input {
+    padding-left: 2rem;
+}
+
+.amount-input::before {
+    content: "R";
+    position: absolute;
+    left: 0.9rem;
+    top: 50%;
+    transform: translateY(-50%);
+
+    color: #737b80;
+
+    font-weight: 600;
+}
+
+.expense-modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+}
+
+.cancel-button,
+.save-expense-button {
+    height: 2.7rem;
+    padding: 0 1.2rem;
+
+    border-radius: 0.6rem;
+
+    font-family: inherit;
+    font-size: 0.8rem;
+    font-weight: 600;
+
+    cursor: pointer;
+}
+
+.cancel-button {
+    border: 1px solid #e4dfd8;
+    background: #ffffff;
+    color: #737b80;
+}
+
+.save-expense-button {
+    border: none;
+    background: #d46b3c;
+    color: white;
+}
+
+.cancel-button:hover {
+    background: #f7f4ef;
+}
+
+.save-expense-button:hover {
+    background: #bd5c32;
+}
+
+@media (max-width: 650px) {
+    .expense-modal {
+        width: 100%;
+        padding: 2rem;
+    }
+
+    .expense-modal h2 {
+        font-size: 1.5rem;
+    }
+
+    .expense-modal-actions {
+        flex-direction: column-reverse;
+    }
+
+    .cancel-button,
+    .save-expense-button {
+        width: 100%;
+    }

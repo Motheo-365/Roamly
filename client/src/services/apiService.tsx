@@ -64,198 +64,257 @@ export function loginUser(email: string, password: string) {
 
 //Image
 interface ImageResponse {
-    status: string;
-    data: {
-        url: string;
-    };
+  status: string;
+  data: {
+    url: string;
+  };
 }
 
 export function getDestinationImage(destination: string) {
-    return apiRequest<ImageResponse>(
-        `/api/images/${encodeURIComponent(destination)}`
-    );
+  return apiRequest<ImageResponse>(
+    `/api/images/${encodeURIComponent(destination)}`,
+  );
 }
 
 // Trip
 export interface Trip {
-    id: number;
-    user_id: number;
-    destination: string | null;
-    start_date: string | null;
-    end_date: string | null;
-    travellers: number;
-    description: string | null;
-    budget: number;
+  id: number;
+  user_id: number;
+  destination: string | null;
+  start_date: string | null;
+  end_date: string | null;
+  travellers: number;
+  description: string | null;
+  budget: number;
 }
 
 interface TripsResponse {
-    status: string;
-    data: Trip[];
+  status: string;
+  data: Trip[];
 }
 
 interface TripResponse {
-    status: string;
-    data: Trip;
+  status: string;
+  data: Trip;
 }
 
 interface DeleteTripResponse {
-    status: string;
-    message: string;
+  status: string;
+  message: string;
 }
 
 export function getTrips() {
-    return apiRequest<TripsResponse>("/api/trips");
+  return apiRequest<TripsResponse>("/api/trips");
 }
 
 export function getTrip(tripId: number) {
-    return apiRequest<TripResponse>(
-        `/api/trips/${tripId}`
-    );
+  return apiRequest<TripResponse>(`/api/trips/${tripId}`);
 }
 
 export function createTrip(
-    destination: string,
-    startDate: string,
-    endDate: string,
-    travellers: number,
-    description: string,
-    budget: number
+  destination: string,
+  startDate: string,
+  endDate: string,
+  travellers: number,
+  description: string,
+  budget: number,
 ) {
-    return apiRequest<TripResponse>("/api/trips", {
-        method: "POST",
-        body: JSON.stringify({
-            destination,
-            startDate,
-            endDate,
-            travellers,
-            description,
-            budget,
-        }),
-    });
+  return apiRequest<TripResponse>("/api/trips", {
+    method: "POST",
+    body: JSON.stringify({
+      destination,
+      startDate,
+      endDate,
+      travellers,
+      description,
+      budget,
+    }),
+  });
 }
 
 export function updateTrip(
-    tripId: number,
-    destination: string,
-    startDate: string,
-    endDate: string,
-    travellers: number,
-    description: string,
-    budget: number
+  tripId: number,
+  destination: string,
+  startDate: string,
+  endDate: string,
+  travellers: number,
+  description: string,
+  budget: number,
 ) {
-    return apiRequest<TripResponse>(
-        `/api/trips/${tripId}`,
-        {
-            method: "PUT",
-            body: JSON.stringify({
-                destination,
-                startDate,
-                endDate,
-                travellers,
-                description,
-                budget,
-            }),
-        }
-    );
+  return apiRequest<TripResponse>(`/api/trips/${tripId}`, {
+    method: "PUT",
+    body: JSON.stringify({
+      destination,
+      startDate,
+      endDate,
+      travellers,
+      description,
+      budget,
+    }),
+  });
 }
 
 export function deleteTrip(tripId: number) {
-    return apiRequest<DeleteTripResponse>(
-        `/api/trips/${tripId}`,
-        {
-            method: "DELETE",
-        }
-    );
+  return apiRequest<DeleteTripResponse>(`/api/trips/${tripId}`, {
+    method: "DELETE",
+  });
 }
 
 // Activity
 
 export interface Activity {
-    id: number;
-    trip_id: number;
-    title: string | null;
-    date: string | null;
-    time: string | null;
-    location: string | null;
-    cost: number | null;
+  id: number;
+  trip_id: number;
+  title: string | null;
+  date: string | null;
+  time: string | null;
+  location: string | null;
+  cost: number | null;
 }
 
 interface ActivitiesResponse {
-    status: string;
-    data: Activity[];
+  status: string;
+  data: Activity[];
 }
 
 interface ActivityResponse {
-    status: string;
-    data: Activity;
+  status: string;
+  data: Activity;
 }
 
 interface DeleteActivityResponse {
-    status: string;
-    message: string;
+  status: string;
+  message: string;
 }
 
 export function getActivitiesByTripId(tripId: number) {
-    return apiRequest<ActivitiesResponse>(
-        `/api/activities/trip/${tripId}`
-    );
+  return apiRequest<ActivitiesResponse>(`/api/activities/trip/${tripId}`);
 }
 
 export function getActivity(activityId: number) {
-    return apiRequest<ActivityResponse>(
-        `/api/activities/${activityId}`
-    );
+  return apiRequest<ActivityResponse>(`/api/activities/${activityId}`);
 }
 
 export function createActivity(
-    tripId: number,
-    title: string,
-    date: string,
-    time: string,
-    location: string,
-    cost: number
+  tripId: number,
+  title: string,
+  date: string,
+  time: string,
+  location: string,
+  cost: number,
 ) {
-    return apiRequest<ActivityResponse>("/api/activities", {
-        method: "POST",
-        body: JSON.stringify({
-            tripId,
-            title,
-            date,
-            time,
-            location,
-            cost,
-        }),
-    });
+  return apiRequest<ActivityResponse>("/api/activities", {
+    method: "POST",
+    body: JSON.stringify({
+      tripId,
+      title,
+      date,
+      time,
+      location,
+      cost,
+    }),
+  });
 }
 
 export function updateActivity(
-    activityId: number,
-    title: string,
-    date: string,
-    time: string,
-    location: string,
-    cost: number
+  activityId: number,
+  title: string,
+  date: string,
+  time: string,
+  location: string,
+  cost: number,
 ) {
-    return apiRequest<ActivityResponse>(
-        `/api/activities/${activityId}`,
-        {
-            method: "PUT",
-            body: JSON.stringify({
-                title,
-                date,
-                time,
-                location,
-                cost,
-            }),
-        }
-    );
+  return apiRequest<ActivityResponse>(`/api/activities/${activityId}`, {
+    method: "PUT",
+    body: JSON.stringify({
+      title,
+      date,
+      time,
+      location,
+      cost,
+    }),
+  });
 }
 
 export function deleteActivity(activityId: number) {
-    return apiRequest<DeleteActivityResponse>(
-        `/api/activities/${activityId}`,
-        {
-            method: "DELETE",
-        }
-    );
+  return apiRequest<DeleteActivityResponse>(`/api/activities/${activityId}`, {
+    method: "DELETE",
+  });
+}
+
+// Expense
+
+export interface Expense {
+  id: number;
+  trip_id: number;
+  category: string | null;
+  description: string | null;
+  amount: number | null;
+  date: string | null;
+}
+
+interface ExpensesResponse {
+  status: string;
+  data: Expense[];
+}
+
+interface ExpenseResponse {
+  status: string;
+  data: Expense;
+}
+
+interface DeleteExpenseResponse {
+  status: string;
+  message: string;
+}
+
+export function getExpensesByTripId(tripId: number) {
+  return apiRequest<ExpensesResponse>(`/api/expenses/trip/${tripId}`);
+}
+
+export function getExpense(expenseId: number) {
+  return apiRequest<ExpenseResponse>(`/api/expenses/${expenseId}`);
+}
+
+export function createExpense(
+  tripId: number,
+  category: string,
+  description: string,
+  amount: number,
+  date: string,
+) {
+  return apiRequest<ExpenseResponse>("/api/expenses", {
+    method: "POST",
+    body: JSON.stringify({
+      tripId,
+      category,
+      description,
+      amount,
+      date,
+    }),
+  });
+}
+
+export function updateExpense(
+  expenseId: number,
+  category: string,
+  description: string,
+  amount: number,
+  date: string,
+) {
+  return apiRequest<ExpenseResponse>(`/api/expenses/${expenseId}`, {
+    method: "PUT",
+    body: JSON.stringify({
+      category,
+      description,
+      amount,
+      date,
+    }),
+  });
+}
+
+export function deleteExpense(expenseId: number) {
+  return apiRequest<DeleteExpenseResponse>(`/api/expenses/${expenseId}`, {
+    method: "DELETE",
+  });
 }

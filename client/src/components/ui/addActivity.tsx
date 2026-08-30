@@ -1,13 +1,25 @@
 import { useState } from "react";
-import { createActivity, type Activity } from "../../services/apiService";
+
+import {
+  createActivity,
+  createExpense,
+  type Activity,
+  type Expense,
+} from "../../services/apiService";
 
 interface AddActivityProps {
   tripId: number;
   date: string;
   onActivityAdded: (activity: Activity) => void;
+  onExpenseAdded: (expense: Expense) => void;
 }
 
-function AddActivity({ tripId, date, onActivityAdded }: AddActivityProps) {
+function AddActivity({
+  tripId,
+  date,
+  onActivityAdded,
+  onExpenseAdded,
+}: AddActivityProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const [title, setTitle] = useState("");
@@ -35,23 +47,72 @@ function AddActivity({ tripId, date, onActivityAdded }: AddActivityProps) {
     resetForm();
   };
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (
+    event: React.FormEvent<HTMLFormElement>
+  ) => {
     event.preventDefault();
+
+    if (!title.trim()) {
+      setError("Please enter an activity.");
+      return;
+    }
+
+    if (!time) {
+      setError("Please select a time.");
+      return;
+    }
 
     try {
       setLoading(true);
       setError("");
 
-      const response = await createActivity(
+      const activityCost = Number(cost) || 0;
+
+      /*
+       * First create the activity.
+       */
+      const activityResponse = await createActivity(
         tripId,
-        title,
+        title.trim(),
         date,
         time,
-        location,
-        Number(cost) || 0,
+        location.trim(),
+        activityCost,
       );
 
-      onActivityAdded(response.data);
+      /*
+       * Add the activity to the itinerary immediately.
+       */
+      onActivityAdded(activityResponse.data);
+
+      /*
+       * If the activity has a cost, automatically
+       * create a corresponding budget expense.
+       */
+      if (activityCost > 0) {
+        const expenseCategory =
+          type === "food"
+            ? "Food"
+            : type === "transport"
+              ? "Transport"
+              : type === "hotel"
+                ? "Accommodation"
+                : "Activities";
+
+        const expenseResponse = await createExpense(
+          tripId,
+          expenseCategory,
+          title.trim(),
+          activityCost,
+          date,
+        );
+
+        /*
+         * Send the new expense back up to
+         * TripDashboard so the Budget updates.
+         */
+        onExpenseAdded(expenseResponse.data);
+      }
 
       setIsModalOpen(false);
       resetForm();
@@ -59,7 +120,9 @@ function AddActivity({ tripId, date, onActivityAdded }: AddActivityProps) {
       console.error("Error creating activity:", error);
 
       setError(
-        error instanceof Error ? error.message : "Failed to add activity",
+        error instanceof Error
+          ? error.message
+          : "Failed to add activity",
       );
     } finally {
       setLoading(false);
@@ -81,7 +144,10 @@ function AddActivity({ tripId, date, onActivityAdded }: AddActivityProps) {
         <div
           className="modal-overlay"
           onMouseDown={(event) => {
-            if (event.target === event.currentTarget && !loading) {
+            if (
+              event.target === event.currentTarget &&
+              !loading
+            ) {
               handleClose();
             }
           }}
@@ -90,6 +156,7 @@ function AddActivity({ tripId, date, onActivityAdded }: AddActivityProps) {
             <div className="activity-modal-header">
               <div>
                 <span>PLAN YOUR DAY</span>
+
                 <h2>Add activity</h2>
               </div>
 
@@ -104,18 +171,29 @@ function AddActivity({ tripId, date, onActivityAdded }: AddActivityProps) {
               </button>
             </div>
 
-            <form className="activity-form" onSubmit={handleSubmit}>
-              {error && <p className="itinerary-error">{error}</p>}
+            <form
+              className="activity-form"
+              onSubmit={handleSubmit}
+            >
+              {error && (
+                <p className="itinerary-error">
+                  {error}
+                </p>
+              )}
 
               <div className="form-group">
-                <label htmlFor="activity-title">Activity</label>
+                <label htmlFor="activity-title">
+                  Activity
+                </label>
 
                 <input
                   id="activity-title"
                   type="text"
                   placeholder="What are you doing?"
                   value={title}
-                  onChange={(event) => setTitle(event.target.value)}
+                  onChange={(event) =>
+                    setTitle(event.target.value)
+                  }
                   required
                   disabled={loading}
                 />
@@ -123,53 +201,75 @@ function AddActivity({ tripId, date, onActivityAdded }: AddActivityProps) {
 
               <div className="form-row">
                 <div className="form-group">
-                  <label htmlFor="activity-time">Time</label>
+                  <label htmlFor="activity-time">
+                    Time
+                  </label>
 
                   <input
                     id="activity-time"
                     type="time"
                     value={time}
-                    onChange={(event) => setTime(event.target.value)}
+                    onChange={(event) =>
+                      setTime(event.target.value)
+                    }
                     required
                     disabled={loading}
                   />
                 </div>
 
                 <div className="form-group">
-                  <label htmlFor="activity-type">Type</label>
+                  <label htmlFor="activity-type">
+                    Type
+                  </label>
 
                   <select
                     id="activity-type"
                     value={type}
-                    onChange={(event) => setType(event.target.value)}
+                    onChange={(event) =>
+                      setType(event.target.value)
+                    }
                     disabled={loading}
                   >
-                    <option value="activity">Activity</option>
+                    <option value="activity">
+                      Activity
+                    </option>
 
-                    <option value="food">Food</option>
+                    <option value="food">
+                      Food
+                    </option>
 
-                    <option value="transport">Transport</option>
+                    <option value="transport">
+                      Transport
+                    </option>
 
-                    <option value="hotel">Stay</option>
+                    <option value="hotel">
+                      Stay
+                    </option>
                   </select>
                 </div>
               </div>
 
               <div className="form-group">
-                <label htmlFor="activity-location">Location</label>
+                <label htmlFor="activity-location">
+                  Location
+                </label>
 
                 <input
                   id="activity-location"
                   type="text"
                   placeholder="Where is it?"
                   value={location}
-                  onChange={(event) => setLocation(event.target.value)}
+                  onChange={(event) =>
+                    setLocation(event.target.value)
+                  }
                   disabled={loading}
                 />
               </div>
 
               <div className="form-group">
-                <label htmlFor="activity-cost">Cost</label>
+                <label htmlFor="activity-cost">
+                  Cost
+                </label>
 
                 <input
                   id="activity-cost"
@@ -178,7 +278,9 @@ function AddActivity({ tripId, date, onActivityAdded }: AddActivityProps) {
                   step="0.01"
                   placeholder="0.00"
                   value={cost}
-                  onChange={(event) => setCost(event.target.value)}
+                  onChange={(event) =>
+                    setCost(event.target.value)
+                  }
                   disabled={loading}
                 />
               </div>
@@ -188,7 +290,9 @@ function AddActivity({ tripId, date, onActivityAdded }: AddActivityProps) {
                 type="submit"
                 disabled={loading}
               >
-                {loading ? "Adding..." : "Add activity"}
+                {loading
+                  ? "Adding..."
+                  : "Add activity"}
 
                 <span>→</span>
               </button>

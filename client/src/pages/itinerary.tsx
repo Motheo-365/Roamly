@@ -10,6 +10,7 @@ import {
   getActivitiesByTripId,
   deleteActivity as deleteActivityApi,
   type Activity as ApiActivity,
+  type Expense,
 } from "../services/apiService";
 
 import "../styles/itinerary.css";
@@ -90,9 +91,10 @@ function getDayTitle(dayNumber: number, activities: Activity[]) {
 
 interface ItineraryProps {
   trip: Trip;
+  onExpenseAdded: (expense: Expense) => void;
 }
 
-function Itinerary({ trip }: ItineraryProps) {
+function Itinerary({ trip, onExpenseAdded }: ItineraryProps) {
   const [days, setDays] = useState<Day[]>([]);
   const [selectedDay, setSelectedDay] = useState(1);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -101,7 +103,7 @@ function Itinerary({ trip }: ItineraryProps) {
 
   const [loading, setLoading] = useState(true);
 
-  const [notificationSettings, setNotificationSettings] = useState({
+  const [notificationSettings, ] = useState({
     thirtyMinutes: true,
     tenMinutes: true,
     atStart: true,
@@ -392,6 +394,7 @@ return (
                   tripId={Number(trip?.id)}
                   date={currentDay.date}
                   onActivityAdded={handleActivityAdded}
+                  onExpenseAdded={onExpenseAdded}
                 />
               </>
             )}

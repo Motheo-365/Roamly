@@ -1,0 +1,356 @@
+/* =========================
+   EXPENSE MODAL
+========================= */
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 2rem;
+
+  background: rgba(20, 18, 16, 0.55);
+  backdrop-filter: blur(8px);
+
+  animation: expenseOverlayIn 0.2s ease-out;
+}
+
+.expense-modal {
+  width: min(560px, 100%);
+
+  padding: 2rem;
+
+  box-sizing: border-box;
+
+  border-radius: 1.25rem;
+
+  background: #ffffff;
+
+  box-shadow: 0 25px 80px rgba(0, 0, 0, 0.25);
+
+  animation: expenseModalIn 0.25s ease-out;
+}
+
+/* =========================
+   HEADER
+========================= */
+
+.expense-modal-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+
+  gap: 2rem;
+
+  margin-bottom: 1.75rem;
+}
+
+.expense-modal-header > div {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    align-items: start;
+}
+
+.expense-modal-header > div > span {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: #d46b3c;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+}
+
+.expense-modal-header h2 {
+    margin: 0;
+    color: rgba(0, 0, 0, 0.68);
+    font-family: "Playfair Display", serif;
+    font-size: 2rem;
+    font-weight: 500;
+    letter-spacing: -0.04em;
+}
+
+.expense-modal-header p {
+  margin: 0.5rem 0 0;
+  color: #858c90;
+  font-size: 0.75rem;
+  line-height: 1.5;
+}
+
+/* =========================
+   CLOSE BUTTON
+========================= */
+
+.close-trip-modal {
+  display: grid;
+  width: 2.25rem;
+  height: 2.25rem;
+  flex-shrink: 0;
+  place-items: center;
+  border: 1px solid #e1e4e2;
+  border-radius: 50%;
+  background: #f5f6f4;
+  color: #596269;
+  font-size: 1.4rem;
+  font-weight: 300;
+  line-height: 1;
+  cursor: pointer;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.close-trip-modal:hover {
+  border-color: #d46b3c;
+  background: #d46b3c;
+  color: white;
+}
+
+.close-trip-modal:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* =========================
+   FORM
+========================= */
+
+.expense-form {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 1.1rem;
+}
+
+.form-group {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 0.4rem;
+}
+
+.form-group label {
+  color: #18232d;
+
+  font-size: 0.7rem;
+  font-weight: 600;
+}
+
+.form-group input,
+.form-group select {
+  width: 100%;
+  height: 25%;
+  box-sizing: border-box;
+  padding: 0.8rem 0.9rem;
+  border: 1px solid #dfe3e0;
+  border-radius: 0.65rem;
+  background: white;
+  color: #18232d;
+  font-family: inherit;
+  font-size: 0.75rem;
+  outline: none;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.form-group input::placeholder {
+  color: #a0a5a8;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  border-color: #d46b3c;
+
+  box-shadow: 0 0 0 3px rgba(212, 107, 60, 0.08);
+}
+
+.form-group input:disabled,
+.form-group select:disabled {
+  opacity: 0.6;
+
+  cursor: not-allowed;
+}
+
+/* =========================
+   AMOUNT
+========================= */
+
+.expense-amount-input {
+  display: flex;
+
+  align-items: center;
+
+  width: 100%;
+
+  box-sizing: border-box;
+
+  border: 1px solid #dfe3e0;
+  border-radius: 0.65rem;
+
+  background: white;
+
+  overflow: hidden;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.expense-amount-input:focus-within {
+  border-color: #d46b3c;
+
+  box-shadow: 0 0 0 3px rgba(212, 107, 60, 0.08);
+}
+
+.expense-amount-input span {
+  flex-shrink: 0;
+
+  padding-left: 0.9rem;
+
+  color: #858c90;
+
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.expense-amount-input input {
+  border: none;
+
+  border-radius: 0;
+
+  box-shadow: none;
+}
+
+.expense-amount-input input:focus {
+  border: none;
+
+  box-shadow: none;
+}
+
+/* =========================
+   ERROR
+========================= */
+
+.budget-error {
+  margin: 0 0 0.25rem;
+
+  padding: 0.7rem 0.8rem;
+
+  border: 1px solid #efd1ca;
+  border-radius: 0.6rem;
+
+  background: #f9e9e5;
+
+  color: #a84f39;
+
+  font-size: 0.7rem;
+}
+
+/* =========================
+   SUBMIT BUTTON
+========================= */
+
+.expense-form .create-trip-button {
+  display: flex;
+
+  align-items: center;
+  justify-content: space-between;
+
+  width: 100%;
+
+  margin-top: 0.5rem;
+
+  padding: 0.85rem 1rem;
+
+  border: none;
+  border-radius: 0.7rem;
+
+  background: #18232d;
+
+  color: white;
+
+  font-family: inherit;
+  font-size: 0.75rem;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease;
+}
+
+.expense-form .create-trip-button:hover {
+  background: #273640;
+
+  transform: translateY(-1px);
+}
+
+.expense-form .create-trip-button span {
+  font-size: 1rem;
+}
+
+.expense-form .create-trip-button:disabled {
+  opacity: 0.6;
+
+  cursor: not-allowed;
+
+  transform: none;
+}
+
+/* =========================
+   ANIMATION
+========================= */
+
+@keyframes expenseOverlayIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes expenseModalIn {
+  from {
+    opacity: 0;
+
+    transform: translateY(15px) scale(0.97);
+  }
+
+  to {
+    opacity: 1;
+
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width: 600px) {
+  .modal-overlay {
+    padding: 1rem;
+  }
+
+  .expense-modal {
+    padding: 1.5rem;
+
+    border-radius: 1rem;
+  }
+
+  .expense-modal-header h2 {
+    font-size: 1.45rem;
+  }
+}
