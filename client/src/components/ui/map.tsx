@@ -357,13 +357,13 @@ function Map({ selectedLocation, onNearbyPlacesChange }: MapProps) {
             <div className="map-controls">
                 <LocationSearch
                     label="From"
-                    placeholder="Where are you starting?"
+                    placeholder="Start"
                     onSelect={handleFromSelect}
                 />
 
                 <LocationSearch
                     label="To"
-                    placeholder="Where are you going?"
+                    placeholder="Destination"
                     onSelect={handleToSelect}
                 />
 

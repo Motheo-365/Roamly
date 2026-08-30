@@ -337,10 +337,13 @@
 
 
 @media (max-width: 550px) {
+    .trip-dashboard-hero-image {
+        margin-top: 25%;
+    }
 
-    .trip-dashboard-hero-image,
     .trip-dashboard-hero-image img {
-        min-height: 450px;
+        object-fit: cover;
+        min-height: 475px;
     }
 
     .trip-dashboard-hero-content {
@@ -361,5 +364,4 @@
         flex-direction: column;
         gap: 0.75rem;
     }
-
 }
