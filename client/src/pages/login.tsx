@@ -39,7 +39,7 @@ function Login() {
         }),
       );
 
-      navigate("/");
+      navigate("/home");
     } catch (error) {
       setError(error instanceof Error ? error.message : "Login failed.");
     } finally {

@@ -7,7 +7,7 @@ import {
 
 import Login from "../pages/login";
 import Signup from "../pages/signup";
-import Dashboard from "../pages/dashboard"
+import Dashboard from "../pages/dashboard";
 import TripDashboard from "../pages/tripDashboard";
 
 import AuthLayout from "../components/auth/authLayout";
@@ -20,13 +20,25 @@ function ApplicationRoutes() {
                 <Route path="/signup" element={<Signup />} />
             </Route>
 
-            <Route path="/" element={<Dashboard />} />
+            {/* Website entry point */}
+            <Route
+                path="/"
+                element={<Navigate to="/login" replace />}
+            />
 
+            {/* Main home/dashboard */}
+            <Route
+                path="/home"
+                element={<Dashboard />}
+            />
+
+            {/* Individual trip */}
             <Route
                 path="/trips/:tripId"
                 element={<TripDashboard />}
             />
 
+            {/* Unknown routes */}
             <Route
                 path="*"
                 element={<Navigate to="/login" replace />}

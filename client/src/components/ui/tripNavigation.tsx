@@ -73,7 +73,7 @@ function TripNavigation() {
     <nav className="trip-navigation">
       <div className="navigation-links">
          <Link 
-            to="/" 
+            to="/home" 
             className="navigation-home-link"
         >
             ←
