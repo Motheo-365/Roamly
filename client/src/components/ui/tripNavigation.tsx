@@ -69,7 +69,7 @@ function TripNavigation() {
         ? "budget"
         : activeSection;
 
-  return (
+  return (    
     <nav className="trip-navigation">
       <div className="navigation-links">
          <Link 
@@ -78,14 +78,6 @@ function TripNavigation() {
         >
             ←
         </Link>
-{/* 
-        <button
-          type="button"
-          className={displayedSection === "home" ? "active" : ""}
-          onClick={handleDashboardClick}
-        >
-          Trip
-        </button> */}
 
         <button
           type="button"

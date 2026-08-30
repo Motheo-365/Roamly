@@ -26,7 +26,7 @@
     top: 1.8rem;
 
     z-index: 999;
-    background: rgba(255, 255, 255, 0.92);
+    background: rgba(12, 9, 9, 0.64);
     backdrop-filter: blur(8px);
     padding: 0.8rem 1.5rem;
     border-radius: 20px;
@@ -36,13 +36,9 @@
     left: 5%;
 }
 
-.trip-navigation button, a {
-    color: black !important;
-}
-
-.trip-navigation button:hover, .trip-navigation:active
-a:hover, a:active {
-    color: #c17e19 !important;
+.trip-navigation button,
+.trip-navigation a {
+    color: black;
 }
 
 /* =========================

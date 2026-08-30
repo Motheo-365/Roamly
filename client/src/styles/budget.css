@@ -431,6 +431,7 @@
     color: white;
     cursor: pointer;
 }
+
 .budget-input-wrapper button:hover {
     background: #18232dc6;
 }
