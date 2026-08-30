@@ -372,6 +372,7 @@
     color: #18232d;
 }
 
+
 /* =================================
    SET BUDGET
 ================================= */
@@ -430,7 +431,9 @@
     color: white;
     cursor: pointer;
 }
-
+.budget-input-wrapper button:hover {
+    background: #18232dc6;
+}
 
 /* =================================
    EXPENSES

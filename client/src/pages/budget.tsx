@@ -1,7 +1,11 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import AddExpense from "../components/ui/addExpense";
-import { type Expense } from "../services/apiService";
+import { 
+  type Expense,
+  getTrip,
+  updateTrip,
+} from "../services/apiService";
 
 import "../styles/budget.css";
 
@@ -20,9 +24,10 @@ function Budget({
   onExpenseAdded,
   onExpenseDeleted,
 }: BudgetProps) {
-  const [budget, setBudget] = useState(15000);
+  const [budget, setBudget] = useState(0);
   const [showBudgetInput, setShowBudgetInput] = useState(false);
   const [newBudget, setNewBudget] = useState("15000");
+  const [, setLoadingBudget] = useState(false);
   const [showExpenses, setShowExpenses] = useState(true);
   const [expenseToDelete, setExpenseToDelete] = useState<Expense | null>(null);
 
@@ -58,12 +63,39 @@ function Budget({
     setExpenseToDelete(null);
   };
 
-  const saveBudget = () => {
+  const saveBudget = async () => {
     const value = Number(newBudget);
 
-    if (value > 0) {
-      setBudget(value);
+    if (value <= 0) {
+      return;
+    }
+
+    try {
+      const tripResponse = await getTrip(tripId);
+      const trip = tripResponse.data;
+
+      const response = await updateTrip(
+        tripId,
+        trip.destination ?? "",
+        trip.start_date ?? "",
+        trip.end_date ?? "",
+        Number(trip.travellers) || 1,
+        trip.description ?? "",
+        value,
+      );
+
+      const savedBudget = Number(response.data.budget);
+
+      setBudget(savedBudget);
+      setNewBudget(String(savedBudget));
       setShowBudgetInput(false);
+    } catch (error) {
+      console.error("Failed to save budget:", error);
+      alert(
+        error instanceof Error
+          ? error.message
+          : "Failed to save budget.",
+      );
     }
   };
 
@@ -88,12 +120,33 @@ function Budget({
     }
   });
 
+  // Load and get budget from backend.
+  useEffect(() => {
+    const loadBudget = async () => {
+      try {
+        setLoadingBudget(true);
+
+        const response = await getTrip(tripId);
+        const savedBudget = Number(response.data.budget) || 0;
+
+        setBudget(savedBudget);
+        setNewBudget(String(savedBudget));
+      } catch (error) {
+        console.error("Failed to load trip budget:", error);
+      } finally {
+        setLoadingBudget(false);
+      }
+    };
+
+    loadBudget();
+  }, [tripId]);
+
   return (
     <main className="budget-page">
       {/* Header */}
       <header className="budget-header">
         <div>
-          <span className="budget-eyebrow">TOKYO ADVENTURE</span>
+          <span className="budget-eyebrow">{ }</span>
 
           <h1>Budgeting</h1>
         </div>
@@ -155,8 +208,6 @@ function Budget({
             <button onClick={() => setShowBudgetInput(!showBudgetInput)}>
               Set budget
             </button>
-
-            <button>Group balances</button>
           </div>
         </div>
       </section>
