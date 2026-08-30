@@ -1,223 +1,223 @@
 # Roamly
 
-Roamly is a full-stack travel planning application designed to help users organise trips, manage expenses, track activities, and monitor their travel budgets in one place.
+Roamly is a full-stack travel planning and expense management application designed to help travellers plan, organise, and track every aspect of a trip in one place. The platform enables users to create multi-day itineraries, monitor trip budgets, manage expenses by category, and review trip details through a modern dashboard experience.
 
-The project is being developed with a focus on **clean architecture, maintainability, and practical software design patterns**. Rather than adding design patterns simply for demonstration, each pattern is being introduced to solve a specific architectural or business problem within the application.
+This project was built as a portfolio-ready application to demonstrate practical experience across frontend development, backend API design, database integration, authentication, and full-stack product thinking. The goal was to create a real, usable travel product rather than a toy demo.
 
-## Project Goals
+## Overview
 
-The main goals of Roamly are to:
+Roamly brings together the core workflows a traveller needs when planning a trip:
 
-* Build a complete full-stack application with a real relational database.
-* Create a clean separation between the frontend, backend, business logic, and data access.
-* Apply software design patterns to solve realistic development problems.
-* Demonstrate understanding of scalable backend architecture.
-* Create a polished project suitable for a professional software development portfolio.
+- Create and manage travel trips with dates, destination, and travel details
+- Track activities and itinerary items for each trip
+- Record expenses by category and view spending against the trip budget
+- Explore destinations using location and imagery services
+- Authenticate users securely and manage protected trip data
+- Navigate a responsive, modern dashboard designed for quick trip review
+
+## Problem it solves
+
+Travellers often have to split trip planning across multiple tools: one app for budgeting, another for activity planning, another for logistics, and another for tracking spending. Roamly centralises those tasks into a single product experience, making it easier to stay organised before and during a trip.
+
+## Key Features
+
+### Trip management
+- Create, update, view, and delete trips
+- Organise trip data by destination, date range, traveller count, and description
+- Keep trip records linked to the authenticated user
+
+### Itinerary planning
+- Add activities with title, date, time, location, and cost
+- View travel plans in a simple itinerary layout
+- Keep plans grouped under each trip
+
+### Budget and expense tracking
+- Record expenses by category such as accommodation, food, transport, activities, and shopping
+- Monitor trip spending against a user-defined budget
+- Review total costs and itemised trip expenses
+
+### Travel dashboard experience
+- Dedicated trip dashboard with trip overview and trip detail sections
+- Responsive interface for browsing trip information quickly
+- Clean UX designed for both planning and review
+
+### Authentication and protected access
+- Secure sign-up and login experience
+- JWT-based authentication with protected route access
+- Restricted access to user-owned trip and expense data
+
+### Location and destination support
+- Lookup and enrich trip details using location-based services
+- Use destination images and travel metadata to improve trip context
+
+## Tech Stack
+
+### Frontend
+- React
+- TypeScript
+- Vite
+- React Router
+- Framer Motion
+- Leaflet
+
+### Backend
+- Node.js
+- Express
+- PostgreSQL
+- JWT
+- bcrypt
+- CORS
+- dotenv
+
+### Additional tools
+- PostgreSQL database integration
+- REST API architecture
+- Environment-based configuration
+- Type-safe backend and frontend development
 
 ## Architecture
 
-Roamly follows a **layered architecture** where different parts of the application have clearly defined responsibilities.
+The application follows a layered architecture designed to separate concerns and keep the system maintainable.
 
 ```text
-Frontend
-   ↓
-Routes / Controllers
-   ↓
+Client (React + Vite)
+    ↓
+API Routes / Controllers
+    ↓
 Service Layer
-   ↓
-Repositories
-   ↓
+    ↓
+Repository Layer
+    ↓
 PostgreSQL Database
 ```
 
-This structure prevents individual components from becoming responsible for too many things.
+This structure helps keep business rules, HTTP handling, and persistence logic distinct. It also makes the codebase easier to extend as the application grows.
 
-For example, a controller should handle HTTP requests and responses rather than containing database queries and business rules.
-
-## Design Patterns
-
-### 1. Repository Pattern
-
-**Problem:**
-Controllers and services should not need to know how PostgreSQL queries are implemented.
-
-**Solution:**
-The Repository Pattern separates database access from the rest of the application.
+## Project Structure
 
 ```text
-Controller
-    ↓
-Service
-    ↓
-Repository
-    ↓
-PostgreSQL
+Roamly/
+├── client/                 # React frontend
+│   ├── src/
+│   ├── public/
+│   ├── package.json
+│   └── vite.config.ts
+│
+├── express-server/         # Express API + business logic
+│   ├── src/
+│   ├── package.json
+│   └── tsconfig.json
+│
+├── Plan/                   # Planning notes and implementation docs
+├── README.md               # Project overview
+├── .gitignore
+└── package.json            # Root project metadata if present
 ```
 
-Repositories will handle operations such as:
+## API Highlights
 
-* `getTripsByUserId()`
-* `getTripById()`
-* `createTrip()`
-* `updateTrip()`
-* `deleteTrip()`
+The backend exposes REST endpoints for:
 
-This makes the database layer easier to test, maintain, and change independently of the business logic.
+- Authentication
+- Trip creation and retrieval
+- Activity management
+- Expense tracking
+- Budget logic
+- Location services
+- Route data
+- Image services
 
----
+These endpoints are organised around the authenticated user, ensuring that trip data remains scoped to the correct owner.
 
-### 2. Service Layer Pattern
+## Design and Implementation Notes
 
-**Problem:**
-Putting validation and business rules directly inside routes would make controllers difficult to maintain.
+Roamly reflects a practical software engineering approach with clear separation between:
 
-**Solution:**
-The Service Layer contains the application's business logic.
+- UI concerns in the frontend
+- API route definitions in the backend
+- validation and business logic in service layers
+- database access in repository functions
+- event-driven updates for trip-related behaviour
 
-For example, when creating a trip, the `TripService` could enforce rules such as:
+This reflects the kind of architecture used in real-world product teams and demonstrates a strong understanding of maintainability and scalability.
 
-* The start date cannot be after the end date.
-* A budget cannot be negative.
-* A user must own the trip they are modifying.
-* Activities must belong to the relevant trip.
+## Getting Started
 
-The resulting flow becomes:
+### Prerequisites
 
-```text
-Controller
-    ↓
-TripService
-    ↓
-TripRepository
-    ↓
-Database
+- Node.js 18+
+- PostgreSQL database
+- npm
+
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/your-username/roamly.git
+cd roamly
 ```
 
-This keeps HTTP handling, business logic, and database access separate.
+### 2. Install frontend dependencies
 
----
-
-### 3. Strategy Pattern
-
-**Problem:**
-Roamly may need to calculate travel costs in different ways without creating one large calculator containing every possible algorithm.
-
-**Solution:**
-The Strategy Pattern allows different budget calculation algorithms to be swapped at runtime.
-
-Potential strategies include:
-
-```text
-BudgetStrategy
-    ├── TotalCostStrategy
-    ├── DailyCostStrategy
-    └── PerPersonStrategy
+```bash
+cd client
+npm install
 ```
 
-For example:
+### 3. Install backend dependencies
 
-```text
-Budget Calculator
-       ↓
-Selected Strategy
-       ↓
-Calculate Budget
+```bash
+cd ../express-server
+npm install
 ```
 
-A new calculation method can therefore be added without rewriting the existing calculator.
+### 4. Configure environment variables
 
----
+Create a `.env` file in the backend root with the required PostgreSQL and app settings, including database connection values and JWT secret configuration.
 
-### 4. Factory Pattern
+### 5. Run the backend
 
-**Problem:**
-Roamly will support different types of expenses, such as accommodation, transport, food, activities, and other expenses.
-
-**Solution:**
-The Factory Pattern centralises the creation of expense objects.
-
-```text
-ExpenseFactory
-      │
-      ├── Accommodation
-      ├── Transport
-      ├── Food
-      ├── Activities
-      └── Other
+```bash
+cd express-server
+npm run dev
 ```
 
-Instead of spreading expense creation logic throughout the application, the factory provides a single entry point for creating the appropriate expense type.
+### 6. Run the frontend
 
----
-
-### 5. Observer Pattern
-
-**Problem:**
-Different parts of the application may need to react when something happens to a trip.
-
-For example, updating a trip could trigger:
-
-* A budget warning.
-* An activity reminder.
-* An entry in the activity log.
-* A notification.
-
-**Solution:**
-The Observer Pattern allows interested components to subscribe to trip-related events.
-
-```text
-Trip Event
-    │
-    ├── Notification System
-    ├── Budget Tracker
-    └── Activity Log
+```bash
+cd client
+npm run dev
 ```
 
-The trip itself does not need to know exactly what each component does when an event occurs.
+## Portfolio Value
 
-This can be implemented using an event-driven system on the Node.js backend.
+Roamly represents a complete, end-to-end software product built with modern tooling and a realistic architecture. It demonstrates:
 
-## Planned Backend Structure
+- full-stack application development
+- API and database design
+- authentication flows
+- business logic implementation
+- user-facing product design
+- maintainable architecture patterns
+- practical portfolio-level engineering judgment
 
-```text
-server/
-│
-├── controllers/
-│   ├── authController.ts
-│   ├── tripController.ts
-│   └── expenseController.ts
-│
-├── services/
-│   ├── authService.ts
-│   ├── tripService.ts
-│   └── budgetService.ts
-│
-├── repositories/
-│   ├── userRepository.ts
-│   ├── tripRepository.ts
-│   └── expenseRepository.ts
-│
-├── strategies/
-│   ├── totalCostStrategy.ts
-│   ├── dailyCostStrategy.ts
-│   └── perPersonStrategy.ts
-│
-├── factories/
-│   └── expenseFactory.ts
-│
-├── events/
-│   └── tripEvents.ts
-│
-├── routes/
-│   ├── authRoutes.ts
-│   ├── tripRoutes.ts
-│   └── expenseRoutes.ts
-│
-└── db/
-    └── connection.ts
-```
+## Future Improvements
 
-## Design Pattern Overview
+The project is already structured for continued growth. Potential future enhancements include:
+
+- multi-user collaboration and shared trip access
+- AI-assisted trip recommendations
+- improved budget forecasting
+- richer itinerary suggestions
+- notifications and reminders
+- map-based travel planning experience
+- deployment pipeline and production-ready configuration
+
+## Conclusion
+
+Roamly is a realistic travel planning application built to showcase modern software engineering capabilities in a full-stack context. It combines practical product thinking with a structured backend, clean frontend experience, and an architecture designed to scale beyond a prototype.
+
+This project is suitable for demonstrating both technical skill and product sense in a portfolio, interview, or professional review setting.
+
 
 | Pattern               | Used For            | Purpose                                                  |
 | --------------------- | ------------------- | -------------------------------------------------------- |
